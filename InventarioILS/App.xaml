@@ -14,7 +14,7 @@
         <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource Foreground}"/>
         <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
         <SolidColorBrush x:Key="AccentForegroundBrush" Color="{StaticResource AccentForeground}"/>
-
+        
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
