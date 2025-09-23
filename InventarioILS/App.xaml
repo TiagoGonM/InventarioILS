@@ -8,9 +8,13 @@
         <Color x:Key="Secondary">#1D1C1C</Color>
         <Color x:Key="Foreground">#E0E0E0</Color>
         <Color x:Key="Accent">#6AC7B2</Color>
-        <Color x:Key="AccentForeground">#FF9BE8D6</Color>
+        <Color x:Key="AccentForeground">#9BE8D6</Color>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource Background}" />
+        <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+        <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource Foreground}"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
         <SolidColorBrush x:Key="AccentForegroundBrush" Color="{StaticResource AccentForeground}"/>
-
+        
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
