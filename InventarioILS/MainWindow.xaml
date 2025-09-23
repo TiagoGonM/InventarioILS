@@ -5,10 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventarioILS"
         mc:Ignorable="d"
-        Title="Inventario Electrónica" Width="1720" Height="1040">
-    <Window.Background>
-        <SolidColorBrush Color="{DynamicResource Background}"/>
-    </Window.Background>
+        Title="Inventario Electrónica" Width="1720" Height="1040"
+        Background="{StaticResource BackgroundBrush}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
@@ -16,11 +14,8 @@
         </Grid.ColumnDefinitions>
 
         <!-- Panel lateral -->
-        <Border Grid.Column="0" Background="{StaticResource Secondary}" BorderBrush="#3FFFEFEF" BorderThickness="0,0,1,0">
-            <StackPanel Margin="0,0,0,0">
-                <StackPanel.Background>
-                    <SolidColorBrush Color="{DynamicResource Background}"/>
-                </StackPanel.Background>
+        <Border Grid.Column="0" Background="{StaticResource SecondaryBrush}" BorderBrush="#3FFFEFEF" BorderThickness="0,0,1,0">
+            <StackPanel Margin="0,0,0,0" Background="{StaticResource SecondaryBrush}">
                 <!-- Tabs -->
                 <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
@@ -28,38 +23,19 @@
                 </StackPanel>
                 <!-- Filtros -->
                 <StackPanel Margin="16,0,16,0">
-                    <StackPanel.Background>
-                        <SolidColorBrush Color="{DynamicResource Background}"/>
-                    </StackPanel.Background>
-                    <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{DynamicResource AccentForegroundBrush}" />
-                    <TextBox Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="#FF232323" BorderThickness="1">
-                        <TextBox.BorderBrush>
-                            <SolidColorBrush Color="{DynamicResource Accent}"/>
-                        </TextBox.BorderBrush>
-                    </TextBox>
+                    <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
+                    <TextBox Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" />
 
-                    <TextBlock Text="Palabras Clave" Foreground="{DynamicResource AccentForegroundBrush}" />
-                    <TextBox Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" Background="#FF232323" BorderThickness="1">
-                        <TextBox.BorderBrush>
-                            <SolidColorBrush Color="#FF9BE8D6"/>
-                        </TextBox.BorderBrush>
-                    </TextBox>
+                    <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
+                    <TextBox Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" />
 
-                    <TextBlock Text="Tipo" Foreground="{DynamicResource AccentForegroundBrush}"/>
-                    <ComboBox Margin="0,4,0,8" Height="28" BorderThickness="1">
-                        <ComboBox.BorderBrush>
-                            <SolidColorBrush Color="#6AC7B2"/>
-                        </ComboBox.BorderBrush>
-                        <ComboBox.Background>
-                            <SolidColorBrush Color="#1D1C1C"/>
-                        </ComboBox.Background>
-                        <ComboBox.Foreground>
-                            <SolidColorBrush Color="{DynamicResource Foreground}"/>
-                        </ComboBox.Foreground>
+                    <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <ComboBox Margin="0,4,0,8" Height="28" BorderThickness="1" BorderBrush="#6AC7B2" Background="#FF1D1C1C"
+                              Foreground="{StaticResource ForegroundBrush}">
                         <ComboBoxItem Content="Insumo" IsSelected="True"/>
                         <ComboBoxItem Content="Dispositivo"/>
                     </ComboBox>
-                    <TextBlock Text="Cantidad" Foreground="{DynamicResource AccentForegroundBrush}" />
+                    <TextBlock Text="Cantidad" Foreground="{StaticResource AccentForegroundBrush}" />
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                         <Slider Minimum="0" Maximum="1000" Width="180" Margin="8,0"/>
@@ -69,47 +45,30 @@
                 </StackPanel>
                 <!-- Botones -->
                 <StackPanel Margin="16,24,16,0">
-                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="Button_Click">
+                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="Button_Click"
+                            Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="+" FontSize="25" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Añadir Item" VerticalAlignment="Center"/>
                         </StackPanel>
-
-                        <Button.Foreground>
-                            <SolidColorBrush Color="{DynamicResource Secondary}"/>
-                        </Button.Foreground>
-                        <Button.Background>
-                            <SolidColorBrush Color="{DynamicResource Accent}"/>
-                        </Button.Background>
                     </Button>
-                    <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5">
+                    <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
+                            Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="←" FontSize="40" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
                         </StackPanel>
-
-                        <Button.Background>
-                            <SolidColorBrush Color="#FF9BE8D6"/>
-                        </Button.Background>
-                        <Button.Foreground>
-                            <SolidColorBrush Color="{DynamicResource Secondary}"/>
-                        </Button.Foreground>
                     </Button>
                 </StackPanel>
             </StackPanel>
         </Border>
 
         <!-- Tabla de datos -->
-        <Grid Grid.Column="1">
-            <Grid.Background>
-                <SolidColorBrush Color="{DynamicResource Background}"/>
-            </Grid.Background>
+        <Grid Grid.Column="1" Background="{StaticResource BackgroundBrush}">
             <DataGrid AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False" Foreground="black" RowBackground="#FF232323"
                       AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0"
-                      ColumnHeaderHeight="40" RowHeight="40" FontSize="16" SelectionChanged="DataGrid_SelectionChanged">
-                <DataGrid.Background>
-                    <SolidColorBrush Color="{DynamicResource Secondary}"/>
-                </DataGrid.Background>
+                      ColumnHeaderHeight="40" RowHeight="40" FontSize="16" SelectionChanged="DataGrid_SelectionChanged"
+                      Background="{StaticResource SecondaryBrush}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120"/>
                     <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*"/>
