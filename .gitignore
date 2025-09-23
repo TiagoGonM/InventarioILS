@@ -1,0 +1,18 @@
+# Ignorar la carpeta de configuración de Visual Studio
+.vs/
+.vscode/
+
+# Ignorar las carpetas de binarios y objetos de compilación
+InventarioILS/bin/
+InventarioILS/obj/
+
+# Archivos temporales de usuario
+*.user
+*.suo
+
+# Archivos de respaldo
+*.bak
+*.tmp
+
+# Paquetes NuGet (si no quieres subirlos)
+InventarioILS/packages/
