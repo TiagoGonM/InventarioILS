@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InventarioILS.View.UserControls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,14 +27,11 @@ namespace InventarioILS
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
+            //List<StockItem> items = new List<StockItem>();
+            //items.Add(new StockItem("R-100-K", "Resistencia", "Estandar", "Resistencia de 100K ohm", Class.INSUMO, State.INSUMO_SUFICIENTE, "Cajón 1", 5));
+            //ItemView.SetItemsSource(items);
         }
     }
 }

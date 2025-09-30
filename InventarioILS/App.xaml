@@ -8,9 +8,13 @@
         <Color x:Key="Secondary">#1D1C1C</Color>
         <Color x:Key="Foreground">#E0E0E0</Color>
         <Color x:Key="Accent">#6AC7B2</Color>
-        <Color x:Key="AccentForeground">#FF9BE8D6</Color>
+        <Color x:Key="AccentForeground">#9BE8D6</Color>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource Background}" />
+        <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+        <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource Foreground}"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
         <SolidColorBrush x:Key="AccentForegroundBrush" Color="{StaticResource AccentForeground}"/>
-
+        
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -36,6 +40,41 @@
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BlackComboBox" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Name="ToggleButton"
+                                  Background="{TemplateBinding Background}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="1"
+                                  IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ClickMode="Press">
+                                <ContentPresenter />
+                            </ToggleButton>
+                            <Popup Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           PopupAnimation="Slide">
+                                <Border BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="5" BorderThickness="1">
+                                    <ScrollViewer>
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
