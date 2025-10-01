@@ -31,8 +31,8 @@ namespace InventarioILS.View.UserControls
 
             using (var connection = new SqliteConnection($"Data Source={path}"))
             {
-                var items = connection.Query<StockItem>("SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, st.name state, it.createdAt, it.updatedAt, COUNT(*) quantity\r\nFROM ItemStock sto\r\nJOIN Item it ON sto.itemId = it.itemId\r\nJOIN Class class ON it.classId = class.classId\r\nJOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId\r\nJOIN Category c ON cs.categoryId = c.categoryId\r\nJOIN Subcategory s ON cs.subcategoryId = s.subcategoryId\r\nJOIN State st ON sto.stateId = st.stateId\r\nGROUP BY \r\n    it.productCode,\r\n    c.name,\r\n    s.name,\r\n    class.name\r\nLIMIT 50;").ToList();
-                ItemView.ItemsSource = items;
+                //var items = connection.Query<StockItem>("SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, st.name state, it.createdAt, it.updatedAt, COUNT(*) quantity\r\nFROM ItemStock sto\r\nJOIN Item it ON sto.itemId = it.itemId\r\nJOIN Class class ON it.classId = class.classId\r\nJOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId\r\nJOIN Category c ON cs.categoryId = c.categoryId\r\nJOIN Subcategory s ON cs.subcategoryId = s.subcategoryId\r\nJOIN State st ON sto.stateId = st.stateId\r\nGROUP BY \r\n    it.productCode,\r\n    c.name,\r\n    s.name,\r\n    class.name\r\nLIMIT 50;").ToList();
+                //ItemView.ItemsSource = items;
             }
         }
     }

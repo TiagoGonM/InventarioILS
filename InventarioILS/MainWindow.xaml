@@ -25,15 +25,15 @@
                 <!-- Filtros -->
                 <StackPanel Margin="16,0,16,0">
                     <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" />
+                    <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" />
 
                     <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" />
+                    <TextBox x:Name="KeywordInput" Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" TextChanged="KeywordInput_TextChanged" />
 
                     <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <ComboBox Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" BorderThickness="1">
-                        <ComboBoxItem Content="Insumo" IsSelected="True" Background="{StaticResource SecondaryBrush}"/>
-                        <ComboBoxItem Content="Dispositivo"/>
+                    <ComboBox x:Name="ClassComboBox" Margin="0,4,0,8" Height="28" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource SecondaryBrush}" SelectionChanged="ClassComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Insumo" Background="Black" Foreground="{StaticResource ForegroundBrush}"/>
+                        <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
                     </ComboBox>
                     <TextBlock Text="Cantidad" Foreground="{StaticResource AccentForegroundBrush}"/>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
