@@ -4,11 +4,11 @@
              xmlns:local="clr-namespace:InventarioILS"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <Color x:Key="Background">#2C2A2A</Color>
-        <Color x:Key="Secondary">#1D1C1C</Color>
-        <Color x:Key="Foreground">#E0E0E0</Color>
-        <Color x:Key="Accent">#6AC7B2</Color>
-        <Color x:Key="AccentForeground">#9BE8D6</Color>
+        <Color x:Key="Background">#FF2C2A2A</Color>
+        <Color x:Key="Secondary">#FF1D1C1C</Color>
+        <Color x:Key="Foreground">#FFE0E0E0</Color>
+        <Color x:Key="Accent">#FF6AC7B2</Color>
+        <Color x:Key="AccentForeground">#FF9BE8D6</Color>
         <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource Background}" />
         <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
         <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource Foreground}"/>
