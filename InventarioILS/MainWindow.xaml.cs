@@ -1,19 +1,7 @@
-﻿using InventarioILS.Model;
-using InventarioILS.View.UserControls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using InventarioILS.Model;
 
 namespace InventarioILS
 {
@@ -22,7 +10,9 @@ namespace InventarioILS
     /// </summary>
     public partial class MainWindow : Window
     {
-        DbConnection client;
+        readonly DbConnection client;
+
+        Dictionary<string, string> appliedFilters = new Dictionary<string, string>();
 
         public MainWindow()
         {
@@ -40,19 +30,45 @@ namespace InventarioILS
 
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MessageBox.Show(((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
             var filter = client.GetStockItemsByClass(((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
-            ItemView.SetItemsSource(filter);
+            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
+            appliedFilters.Add("item-class", ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
         }
 
         private void ProductCodeInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ItemView.SetItemsSource(client.GetStockItemsByCode(ProductCodeInput.Text));
+            if (string.IsNullOrEmpty(ProductCodeInput.Text))
+            {
+                appliedFilters.Remove("product-code");
+                ItemView.SetItemsSource(client.GetStockItems());
+                return;
+            }
+
+            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
+            appliedFilters.Add("product-code", ProductCodeInput.Text);
         }
 
         private void KeywordInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ItemView.SetItemsSource(client.GetStockItemsByKeyword(KeywordInput.Text));
+            if (string.IsNullOrEmpty(ProductCodeInput.Text))
+            {
+                appliedFilters.Remove("keyword");
+                ItemView.SetItemsSource(client.GetStockItems());
+                return;
+            }
+
+            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
+            appliedFilters.Add("keyword", KeywordInput.Text);
+        }
+
+        private void clearFilters_Click(object sender, RoutedEventArgs e)
+        {
+            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
+        }
+
+        private void ItemView_Loaded(object sender, RoutedEventArgs e)
+        {
+            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
         }
     }
 }

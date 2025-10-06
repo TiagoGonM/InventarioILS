@@ -9,7 +9,7 @@
     <Grid Background="{StaticResource BackgroundBrush}">
         <DataGrid x:Name="ItemView" CanUserAddRows="False" CanUserDeleteRows="False" RowBackground="#FF232323"
           AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0"
-          ColumnHeaderHeight="40" RowHeight="40" FontSize="16" HorizontalAlignment="Center" HeadersVisibility="Column" AutoGenerateColumns="False" Background="{DynamicResource BackgroundBrush}" Loaded="ItemView_Loaded">
+          ColumnHeaderHeight="40" RowHeight="40" FontSize="16" HorizontalAlignment="Center" HeadersVisibility="Column" AutoGenerateColumns="False" Background="{DynamicResource BackgroundBrush}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
