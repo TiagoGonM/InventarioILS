@@ -25,14 +25,14 @@
                 <!-- Filtros -->
                 <StackPanel Margin="16,0,16,0">
                     <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" />
+                    <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" Foreground="{DynamicResource ForegroundBrush}" FontWeight="Bold"/>
 
                     <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox x:Name="KeywordInput" Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" TextChanged="KeywordInput_TextChanged" />
+                    <TextBox x:Name="KeywordInput" Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="{StaticResource BackgroundBrush}" BorderThickness="1" TextChanged="KeywordInput_TextChanged" />
 
                     <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <ComboBox x:Name="ClassComboBox" Margin="0,4,0,8" Height="28" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource SecondaryBrush}" SelectionChanged="ClassComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Insumo" Background="Black" Foreground="{StaticResource ForegroundBrush}"/>
+                    <ComboBox x:Name="ClassComboBox" Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource BackgroundBrush}" SelectionChanged="ClassComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Insumo" Foreground="{StaticResource ForegroundBrush}"/>
                         <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
                     </ComboBox>
                     <TextBlock Text="Cantidad" Foreground="{StaticResource AccentForegroundBrush}"/>
@@ -41,6 +41,8 @@
                         <Slider Minimum="0" Maximum="1000" Width="180" Margin="8,0"/>
                         <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                     </StackPanel>
+                    <Button x:Name="clearFilters" Content="Restablecer filtros" Click="clearFilters_Click"/>
+
                     <CheckBox Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0"/>
                 </StackPanel>
                 <!-- Botones -->
@@ -65,7 +67,7 @@
 
         <!-- Tabla de datos -->
         <Grid Grid.Column="1" Background="{StaticResource BackgroundBrush}">
-            <userControls:InventoryDataView x:Name="ItemView" />
+            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" />
             <!--<DataGrid x:Name="ItemView" CanUserAddRows="False" CanUserDeleteRows="False" Foreground="{DynamicResource ForegroundBrush}" RowBackground="#FF232323"
                       AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0"
                       ColumnHeaderHeight="40" RowHeight="40" FontSize="16" HorizontalAlignment="Center"
