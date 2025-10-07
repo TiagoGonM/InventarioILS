@@ -21,7 +21,7 @@
         REPUESTO_DESCARTAR = 5 
     }
 
-    public interface IItem
+    public class IItem
     {
         string ProductCode { get; set; }
         string CategoryName { get; set; }

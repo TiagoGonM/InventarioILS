@@ -14,7 +14,7 @@
                 <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                <DataGridTextColumn Header="Estado" Binding="{Binding State}" Width="120" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Estado" Binding="{Binding State}" Width="120" Foreground="{StaticResource ForegroundBrush}" Visibility="Visible"/>
                 <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantity}" Width="40" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Ubicación" Binding="{Binding Location}" Width="160" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Notas" Binding="{Binding AdditionalNotes}" Width="80" Foreground="{StaticResource ForegroundBrush}"/>

@@ -28,11 +28,17 @@ namespace InventarioILS
             return;
         }
 
+        // TODO: Avoid code duplication
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var filter = client.GetStockItemsByClass(((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
-            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
-            appliedFilters.Add("item-class", ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
+            if (ClassComboBox.SelectedItem == null) return;
+
+            if (!appliedFilters.ContainsKey("item-class"))
+                appliedFilters.Add("item-class", ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
+            else
+                appliedFilters["item-class"] = ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString();
+            
+            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
         }
 
         private void ProductCodeInput_TextChanged(object sender, TextChangedEventArgs e)
@@ -40,35 +46,56 @@ namespace InventarioILS
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
                 appliedFilters.Remove("product-code");
-                ItemView.SetItemsSource(client.GetStockItems());
+                ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
                 return;
             }
 
-            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
-            appliedFilters.Add("product-code", ProductCodeInput.Text);
+            if (!appliedFilters.ContainsKey("product-code"))
+                appliedFilters.Add("product-code", ProductCodeInput.Text);
+            else
+                appliedFilters["product-code"] = ProductCodeInput.Text;
+                
+            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+            //ItemView.SetItemsSource(client.GetStockItemsByCode(ProductCodeInput.Text));
         }
 
         private void KeywordInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrEmpty(ProductCodeInput.Text))
+            if (string.IsNullOrEmpty(KeywordInput.Text))
             {
                 appliedFilters.Remove("keyword");
-                ItemView.SetItemsSource(client.GetStockItems());
+                ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
                 return;
             }
 
-            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
-            appliedFilters.Add("keyword", KeywordInput.Text);
+            if (!appliedFilters.ContainsKey("keyword"))
+                appliedFilters.Add("keyword", KeywordInput.Text);
+            else
+                appliedFilters["keyword"] = KeywordInput.Text;
+            
+            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+            //ItemView.SetItemsSource(client.GetStockItemsByKeyword(KeywordInput.Text));
         }
 
         private void clearFilters_Click(object sender, RoutedEventArgs e)
         {
-            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
+            appliedFilters.Clear();
+            ClassComboBox.SelectedItem = null;
+            ProductCodeInput.Text = string.Empty;
+            KeywordInput.Text = string.Empty;
+            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+            //ItemView.SetItemsSource(client.GetStockItems());
         }
 
         private void ItemView_Loaded(object sender, RoutedEventArgs e)
         {
-            ItemView.SetItemsSource(client.GetStockItems2(appliedFilters));
+            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+            //ItemView.SetItemsSource(client.GetStockItems());
+        }
+
+        private void ShowNoStockItem_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
