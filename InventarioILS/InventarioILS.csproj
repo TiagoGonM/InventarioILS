@@ -148,7 +148,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Filter.cs" />
     <Compile Include="Model\DbConnection.cs" />
     <Compile Include="View\UserControls\InventoryDataView.xaml.cs">
       <DependentUpon>InventoryDataView.xaml</DependentUpon>
