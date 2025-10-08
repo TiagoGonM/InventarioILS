@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Windows;
 
 namespace InventarioILS.Model
 {
@@ -37,6 +35,31 @@ namespace InventarioILS.Model
             }
         }
 
+        // TODO: i don't like what i did here
+        public class DynamicQueryBuilder
+        {
+            readonly DynamicParameters parameters;
+
+            public string Query { get; private set; }
+
+            public DynamicQueryBuilder(string mainQuery)
+            {
+                parameters = new DynamicParameters();
+                Query = mainQuery;
+            }
+
+            public void AddFilter(string tableColumn, string paramName, string filterValue)
+            {
+                Query += $" AND {tableColumn} LIKE @{paramName} COLLATE NOCASE";
+                parameters.Add(paramName, $"%{filterValue}%");
+            }
+
+            public (string, DynamicParameters) GetQueryTuple()
+            {
+                return (Query, parameters);
+            }
+        }
+
         public List<StockItem> GetStockItems(Dictionary<string, string> filters) {
             
             string query = @"SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, st.name state, sto.location, sto.additionalNotes, COUNT(*) quantity
@@ -49,37 +72,26 @@ namespace InventarioILS.Model
                              JOIN State st ON sto.stateId = st.stateId
                              WHERE 1=1";
 
-            var parameters = new DynamicParameters();
+            var queryObj = new DynamicQueryBuilder(query);
 
-            if (filters.ContainsKey("product-code"))
-            {
-                query += " AND it.productCode LIKE @productCode COLLATE NOCASE";
-                parameters.Add("productCode", $"%{filters["product-code"]}%");
-            }
+            if (filters.ContainsKey("productCode")) queryObj.AddFilter("it.productCode", "productCode", filters["productCode"]);
+            if (filters.ContainsKey("keyword")) queryObj.AddFilter("it.description", "keyword", filters["keyword"]);
+            if (filters.ContainsKey("className")) queryObj.AddFilter("class.name", "className", filters["className"]);
 
-            if (filters.ContainsKey("keyword"))
-            {
-                query += " AND it.description LIKE @keyword COLLATE NOCASE";
-                parameters.Add("keyword", $"%{filters["keyword"]}%");
-            }
-            
-            if (filters.ContainsKey("item-class"))
-            {
-                query += " AND class.name LIKE @className COLLATE NOCASE";
-                parameters.Add("className", $"%{filters["item-class"]}%");
-            }
-            query += @" GROUP BY 
+            (string sql, var parameters) = queryObj.GetQueryTuple();
+
+            sql += @" GROUP BY 
                             it.productCode,
                             c.name,
                             s.name,
                             class.name
                         LIMIT 50;";
 
-            return connection.Query<StockItem>(query, parameters).ToList();
+            return connection.Query<StockItem>(sql, parameters).ToList();
         }
 
         // TODO: Implement no stock items, try to avoid code duplication and apply DRY
-        public List<IItem> GetItems(Dictionary<string, string> filters)
+        public List<OrderItem> GetItems(Dictionary<string, string> filters)
         {
             string query = @"SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, it.createdAt, it.updatedAt, COUNT(*) quantity
                              FROM Item it
@@ -88,12 +100,13 @@ namespace InventarioILS.Model
                              JOIN Category c ON cs.categoryId = c.categoryId
                              JOIN Subcategory s ON cs.subcategoryId = s.subcategoryId
                              WHERE 1=1";
+
             var parameters = new DynamicParameters();
 
-            if (filters.ContainsKey("product-code"))
+            if (filters.ContainsKey("productCode"))
             {
                 query += " AND it.productCode LIKE @productCode COLLATE NOCASE";
-                parameters.Add("productCode", $"%{filters["product-code"]}%");
+                parameters.Add("productCode", $"%{filters["productCode"]}%");
             }
 
             if (filters.ContainsKey("keyword"))
@@ -102,10 +115,10 @@ namespace InventarioILS.Model
                 parameters.Add("keyword", $"%{filters["keyword"]}%");
             }
 
-            if (filters.ContainsKey("item-class"))
+            if (filters.ContainsKey("className"))
             {
                 query += " AND class.name LIKE @className COLLATE NOCASE";
-                parameters.Add("className", $"%{filters["item-class"]}%");
+                parameters.Add("className", $"%{filters["className"]}%");
             }
 
             query += @" GROUP BY 
@@ -115,7 +128,7 @@ namespace InventarioILS.Model
                             class.name
                         LIMIT 50;";
 
-            return connection.Query<IItem>(@"").ToList();
+            return connection.Query<OrderItem>(query, parameters).ToList();
         }
     }
 }

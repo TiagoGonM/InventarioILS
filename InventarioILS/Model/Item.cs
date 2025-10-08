@@ -21,7 +21,7 @@
         REPUESTO_DESCARTAR = 5 
     }
 
-    public class IItem
+    public interface IItem
     {
         string ProductCode { get; set; }
         string CategoryName { get; set; }
@@ -84,5 +84,7 @@
         public string SubcategoryName { get; set; }
         public Class Class { get; set; }
         public string Description { get; set; }
+        public string ShipmentState { get; set; }
+        public int Quantity { get; set; }
     }
 }
