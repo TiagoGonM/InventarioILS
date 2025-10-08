@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
-using Dapper;
-using Microsoft.Data.Sqlite;
 
 namespace InventarioILS.View.UserControls
 {
@@ -19,9 +15,8 @@ namespace InventarioILS.View.UserControls
             InitializeComponent();
         }
 
-        public void SetItemsSource(List<StockItem> items)
-        {
-            ItemView.ItemsSource = items;
-        }
+        public bool AutoGenerateColumns { set => ItemView.AutoGenerateColumns = value; }
+        public IEnumerable<IItem> ItemsSource { set => ItemView.ItemsSource = value; }
+        
     }
 }
