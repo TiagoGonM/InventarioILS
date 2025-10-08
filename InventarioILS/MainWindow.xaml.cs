@@ -12,12 +12,15 @@ namespace InventarioILS
     {
         readonly DbConnection client;
 
-        Dictionary<string, string> appliedFilters = new Dictionary<string, string>();
+        readonly Map<string, string> appliedFilters;
+
+        bool isStock = true;
 
         public MainWindow()
         {
             InitializeComponent();
             client = new DbConnection();
+            appliedFilters = new Map<string, string>();
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -28,35 +31,46 @@ namespace InventarioILS
             return;
         }
 
-        // TODO: Avoid code duplication
+        public class Map<TKey, TValue> : Dictionary<TKey, TValue>
+        {
+            public void AddOrUpdate(TKey key, TValue value)
+            {
+                if (!this.ContainsKey(key))
+                    this.Add(key, value);
+                else 
+                    this[key] = value;
+            }
+        }
+
+        public void SetItems()
+        {
+            if (!isStock)
+                ItemView.ItemsSource = client.GetItems(appliedFilters);
+            else
+                ItemView.ItemsSource = client.GetStockItems(appliedFilters);
+        }
+
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ClassComboBox.SelectedItem == null) return;
 
-            if (!appliedFilters.ContainsKey("item-class"))
-                appliedFilters.Add("item-class", ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
-            else
-                appliedFilters["item-class"] = ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString();
+            appliedFilters.AddOrUpdate("className", ((ComboBoxItem)ClassComboBox.SelectedItem).Content.ToString());
             
-            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+            SetItems();
         }
 
         private void ProductCodeInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
-                appliedFilters.Remove("product-code");
-                ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+                appliedFilters.Remove("productCode");
+                SetItems();
                 return;
             }
 
-            if (!appliedFilters.ContainsKey("product-code"))
-                appliedFilters.Add("product-code", ProductCodeInput.Text);
-            else
-                appliedFilters["product-code"] = ProductCodeInput.Text;
-                
-            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
-            //ItemView.SetItemsSource(client.GetStockItemsByCode(ProductCodeInput.Text));
+            appliedFilters.AddOrUpdate("productCode", ProductCodeInput.Text);
+
+            SetItems();
         }
 
         private void KeywordInput_TextChanged(object sender, TextChangedEventArgs e)
@@ -64,38 +78,36 @@ namespace InventarioILS
             if (string.IsNullOrEmpty(KeywordInput.Text))
             {
                 appliedFilters.Remove("keyword");
-                ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
+                SetItems();
                 return;
             }
 
-            if (!appliedFilters.ContainsKey("keyword"))
-                appliedFilters.Add("keyword", KeywordInput.Text);
-            else
-                appliedFilters["keyword"] = KeywordInput.Text;
-            
-            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
-            //ItemView.SetItemsSource(client.GetStockItemsByKeyword(KeywordInput.Text));
+            appliedFilters.AddOrUpdate("keyword", KeywordInput.Text);
+
+            SetItems();
         }
 
-        private void clearFilters_Click(object sender, RoutedEventArgs e)
+        private void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
             appliedFilters.Clear();
+
             ClassComboBox.SelectedItem = null;
             ProductCodeInput.Text = string.Empty;
             KeywordInput.Text = string.Empty;
-            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
-            //ItemView.SetItemsSource(client.GetStockItems());
+
+            SetItems();
         }
 
         private void ItemView_Loaded(object sender, RoutedEventArgs e)
         {
-            ItemView.SetItemsSource(client.GetStockItems(appliedFilters));
-            //ItemView.SetItemsSource(client.GetStockItems());
+            SetItems();
         }
 
-        private void ShowNoStockItem_Click(object sender, RoutedEventArgs e)
+        private void ShowNonStockItems_Click(object sender, RoutedEventArgs e)
         {
+            isStock = !ShowNonStockItems.IsChecked ?? true;
 
+            SetItems();
         }
     }
 }

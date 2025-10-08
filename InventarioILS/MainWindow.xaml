@@ -50,9 +50,9 @@
                         <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                     </StackPanel>
                     
-                    <Button x:Name="clearFilters" Content="Restablecer filtros" Click="clearFilters_Click"/>
+                    <Button x:Name="ClearFilters" Content="Restablecer filtros" Click="ClearFilters_Click"/>
 
-                    <CheckBox x:Name="ShowNoStockItem" Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0" Click="ShowNoStockItem_Click"/>
+                    <CheckBox x:Name="ShowNonStockItems" Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0" Click="ShowNonStockItems_Click"/>
                 </StackPanel>
                 <!-- Botones -->
                 <StackPanel Margin="16,24,16,0">
