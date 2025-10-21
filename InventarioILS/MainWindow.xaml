@@ -7,55 +7,99 @@
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
         Background="{StaticResource BackgroundBrush}">
+    <Window.Resources>
+        <!-- Column header style to match the supplied design -->
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <!-- Cell style with spacing and white text -->
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- Row style for even spacing -->
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="56"/>
+        </Style>
+
+        <!-- Small pill button used in cards -->
+        <Style x:Key="CardButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="10,6,20,6"/> <!--padding derecho aumentado -->   
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Panel lateral -->
+        <!-- Sidebar: ajustado visualmente para coincidir con el diseño enviado -->
         <Border Grid.Column="0" Background="{StaticResource SecondaryBrush}" BorderBrush="#3FFFEFEF" BorderThickness="0,0,1,0">
             <StackPanel Margin="0,0,0,0" Background="{StaticResource SecondaryBrush}">
                 <!-- Tabs -->
                 <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
-                    <Button Content="Pedidos" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
+                    <Button Content="Inventario" Style="{x:Null}" Foreground="#A8A8A8" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
+                    <Button Content="Pedidos" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
                 </StackPanel>
-                <!-- Filtros -->
+
+                <!-- Filtros superior (Inventario) -->
                 <StackPanel Margin="16,0,16,0">
                     <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" />
+                    <TextBox Margin="0,4,0,8" Height="32" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" 
+                             Foreground="{StaticResource ForegroundBrush}" Text="Ej.: R1o5"/>
 
                     <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1" />
+                    <TextBox Margin="0,4,0,8" Height="32"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Background="#FF232323" BorderThickness="1"
+                             Foreground="{StaticResource ForegroundBrush}" Text="Ej.: Tester"/>
 
                     <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <ComboBox Margin="0,4,0,8" Height="28" BorderThickness="1" BorderBrush="#6AC7B2" Background="#FF1D1C1C"
+                    <ComboBox Margin="0,4,0,8" Height="32" BorderThickness="1" BorderBrush="#6AC7B2" Background="#FF1D1C1C"
                               Foreground="{StaticResource ForegroundBrush}">
                         <ComboBoxItem Content="Insumo" IsSelected="True"/>
                         <ComboBoxItem Content="Dispositivo"/>
                     </ComboBox>
+
                     <TextBlock Text="Cantidad" Foreground="{StaticResource AccentForegroundBrush}" />
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
-                        <Slider Minimum="0" Maximum="1000" Width="180" Margin="8,0"/>
+                        <Slider Minimum="0" Maximum="1000" Width="180" Margin="8,0" />
                         <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                     </StackPanel>
+
                     <CheckBox Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0"/>
                 </StackPanel>
-                <!-- Botones -->
+
+                <!-- Botones inferiores del sidebar (añadir / colapsar) -->
                 <StackPanel Margin="16,24,16,0">
-                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="Button_Click"
+                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="16" Margin="0,0,0,8" BorderBrush="Transparent" Click="Button_Click"
                             Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="+" FontSize="25" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Añadir Item" VerticalAlignment="Center"/>
+                            <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Añadir pedido" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
+
+                    <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="16" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
                             Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="←" FontSize="40" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
@@ -63,22 +107,115 @@
             </StackPanel>
         </Border>
 
-        <!-- Tabla de datos -->
+        <!-- Área principal: DataGrid arriba y sección Pedidos abajo -->
         <Grid Grid.Column="1" Background="{StaticResource BackgroundBrush}">
-            <DataGrid AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False" Foreground="black" RowBackground="#FF232323"
-                      AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0"
-                      ColumnHeaderHeight="40" RowHeight="40" FontSize="16" SelectionChanged="DataGrid_SelectionChanged"
-                      Background="{StaticResource SecondaryBrush}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120"/>
-                    <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*"/>
-                    <DataGridTextColumn Header="Tipo" Binding="{Binding Type}" Width="120"/>
-                    <DataGridTextColumn Header="Estado" Binding="{Binding State}" Width="120"/>
-                    <DataGridTextColumn Header="Cant." Binding="{Binding Quantity}" Width="80"/>
-                    <DataGridTextColumn Header="Ubicación" Binding="{Binding Location}" Width="160"/>
-                    <DataGridTextColumn Header="Notas" Binding="{Binding AdditionalNotes}" Width="80"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>  <!-- tabla principal -->
+                <RowDefinition Height="2*"/>  <!-- sección pedidos -->
+            </Grid.RowDefinitions>
+
+            <!-- Border azul alrededor de la tabla para coincidir con el diseño -->
+            <Border Grid.Row="0" Margin="12" BorderBrush="{StaticResource AccentBrush}" BorderThickness="4" Background="{StaticResource SecondaryBrush}" Padding="8">
+                <DataGrid AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
+                          RowBackground="#FF232323" AlternatingRowBackground="#FF232323" GridLinesVisibility="None"
+                          ColumnHeaderHeight="56" RowHeight="56" FontSize="16"
+                          SelectionChanged="DataGrid_SelectionChanged"
+                          Background="Transparent"
+                          ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
+                          CellStyle="{StaticResource DataGridCellStyle}"
+                          RowStyle="{StaticResource DataGridRowStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120"/>
+                        <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Tipo" Binding="{Binding Type}" Width="120"/>
+                        <DataGridTextColumn Header="Estado" Binding="{Binding State}" Width="120"/>
+                        <DataGridTextColumn Header="Cant." Binding="{Binding Quantity}" Width="80" />
+                        <DataGridTextColumn Header="Ubicación" Binding="{Binding Location}" Width="160"/>
+                        <DataGridTextColumn Header="Notas" Binding="{Binding AdditionalNotes}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Sección Pedidos: encabezado y tarjetas (cards) -->
+            <Border Grid.Row="1" Margin="12" BorderBrush="#43C7B2" BorderThickness="0,3,0,0" Background="Transparent" Padding="8">
+                <StackPanel>
+                    <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,4" />
+
+                    <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <WrapPanel Margin="0,12,0,0" Orientation="Horizontal" ItemHeight="120" ItemWidth="620">
+                            <!-- Tarjetas estáticas de ejemplo; reemplazar por ItemsControl vinculado a su colección real -->
+                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Pedido #1" FontWeight="Bold" FontSize="16" Foreground="White"/>
+                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
+                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
+                                </Grid>
+                            </Border>
+
+                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Pedido #2" FontWeight="Bold" FontSize="16" Foreground="White"/>
+                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
+                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
+                                </Grid>
+                            </Border>
+
+                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Pedido #3" FontWeight="Bold" FontSize="16" Foreground="White"/>
+                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
+                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
+                                </Grid>
+                            </Border>
+
+                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Pedido #4" FontWeight="Bold" FontSize="16" Foreground="White"/>
+                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
+                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
+                                </Grid>
+                            </Border>
+
+                        </WrapPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </Window>
