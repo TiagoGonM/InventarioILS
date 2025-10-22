@@ -1,18 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\",
+  "WorkspaceRootPath": "E:\\programs\\github\\InventarioILS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|c:\\users\\tiago_mvzee29\\source\\repos\\inventarioils\\inventarioils\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|e:\\programs\\github\\inventarioils\\inventarioils\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|solutionrelative:inventarioils\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\inventarioils\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|E:\\programs\\github\\InventarioILS\\inventarioils\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|solutionrelative:inventarioils\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\inventarioils\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{867B2C5C-7DD3-4080-967E-9680740950BA}|InventarioILS\\InventarioILS.csproj|solutionrelative:inventarioils\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -28,9 +24,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\InventarioILS\\MainWindow.xaml",
+              "DocumentMoniker": "E:\\programs\\github\\InventarioILS\\InventarioILS\\MainWindow.xaml",
               "RelativeDocumentMoniker": "InventarioILS\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\InventarioILS\\MainWindow.xaml",
+              "ToolTip": "E:\\programs\\github\\InventarioILS\\InventarioILS\\MainWindow.xaml",
               "RelativeToolTip": "InventarioILS\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-09-22T12:42:52.068Z",
@@ -40,25 +36,12 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "App.xaml",
-              "DocumentMoniker": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\InventarioILS\\App.xaml",
+              "DocumentMoniker": "E:\\programs\\github\\InventarioILS\\InventarioILS\\App.xaml",
               "RelativeDocumentMoniker": "InventarioILS\\App.xaml",
-              "ToolTip": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\InventarioILS\\App.xaml",
+              "ToolTip": "E:\\programs\\github\\InventarioILS\\InventarioILS\\App.xaml",
               "RelativeToolTip": "InventarioILS\\App.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-09-17T19:24:58.557Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\InventarioILS\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "InventarioILS\\MainWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\tiago_mvzee29\\source\\repos\\InventarioILS\\InventarioILS\\MainWindow.xaml.cs",
-              "RelativeToolTip": "InventarioILS\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAYwB0AAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-17T18:30:24.815Z",
               "EditorCaption": ""
             }
           ]
