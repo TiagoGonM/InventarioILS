@@ -16,7 +16,7 @@ namespace InventarioILS.View.UserControls
         }
 
         public bool AutoGenerateColumns { set => ItemView.AutoGenerateColumns = value; }
-        public IEnumerable<IItem> ItemsSource { set => ItemView.ItemsSource = value; }
+        public IEnumerable<Item> ItemsSource { get => ItemsSource; set => ItemView.ItemsSource = value; }
         
     }
 }

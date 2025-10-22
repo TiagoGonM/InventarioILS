@@ -8,22 +8,34 @@
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
         Background="{StaticResource BackgroundBrush}">
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
 
         <!-- Panel lateral -->
+        <!--<local:Sidebar-->
+        <!--ProductCode="{Binding ProductCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            ProductCodeTextChanged="Sidebar_ProductCodeTextChanged" />-->
         <Border Grid.Column="0" Background="{StaticResource SecondaryBrush}" BorderBrush="#3FFFEFEF" BorderThickness="0,0,1,0">
-            <StackPanel Margin="0,0,0,0" Background="{StaticResource SecondaryBrush}">
-                <!-- Tabs -->
-                <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
-                    <Button Content="Pedidos" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
-                </StackPanel>
-                <!-- Filtros -->
-                <StackPanel Margin="16,0,16,0">
+            <Grid Background="{StaticResource SecondaryBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="150"/>
+                </Grid.RowDefinitions>
+
+                <!--Tabs-->
+                <!--Filtros-->
+                <StackPanel Margin="16,0,16,0" Grid.Row="0">
+                    <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
+                        <Button x:Name="OrderBtn" Content="Pedidos" Click="OrderBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
+                    </StackPanel>
                     <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
                     <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
 
@@ -35,7 +47,7 @@
                         <ComboBoxItem Content="Insumo" Foreground="{StaticResource ForegroundBrush}"/>
                         <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
                     </ComboBox>
-                    
+
                     <TextBlock Text="Cantidad mínima" Foreground="{StaticResource AccentForegroundBrush}"/>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
@@ -49,14 +61,14 @@
                         <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0" SmallChange="3"/>
                         <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                     </StackPanel>
-                    
+
                     <Button x:Name="ClearFilters" Content="Restablecer filtros" Click="ClearFilters_Click"/>
 
                     <CheckBox x:Name="ShowNonStockItems" Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0" Click="ShowNonStockItems_Click"/>
                 </StackPanel>
-                <!-- Botones -->
-                <StackPanel Margin="16,24,16,0">
-                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddButton_Click"
+                <!--Botones-->
+                <StackPanel Grid.Row="1" Width="280" VerticalAlignment="Center">
+                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemButton_Click"
                             Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="+" FontSize="25" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -64,19 +76,166 @@
                         </StackPanel>
                     </Button>
                     <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
-                            Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}">
+                            Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="←" FontSize="40" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Tabla de datos -->
-        <Grid Grid.Column="1" Background="{StaticResource BackgroundBrush}">
+        <Grid x:Name="RightGrid" Grid.Column="1" Background="{StaticResource BackgroundBrush}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="OrderLabel" Text="Ordenes" Foreground="White" Grid.Row="1"/>
+
             <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" />
+            <Grid Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0" x:Name="AddItemCollapsedBtn"
+                        Click="AddItemButton_Click"
+                        Width="50"
+                        Height="50"
+                        Margin="10,0,0,10"
+                        Style="{StaticResource RoundedButton}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Visibility="Hidden"
+                        d:Visibility="Visible"
+                        Background="{StaticResource AccentBrush}">
+                    <TextBlock Text="+" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Height="50" Width="50" />
+                </Button>
+                <Button Grid.Row="1" x:Name="DecollapseSidebarBtn"
+                        Click="CollapseSidebarBtn_Click"
+                        Width="50"
+                        Height="50"
+                        Margin="10,0,0,20"
+                      Style="{StaticResource RoundedButton}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Visibility="Hidden"
+                        d:Visibility="Visible"
+                        Background="#FF9BE8D6">
+                    <TextBlock Text="←" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Height="50" Width="50" />
+                </Button>
+            </Grid>
         </Grid>
+
+        <Label x:Name="StatusMessageLabel" d:Content="Estado de la acción" Foreground="White" Grid.Row="1" Grid.ColumnSpan="2" />
+
+        <Popup x:Name="AddItemPopup" 
+                PlacementTarget="{Binding ElementName=InventoryDataView}"
+                Placement="Center"
+        
+                PopupAnimation="Fade"
+                StaysOpen="False"
+                d:IsOpen="True">
+            <Border BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Padding="10" CornerRadius="5" Background="{StaticResource SecondaryBrush}">
+                <StackPanel>
+                    <TextBlock Text="Agregar Item" 
+                      Foreground="{StaticResource ForegroundBrush}" 
+                      FontSize="18" 
+                      FontWeight="Bold" 
+                      Margin="0,0,0,16"/>
+
+                    <TextBlock Text="Código" 
+                      Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox Style="{StaticResource RoundedInput}" 
+                     Height="28" 
+                     Margin="0,4,0,8"
+                     Background="{StaticResource BackgroundBrush}"
+                     Foreground="{StaticResource ForegroundBrush}"
+                     BorderBrush="{StaticResource AccentBrush}"/>
+
+                    <TextBlock Text="Descripción" 
+                      Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox Style="{StaticResource RoundedInput}" 
+                     Height="28"
+                     Margin="0,4,0,8"
+                     Background="{StaticResource BackgroundBrush}"
+                     Foreground="{StaticResource ForegroundBrush}"
+                     BorderBrush="{StaticResource AccentBrush}"/>
+
+                    <TextBlock Text="Tipo" 
+                      Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <ComboBox Style="{StaticResource BlackComboBox}"
+                     Height="28"
+                     Margin="0,4,0,8">
+                        <ComboBoxItem Content="Insumo" Foreground="{StaticResource ForegroundBrush}"/>
+                        <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
+                    </ComboBox>
+
+                    <TextBlock Text="Cantidad" 
+                      Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox Style="{StaticResource RoundedInput}"
+                     Height="28"
+                     Margin="0,4,0,8"
+                     Background="{StaticResource BackgroundBrush}"
+                     Foreground="{StaticResource ForegroundBrush}"
+                     BorderBrush="{StaticResource AccentBrush}"/>
+
+                    <TextBlock Text="Ubicación" 
+                      Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox Style="{StaticResource RoundedInput}"
+                     Height="28"
+                     Margin="0,4,0,16"
+                     Background="{StaticResource BackgroundBrush}"
+                     Foreground="{StaticResource ForegroundBrush}"
+                     BorderBrush="{StaticResource AccentBrush}"/>
+
+                    <StackPanel Orientation="Horizontal" 
+                       HorizontalAlignment="Right">
+                        <Button Content="Cancelar"
+                         Style="{StaticResource RoundedButton}"
+                         Height="32"
+                         Width="100"
+                         Margin="0,0,8,0"
+                         Background="{StaticResource BackgroundBrush}"
+                         Foreground="{StaticResource ForegroundBrush}"
+                         Click="CancelEdit_Click"/>
+                        <Button Content="Guardar"
+                         Style="{StaticResource RoundedButton}"
+                         Height="32"
+                         Width="100"
+                         Background="{StaticResource AccentBrush}"
+                         Foreground="{StaticResource SecondaryBrush}"
+                         Click="SaveEdit_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Popup>
     </Grid>
+
+    <!-- Popup Template -->
+    <Window.Resources>
+        <ControlTemplate x:Key="PopupTemplate" TargetType="Popup">
+            <Border Background="{StaticResource SecondaryBrush}" 
+                    BorderBrush="{StaticResource AccentBrush}" 
+                    BorderThickness="1"
+                    CornerRadius="5"
+                    Padding="16"
+                    Width="300">
+                <AdornedElementPlaceholder x:Name="Placeholder"/>
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <!-- Popup Definition - Place this in your XAML where appropriate -->
+    <!--<Popup x:Name="SamplePopup" Placement="Mouse" StaysOpen="False">
+        <ContentControl Template="{StaticResource PopupTemplate}">
+            <TextBlock Text="Este es un mensaje emergente." Foreground="White"/>
+        </ContentControl>
+    </Popup>-->
+
+    <!-- Edit Popup -->
 </Window>

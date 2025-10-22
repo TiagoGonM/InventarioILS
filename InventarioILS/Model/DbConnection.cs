@@ -4,34 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace InventarioILS.Model
 {
-    internal class DbConnection
+    internal class DbConnection : SqliteConnection
     {
         readonly string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "inventory.db");
 
-        readonly SqliteConnection connection = null;
+        public static SqliteConnection Connection { get; private set; }
 
         public DbConnection()
         {
             if (File.Exists(dbPath))
             {
-                Console.WriteLine("Database file exists.");
+                Connection = new SqliteConnection($"Data Source={dbPath}");
             }
             else
             {
-                Console.WriteLine("Database file does not exist. Creating a new one.");
+                MessageBox.Show($"Error opening database", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-           connection = new SqliteConnection($"Data Source={dbPath}");
         }
 
         ~DbConnection()
         {
-            if (connection?.State == System.Data.ConnectionState.Open)
+            if (Connection?.State == System.Data.ConnectionState.Open)
             {
-                connection.Close();
+                Connection.Close();
             }
         }
 
@@ -60,8 +59,10 @@ namespace InventarioILS.Model
             }
         }
 
-        public List<StockItem> GetStockItems(Dictionary<string, string> filters) {
-            
+        public List<StockItem> GetStockItems(Dictionary<string, string> filters)
+        {
+            if (Connection == null) return new List<StockItem>();
+
             string query = @"SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, st.name state, sto.location, sto.additionalNotes, COUNT(*) quantity
                              FROM ItemStock sto
                              JOIN Item it ON sto.itemId = it.itemId
@@ -87,12 +88,13 @@ namespace InventarioILS.Model
                             class.name
                         LIMIT 50;";
 
-            return connection.Query<StockItem>(sql, parameters).ToList();
+            return Connection.Query<StockItem>(sql, parameters).ToList();
         }
 
-        // TODO: Implement no stock items, try to avoid code duplication and apply DRY
         public List<OrderItem> GetItems(Dictionary<string, string> filters)
         {
+            if (Connection == null) return new List<OrderItem>();
+
             string query = @"SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, it.createdAt, it.updatedAt, COUNT(*) quantity
                              FROM Item it
                              JOIN Class class ON it.classId = class.classId
@@ -128,7 +130,65 @@ namespace InventarioILS.Model
                             class.name
                         LIMIT 50;";
 
-            return connection.Query<OrderItem>(query, parameters).ToList();
+            return Connection.Query<OrderItem>(query, parameters).ToList();
         }
+
+        public void SaveItem(Item item)
+        {
+            if (Connection == null) return;
+
+            var categoryId = Connection.QuerySingleOrDefault<int>(
+                "SELECT categoryId FROM Category WHERE name = @CategoryName COLLATE NOCASE",
+                new { item.CategoryName });
+
+            var subcategoryId = Connection.QuerySingleOrDefault<int>(
+                "SELECT subcategoryId FROM Subcategory WHERE name = @SubcategoryName COLLATE NOCASE",
+                new { item.SubcategoryName });
+
+            var catSubcatId = Connection.QuerySingleOrDefault<int>(
+                @"SELECT catSubcatId FROM CatSubcat 
+          WHERE categoryId = @categoryId AND subcategoryId = @subcategoryId COLLATE NOCASE",
+                new { categoryId, subcategoryId });
+
+            MessageBox.Show($"CategoryId: {categoryId}, SubcategoryId: {subcategoryId}, CatSubcatId: {catSubcatId}");
+
+            // Si no existe la relación, crearla
+            //if (catSubcatId == 0)
+            //{
+            //    connection.Execute(
+            //        "INSERT INTO CatSubcat (categoryId, subcategoryId) VALUES (@categoryId, @subcategoryId)",
+            //        new { categoryId, subcategoryId });
+
+            //    catSubcatId = connection.QuerySingle<int>(
+            //        "SELECT last_insert_rowid()");
+            //}
+
+            Connection.Execute(@"INSERT INTO Item (productCode, catSubcatId, classId, description)
+                                 VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
+            new {
+                item.ProductCode,
+                CatSubcatId = catSubcatId,
+                ClassId = item.Class,
+                item.Description,
+            });
+
+            if (item is StockItem stockItem)
+            {
+                var stateId = Connection.QuerySingleOrDefault<int>(
+                    "SELECT stateId FROM State WHERE name = @State COLLATE NOCASE",
+                    new { stockItem.State });
+
+                Connection.Execute(@"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                                     VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
+                new {
+                    ItemId = Connection.QuerySingle<int>(
+                        "SELECT last_insert_rowid()"),
+                    StateId = stateId,
+                    stockItem.Location,
+                    stockItem.AdditionalNotes
+                });
+            } 
+        }
+        
     }
 }

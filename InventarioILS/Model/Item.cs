@@ -1,10 +1,12 @@
-﻿namespace InventarioILS
+﻿using System.ComponentModel;
+
+namespace InventarioILS
 {
     public enum Class
     {
-        INSUMO,
-        DISPOSITIVO,
-        REPUESTO
+        INSUMO = 1,
+        REPUESTO = 2,
+        DISPOSITIVO = 3
     }
 
     public enum State
@@ -21,16 +23,27 @@
         REPUESTO_DESCARTAR = 5 
     }
 
-    public interface IItem
+    public abstract class Item
     {
-        string ProductCode { get; set; }
-        string CategoryName { get; set; }
-        string SubcategoryName { get; set; }
-        Class Class { get; set; }
-        string Description { get; set; }
+        public string ProductCode { get; set; }
+        public string CategoryName { get; set; }
+        public string SubcategoryName { get; set; }
+        public Class Class { get; set; }
+        public string Description { get; set; }
+        
+        protected Item(string productCode, string categoryName, string subcategoryName, string description, Class type)
+        {
+            ProductCode = productCode;
+            CategoryName = categoryName;
+            SubcategoryName = subcategoryName;
+            Description = description;
+            Class = type;
+        }
+
+        protected Item() { }
     }
 
-    public class StockItem : IItem
+    public class StockItem : Item
     {
         public StockItem(
             string productCode,
@@ -41,23 +54,9 @@
             string state,
             string location,
             int quantity,
-            string additionalNotes = "")
+            string additionalNotes = "") 
+            : base(productCode, categoryName, subcategoryName, description, type)
         {
-            ProductCode = productCode;
-            CategoryName = categoryName;
-            SubcategoryName = subcategoryName;
-            Description = description;
-            Class = type;
-            State = state;
-            Location = location;
-            Quantity = quantity;
-            AdditionalNotes = additionalNotes;
-        }
-
-        public StockItem(string productCode, string description, Class type, string state, string location, int quantity, string additionalNotes = "") { 
-            ProductCode = productCode;
-            Description = description;
-            Class = type;
             State = state;
             Location = location;
             Quantity = quantity;
@@ -66,24 +65,14 @@
 
         public StockItem() { }
 
-        public string ProductCode { get; set; }
-        public string CategoryName { get; set; }
-        public string SubcategoryName { get; set; }
-        public Class Class { get; set; }
         public string State { get; set; }
-        public string Description { get; set; }
         public string Location { get; set; }
         public int Quantity { get; set; }
         public string AdditionalNotes { get; set; }
     }
 
-    public class OrderItem : IItem
+    public class OrderItem : Item
     {
-        public string ProductCode { get; set; }
-        public string CategoryName { get; set; }
-        public string SubcategoryName { get; set; }
-        public Class Class { get; set; }
-        public string Description { get; set; }
         public string ShipmentState { get; set; }
         public int Quantity { get; set; }
     }
