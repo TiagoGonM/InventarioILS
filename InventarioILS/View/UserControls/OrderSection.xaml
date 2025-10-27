@@ -6,9 +6,43 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1952">
-    <Border Grid.Row="1" Margin="12" BorderBrush="#43C7B2" BorderThickness="0,3,0,0" Background="Transparent" Padding="8">
+    <Grid Grid.Row="1" Margin="12" Background="Transparent">
         <StackPanel>
             <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,4" />
+
+            <!--<ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" ItemHeight="120" ItemWidth="600" HorizontalAlignment="Center" Margin="10" MaxWidth="1500" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+                <ListViewItem>
+                    <local:OrderCard Margin="5,0" />
+                </ListViewItem>
+
+                <ListViewItem>
+                    <local:OrderCard Margin="5,0" />
+                </ListViewItem>
+            </ListView>-->
+
+            <!--<ScrollViewer>
+                <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel ItemHeight="120" ItemWidth="600" HorizontalAlignment="Center" Margin="10" MaxWidth="1500" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                    <local:OrderCard Margin="5,0" />
+                </ListView>
+            </ScrollViewer>-->
 
             <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
             <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
@@ -28,5 +62,5 @@
                 </WrapPanel>
             </ScrollViewer>
         </StackPanel>
-    </Border>
+    </Grid>
 </UserControl>

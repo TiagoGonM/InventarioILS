@@ -29,6 +29,8 @@ namespace InventarioILS
         readonly Map<string, string> appliedFilters;
         ObservableCollection<Item> items;
 
+        int orderSectionHeight = 400;
+
         bool isStock = true;
 
         public MainWindow()
@@ -39,7 +41,7 @@ namespace InventarioILS
             items = new ObservableCollection<Item>();
         }
 
-        private void AddItemButton_Click(object sender, RoutedEventArgs e)
+        private void AddItemBtn_Click(object sender, RoutedEventArgs e)
         {
             AddItemPopup.IsOpen = true;
             var item = new StockItem("R-10", "Resistencia", "estandar / no definido", "Resistencia de 10 ohm", Class.INSUMO, "suficientes", "Cajón 1", 5);
@@ -78,7 +80,6 @@ namespace InventarioILS
                 : client.GetStockItems(appliedFilters).ToObservableCollection<Item>();
 
             ItemView.ItemsSource = items;
-
         }
 
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -169,8 +170,12 @@ namespace InventarioILS
 
         private void OrderBtn_Click(object sender, RoutedEventArgs e)
         {
-            Grid.GetRow(OrderSection);
-            RightGrid.RowDefinitions[1].Height = new GridLength(200);
+            var row = Grid.GetRow(OrderSection);
+            RightGrid.RowDefinitions[row].Height = new GridLength(orderSectionHeight);
+            AddOrderBtn.Visibility = Visibility.Visible;
+            AddItemBtn.Visibility = Visibility.Collapsed;
+
+            Grid.SetRow(CollapsedButtonBar, 1);
         }
 
         private void CollapseSidebarBtn_Click(object sender, RoutedEventArgs e)
@@ -184,19 +189,18 @@ namespace InventarioILS
             DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
         }
 
-        private void Sidebar_ProductCodeTextChanged(object sender, TextChangedEventArgs e)
-        {
-            MessageBox.Show("Text changed!");
-        }
-
-        private void Button_Click_1()
+        private void AddOrderBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
+            AddOrderBtn.Visibility = Visibility.Collapsed;
+            AddItemBtn.Visibility = Visibility.Visible;
+            RightGrid.RowDefinitions[1].Height = new GridLength(0);
 
+            Grid.SetRow(CollapsedButtonBar, 0);
         }
     }
 }

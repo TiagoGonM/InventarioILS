@@ -34,7 +34,7 @@
                 <!--Filtros-->
                 <StackPanel Margin="16,0,16,0" Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
+                        <Button x:Name="InventoryTabBtn" Click="InventoryTabBtn_Click" Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
                         <Button x:Name="OrderBtn" Content="Pedidos" Click="OrderBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
                     </StackPanel>
                     <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
@@ -69,13 +69,22 @@
                 </StackPanel>
                 <!--Botones-->
                 <StackPanel Grid.Row="1" Width="280" VerticalAlignment="Center">
-                    <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemButton_Click"
+                    <Button x:Name="AddItemBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemBtn_Click"
+                            Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Añadir item" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button x:Name="AddOrderBtn" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddOrderBtn_Click"
                             Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Añadir pedido" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+
                     <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
                             Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -91,20 +100,21 @@
         <Grid x:Name="RightGrid" Grid.Column="1" Background="{StaticResource BackgroundBrush}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="0"/>
+                <RowDefinition Height="0" MaxHeight="500"/>
             </Grid.RowDefinitions>
 
-            <userControls:OrderSection Grid.Row="1" x:Name="OrderSection"/>
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" ResizeDirection="Rows" Width="1500" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
+            <userControls:OrderSection Grid.Row="1" x:Name="OrderSection" />
 
             <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" />
-            <Grid Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Button Grid.Row="0" x:Name="AddItemCollapsedBtn"
-                        Click="AddItemButton_Click"
+                        Click="AddItemBtn_Click"
                         Width="50"
                         Height="50"
                         Margin="10,0,0,10"
@@ -132,7 +142,9 @@
             </Grid>
         </Grid>
 
-        <Label x:Name="StatusMessageLabel" d:Content="Estado de la acción" Foreground="White" Grid.Row="1" Grid.ColumnSpan="2" />
+        <Border BorderBrush="Gray" BorderThickness="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="2">
+            <Label x:Name="StatusMessageLabel" d:Content="Estado de la acción" Foreground="White" Grid.ColumnSpan="2" />
+        </Border>
 
         <Popup x:Name="AddItemPopup" 
                 PlacementTarget="{Binding ElementName=InventoryDataView}"
