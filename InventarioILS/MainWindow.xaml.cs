@@ -188,5 +188,15 @@ namespace InventarioILS
         {
             MessageBox.Show("Text changed!");
         }
+
+        private void Button_Click_1()
+        {
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

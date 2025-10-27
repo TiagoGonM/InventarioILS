@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="InventarioILS.View.UserControls.OrderSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:InventarioILS.View.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1952">
+    <Border Grid.Row="1" Margin="12" BorderBrush="#43C7B2" BorderThickness="0,3,0,0" Background="Transparent" Padding="8">
+        <StackPanel>
+            <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,4" />
+
+            <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
+            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+                <WrapPanel ItemHeight="120" ItemWidth="600" HorizontalAlignment="Center" Margin="10" MaxWidth="1500">
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                    <local:OrderCard Margin="5,0"/>
+                </WrapPanel>
+            </ScrollViewer>
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -8,6 +8,43 @@
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
         Background="{StaticResource BackgroundBrush}">
+    <Window.Resources>
+        <!-- Column header style to match the supplied design -->
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <!-- Cell style with spacing and white text -->
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- Row style for even spacing -->
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="56"/>
+        </Style>
+
+        <!-- Small pill button used in cards -->
+        <Style x:Key="CardButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="10,6,20,6"/> <!--padding derecho aumentado -->   
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+    </Window.Resources>
+
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
@@ -71,14 +108,14 @@
                     <Button Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemButton_Click"
                             Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="+" FontSize="25" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Añadir Item" VerticalAlignment="Center"/>
+                            <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Añadir pedido" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
                             Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="←" FontSize="40" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
