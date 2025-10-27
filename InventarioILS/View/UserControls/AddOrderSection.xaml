@@ -6,6 +6,32 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <!-- Reutilizo/defino estilos para encabezados y celdas -->
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#232323"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="#E6E6E6"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="56"/>
+        </Style>
+    </UserControl.Resources>
+    
     <Grid>
         <StackPanel>
             <!-- Encabezado de la sección: Nuevo Pedido | Pedido #N | Confirmar -->
@@ -19,7 +45,7 @@
                 <TextBlock Grid.Column="0" Text="Nuevo Pedido" FontSize="22" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="1" Text="Pedido #3" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                <Button Grid.Column="2" Width="100" Height="30" Style="{StaticResource RoundedButton}" Background="{StaticResource AccentBrush}" Content="Confirmar" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Button Grid.Column="2" Width="100" Height="30" Style="{StaticResource RoundedButton}" Background="{StaticResource AccentBrush}" FontWeight="Bold" Content="Confirmar" VerticalAlignment="Center" HorizontalAlignment="Right" />
             </Grid>
 
             <!-- Descripción grande con borde turquesa -->
@@ -32,11 +58,14 @@
             <!-- Contenedor de lista de items del pedido dentro de borde turquesa -->
             <Border BorderBrush="{StaticResource AccentBrush}" BorderThickness="3" CornerRadius="4" Padding="12" Background="{StaticResource SecondaryBrush}">
                 <DataGrid x:Name="OrderItemsGrid"
-                  ItemsSource="{Binding OrderItems}" AutoGenerateColumns="False"
-                  CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False"
-                  GridLinesVisibility="None"
-                  ColumnHeaderHeight="44" RowHeight="48" FontSize="14"
-                  Background="Transparent">
+                          ItemsSource="{Binding OrderItems}" AutoGenerateColumns="False"
+                          CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False"
+                          GridLinesVisibility="None"
+                          ColumnHeaderHeight="44" RowHeight="48" FontSize="14"
+                          Background="Transparent" 
+                          ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
+                          CellStyle="{StaticResource DataGridCellStyle}"
+                          RowStyle="{StaticResource DataGridRowStyle}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Código" Binding="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="120" />
                         <DataGridTextColumn Header="Categoría" Binding="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="160" />

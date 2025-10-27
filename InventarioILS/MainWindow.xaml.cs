@@ -225,7 +225,6 @@ namespace InventarioILS
             }
 
                 DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
-
         }
 
         private void AddOrderBtn_Click(object sender, RoutedEventArgs e)
