@@ -5,11 +5,40 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="300" d:DesignWidth="1000">
+    
+    <UserControl.Resources>
+        <!-- Column header style to match the supplied design -->
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <!-- Cell style with spacing and white text -->
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- Row style for even spacing -->
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="56"/>
+        </Style>
+    </UserControl.Resources>
+    
     <Grid Background="{StaticResource BackgroundBrush}">
         <DataGrid x:Name="ItemView" CanUserAddRows="False" CanUserDeleteRows="False" RowBackground="#FF232323"
-          AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0"
-          ColumnHeaderHeight="40" RowHeight="40" FontSize="16" HorizontalAlignment="Center" HeadersVisibility="Column" AutoGenerateColumns="False" Background="{DynamicResource BackgroundBrush}">
+          AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0" ColumnHeaderHeight="40" 
+          RowHeight="40" FontSize="16" HorizontalAlignment="Center" HeadersVisibility="Column" AutoGenerateColumns="False" Background="{DynamicResource BackgroundBrush}"
+          ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}" CellStyle="{StaticResource DataGridCellStyle}" RowStyle="{StaticResource DataGridRowStyle}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>

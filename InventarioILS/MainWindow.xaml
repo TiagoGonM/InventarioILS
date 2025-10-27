@@ -8,43 +8,7 @@
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
         Background="{StaticResource BackgroundBrush}">
-    <Window.Resources>
-        <!-- Column header style to match the supplied design -->
-        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-
-        <!-- Cell style with spacing and white text -->
-        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <!-- Row style for even spacing -->
-        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
-            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Height" Value="56"/>
-        </Style>
-
-        <!-- Small pill button used in cards -->
-        <Style x:Key="CardButton" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="10,6,20,6"/> <!--padding derecho aumentado -->   
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-        </Style>
-    </Window.Resources>
-
+    
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
@@ -130,7 +94,7 @@
                 <RowDefinition Height="0"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="OrderLabel" Text="Ordenes" Foreground="White" Grid.Row="1"/>
+            <userControls:OrderSection Grid.Row="1" x:Name="OrderSection"/>
 
             <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" />
             <Grid Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -163,7 +127,7 @@
                         Visibility="Hidden"
                         d:Visibility="Visible"
                         Background="#FF9BE8D6">
-                    <TextBlock Text="←" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Height="50" Width="50" />
+                    <TextBlock Text="🠖" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Height="50" Width="50" />
                 </Button>
             </Grid>
         </Grid>
@@ -254,7 +218,7 @@
     </Grid>
 
     <!-- Popup Template -->
-    <Window.Resources>
+    <!--<Window.Resources>
         <ControlTemplate x:Key="PopupTemplate" TargetType="Popup">
             <Border Background="{StaticResource SecondaryBrush}" 
                     BorderBrush="{StaticResource AccentBrush}" 
@@ -265,7 +229,7 @@
                 <AdornedElementPlaceholder x:Name="Placeholder"/>
             </Border>
         </ControlTemplate>
-    </Window.Resources>
+    </Window.Resources>-->
 
     <!-- Popup Definition - Place this in your XAML where appropriate -->
     <!--<Popup x:Name="SamplePopup" Placement="Mouse" StaysOpen="False">

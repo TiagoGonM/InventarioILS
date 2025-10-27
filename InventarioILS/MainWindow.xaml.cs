@@ -169,7 +169,7 @@ namespace InventarioILS
 
         private void OrderBtn_Click(object sender, RoutedEventArgs e)
         {
-            Grid.GetRow(OrderLabel);
+            Grid.GetRow(OrderSection);
             RightGrid.RowDefinitions[1].Height = new GridLength(200);
         }
 
