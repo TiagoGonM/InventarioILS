@@ -233,30 +233,44 @@ namespace InventarioILS
             CancelOrderFormBtn.Visibility = Visibility.Visible;
             AddOrderBtn.Visibility = Visibility.Collapsed;
 
-            AddOrderSection.Visibility = Visibility.Visible;
-            OrderListSection.Visibility = Visibility.Collapsed;
+            ShowAddOrderSection(true);
         }
-
 
         private void CancelOrderFormBtn_Click(object sender, RoutedEventArgs e)
         {
             CancelOrderFormBtn.Visibility = Visibility.Collapsed;
             AddOrderBtn.Visibility = Visibility.Visible;
 
-            AddOrderSection.Visibility = Visibility.Collapsed;
-            OrderListSection.Visibility = Visibility.Visible;
+            ShowAddOrderSection(false);
         }
 
         private void AddOrderCollapsedBtn_Click(object sender, RoutedEventArgs e)
         {
             CancelNewOrderFormCollapsedBtn.Visibility = Visibility.Visible;
             AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
+
+            ShowAddOrderSection(true);
         }
 
         private void CancelNewOrderFormCollapsedBtn_Click(object sender, RoutedEventArgs e)
         {
             CancelNewOrderFormCollapsedBtn.Visibility = Visibility.Collapsed;
             AddOrderCollapsedBtn.Visibility = Visibility.Visible;
+
+            ShowAddOrderSection(false);
+        }
+
+        private void ShowAddOrderSection(bool show)
+        {
+            if (!show)
+            {
+                OrderListSection.Visibility = Visibility.Visible;
+                AddOrderSection.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            OrderListSection.Visibility = Visibility.Collapsed;
+            AddOrderSection.Visibility = Visibility.Visible;
         }
     }
 }
