@@ -148,6 +148,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="View\UserControls\AddOrderSection.xaml.cs">
+      <DependentUpon>AddOrderSection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\UserControls\OrderCard.xaml.cs">
       <DependentUpon>OrderCard.xaml</DependentUpon>
     </Compile>
@@ -180,11 +183,17 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\UserControls\AddOrderSection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\UserControls\OrderCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\UserControls\OrderSection.xaml" />
+    <Page Include="View\UserControls\OrderSection.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Model\Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

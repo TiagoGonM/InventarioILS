@@ -35,7 +35,7 @@
                 <StackPanel Margin="16,0,16,0" Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Button x:Name="InventoryTabBtn" Click="InventoryTabBtn_Click" Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
-                        <Button x:Name="OrderBtn" Content="Pedidos" Click="OrderBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
+                        <Button x:Name="OrderTabBtn" Content="Pedidos" Click="OrderTabBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
                     </StackPanel>
                     <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
                     <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
@@ -85,6 +85,14 @@
                         </StackPanel>
                     </Button>
 
+                    <Button x:Name="CancelOrderFormBtn" Click="CancelOrderFormBtn_Click" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
+        Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="-" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
                             Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -103,8 +111,12 @@
                 <RowDefinition Height="0" MaxHeight="500"/>
             </Grid.RowDefinitions>
 
-            <GridSplitter Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" ResizeDirection="Rows" Width="1500" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
-            <userControls:OrderSection Grid.Row="1" x:Name="OrderSection" />
+
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" ResizeDirection="Rows" Width="2500" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
+            <Grid x:Name="BottomBar" Grid.Row="1" Margin="0,10">
+                <userControls:OrderSection Grid.Row="1" x:Name="OrderListSection" />
+                <userControls:AddOrderSection Grid.Row="1" Visibility="Collapsed" x:Name="AddOrderSection" />
+            </Grid>
 
             <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" />
             <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -126,6 +138,33 @@
                         Background="{StaticResource AccentBrush}">
                     <TextBlock Text="+" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Height="50" Width="50" />
                 </Button>
+
+                <Button Grid.Row="0" x:Name="AddOrderCollapsedBtn"
+                        Click="AddOrderCollapsedBtn_Click"
+                        Width="50"
+                        Height="50"
+                        Margin="10,0,0,10"
+                        Style="{StaticResource RoundedButton}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Visibility="Collapsed"
+                        Background="{StaticResource AccentBrush}">
+                    <TextBlock Text="+" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Height="50" Width="50" />
+                </Button>
+
+                <Button Grid.Row="0" x:Name="CancelNewOrderFormCollapsedBtn"
+                        Click="CancelNewOrderFormCollapsedBtn_Click"
+                        Width="50"
+                        Height="50"
+                        Margin="10,0,0,10"
+                        Style="{StaticResource RoundedButton}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Visibility="Collapsed"
+                        Background="{StaticResource AccentBrush}">
+                    <TextBlock Text="-" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Height="50" Width="50" />
+                </Button>
+
                 <Button Grid.Row="1" x:Name="DecollapseSidebarBtn"
                         Click="CollapseSidebarBtn_Click"
                         Width="50"

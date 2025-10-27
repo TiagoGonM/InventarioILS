@@ -26,6 +26,8 @@ namespace InventarioILS
 
         bool sidebarCollapsed = false;
 
+        bool bottomBarCollapsed = true;
+
         readonly Map<string, string> appliedFilters;
         ObservableCollection<Item> items;
 
@@ -167,15 +169,33 @@ namespace InventarioILS
         {
             AddItemPopup.IsOpen = false;
         }
-
-        private void OrderBtn_Click(object sender, RoutedEventArgs e)
+        private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
-            var row = Grid.GetRow(OrderSection);
+            AddOrderBtn.Visibility = Visibility.Collapsed;
+            AddItemBtn.Visibility = Visibility.Visible;
+            RightGrid.RowDefinitions[1].Height = new GridLength(0);
+
+            Grid.SetRow(CollapsedButtonBar, 0);
+
+            bottomBarCollapsed = true;
+
+            InventoryTabBtn.IsEnabled = false;
+            OrderTabBtn.IsEnabled = true;
+        }
+
+        private void OrderTabBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var row = Grid.GetRow(OrderListSection);
             RightGrid.RowDefinitions[row].Height = new GridLength(orderSectionHeight);
             AddOrderBtn.Visibility = Visibility.Visible;
             AddItemBtn.Visibility = Visibility.Collapsed;
 
             Grid.SetRow(CollapsedButtonBar, 1);
+
+            bottomBarCollapsed = false;
+
+            InventoryTabBtn.IsEnabled = true;
+            OrderTabBtn.IsEnabled = false;
         }
 
         private void CollapseSidebarBtn_Click(object sender, RoutedEventArgs e)
@@ -184,23 +204,59 @@ namespace InventarioILS
             var colDef = MainGrid.ColumnDefinitions[col];
 
             colDef.Width = new GridLength(!sidebarCollapsed ? 0 : 320);
+
             sidebarCollapsed = !sidebarCollapsed;
-            AddItemCollapsedBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
-            DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
+
+            if (sidebarCollapsed)
+            {
+                if (!bottomBarCollapsed)
+                {
+                    AddOrderCollapsedBtn.Visibility = Visibility.Visible;
+                    AddItemCollapsedBtn.Visibility = Visibility.Collapsed;
+                } else
+                {
+                    AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
+                    AddItemCollapsedBtn.Visibility = Visibility.Visible;
+                }
+            } else
+            {
+                AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
+                AddItemCollapsedBtn.Visibility = Visibility.Collapsed;
+            }
+
+                DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
+
         }
 
         private void AddOrderBtn_Click(object sender, RoutedEventArgs e)
         {
+            CancelOrderFormBtn.Visibility = Visibility.Visible;
+            AddOrderBtn.Visibility = Visibility.Collapsed;
 
+            AddOrderSection.Visibility = Visibility.Visible;
+            OrderListSection.Visibility = Visibility.Collapsed;
         }
 
-        private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
-        {
-            AddOrderBtn.Visibility = Visibility.Collapsed;
-            AddItemBtn.Visibility = Visibility.Visible;
-            RightGrid.RowDefinitions[1].Height = new GridLength(0);
 
-            Grid.SetRow(CollapsedButtonBar, 0);
+        private void CancelOrderFormBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CancelOrderFormBtn.Visibility = Visibility.Collapsed;
+            AddOrderBtn.Visibility = Visibility.Visible;
+
+            AddOrderSection.Visibility = Visibility.Collapsed;
+            OrderListSection.Visibility = Visibility.Visible;
+        }
+
+        private void AddOrderCollapsedBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CancelNewOrderFormCollapsedBtn.Visibility = Visibility.Visible;
+            AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
+        }
+
+        private void CancelNewOrderFormCollapsedBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CancelNewOrderFormCollapsedBtn.Visibility = Visibility.Collapsed;
+            AddOrderCollapsedBtn.Visibility = Visibility.Visible;
         }
     }
 }
