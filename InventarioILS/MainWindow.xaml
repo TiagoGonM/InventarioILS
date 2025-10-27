@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:InventarioILS"
+        xmlns:local="clr-namespace:InventarioILS.View.UserControls"
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
         Background="{StaticResource BackgroundBrush}">
@@ -144,78 +144,7 @@
             </Border>
 
             <!-- Sección Pedidos: encabezado y tarjetas (cards) -->
-            <Border Grid.Row="1" Margin="12" BorderBrush="#43C7B2" BorderThickness="0,3,0,0" Background="Transparent" Padding="8">
-                <StackPanel>
-                    <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,4" />
-
-                    <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <WrapPanel Margin="0,12,0,0" Orientation="Horizontal" ItemHeight="120" ItemWidth="620">
-                            <!-- Tarjetas estáticas de ejemplo; reemplazar por ItemsControl vinculado a su colección real -->
-                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="120"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="Pedido #1" FontWeight="Bold" FontSize="16" Foreground="White"/>
-                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
-                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
-                                </Grid>
-                            </Border>
-
-                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="120"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="Pedido #2" FontWeight="Bold" FontSize="16" Foreground="White"/>
-                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
-                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
-                                </Grid>
-                            </Border>
-
-                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="120"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="Pedido #3" FontWeight="Bold" FontSize="16" Foreground="White"/>
-                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
-                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
-                                </Grid>
-                            </Border>
-
-                            <Border Background="{StaticResource SecondaryBrush}" CornerRadius="4" Margin="6" Padding="12" Width="620" Height="100" BorderBrush="#111" BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="120"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="Pedido #4" FontWeight="Bold" FontSize="16" Foreground="White"/>
-                                        <TextBlock Text="06/08/2025" Foreground="#A1A1A1" FontSize="12"/>
-                                        <TextBlock Text="descripcion bla bla" Foreground="#BFBFBF" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="72">Ver</Button>
-                                </Grid>
-                            </Border>
-
-                        </WrapPanel>
-                    </ScrollViewer>
-                </StackPanel>
-            </Border>
+            <local:OrderSection Grid.Row="1"/>
         </Grid>
     </Grid>
 </Window>
