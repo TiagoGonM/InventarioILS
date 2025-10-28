@@ -11,7 +11,7 @@
     
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="320" MinWidth="220" MaxWidth="400"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -23,86 +23,85 @@
         <!--<local:Sidebar-->
         <!--ProductCode="{Binding ProductCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             ProductCodeTextChanged="Sidebar_ProductCodeTextChanged" />-->
-        <Border Grid.Column="0" Background="{StaticResource SecondaryBrush}" BorderBrush="#3FFFEFEF" BorderThickness="0,0,1,0">
-            <Grid Background="{StaticResource SecondaryBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <GridSplitter Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Panel.ZIndex="1" Width="3" Height="1200" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
+        <Grid Background="{StaticResource SecondaryBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <!--Tabs-->
-                <!--Filtros-->
-                <StackPanel Margin="16,0,16,0" Grid.Row="0">
-                    <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button x:Name="InventoryTabBtn" Click="InventoryTabBtn_Click" Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
-                        <Button x:Name="OrderTabBtn" Content="Pedidos" Click="OrderTabBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
-                    </StackPanel>
-                    <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
-
-                    <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
-                    <TextBox x:Name="KeywordInput" Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" Background="{StaticResource BackgroundBrush}" BorderThickness="1" TextChanged="KeywordInput_TextChanged" />
-
-                    <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <ComboBox x:Name="ClassComboBox" Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource BackgroundBrush}" SelectionChanged="ClassComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Insumo" Foreground="{StaticResource ForegroundBrush}"/>
-                        <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
-                    </ComboBox>
-
-                    <TextBlock Text="Cantidad mínima" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
-                        <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0"/>
-                        <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
-                    </StackPanel>
-
-                    <TextBlock Text="Cantidad máxima" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
-                        <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0" SmallChange="3"/>
-                        <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
-                    </StackPanel>
-
-                    <Button x:Name="ClearFilters" Content="Restablecer filtros" Click="ClearFilters_Click"/>
-
-                    <CheckBox x:Name="ShowNonStockItems" Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0" Click="ShowNonStockItems_Click"/>
+            <!--Tabs-->
+            <!--Filtros-->
+            <StackPanel Margin="16,0,16,0" Grid.Row="0">
+                <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button x:Name="InventoryTabBtn" Click="InventoryTabBtn_Click" Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
+                    <Button x:Name="OrderTabBtn" Content="Pedidos" Click="OrderTabBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
                 </StackPanel>
-                <!--Botones-->
-                <StackPanel Grid.Row="1" Width="280" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Center">
-                    <Button x:Name="AddItemBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemBtn_Click"
-                            Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Añadir item" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    
-                    <Button x:Name="AddOrderBtn" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddOrderBtn_Click"
-                            Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Añadir pedido" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
+                <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
 
-                    <Button x:Name="CancelOrderFormBtn" Click="CancelOrderFormBtn_Click" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
+                <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
+                <TextBox x:Name="KeywordInput" Margin="0,4,0,8" Height="28"  Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" Background="{StaticResource BackgroundBrush}" BorderThickness="1" TextChanged="KeywordInput_TextChanged" />
+
+                <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <ComboBox x:Name="ClassComboBox" Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource BackgroundBrush}" SelectionChanged="ClassComboBox_SelectionChanged">
+                    <ComboBoxItem Content="Insumo" Foreground="{StaticResource ForegroundBrush}"/>
+                    <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
+                </ComboBox>
+
+                <TextBlock Text="Cantidad mínima" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
+                    <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0"/>
+                    <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <TextBlock Text="Cantidad máxima" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
+                    <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0" SmallChange="3"/>
+                    <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Width="Auto" x:Name="ClearFilters" Content="Restablecer filtros" Click="ClearFilters_Click"/>
+
+                <CheckBox x:Name="ShowNonStockItems" Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0" Click="ShowNonStockItems_Click"/>
+            </StackPanel>
+            <!--Botones-->
+            <StackPanel Grid.Row="1" MinWidth="170" HorizontalAlignment="Stretch" Margin="20,0,20,20" VerticalAlignment="Center">
+                <Button x:Name="AddItemBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemBtn_Click"
+                            Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Añadir item" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="AddOrderBtn" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddOrderBtn_Click"
+                            Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Añadir pedido" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="CancelOrderFormBtn" Click="CancelOrderFormBtn_Click" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
         Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="-" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="-" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
-                    <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
+                <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
                             Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
 
         <!-- Tabla de datos -->
         <Grid x:Name="RightGrid" Grid.Column="1" Background="{StaticResource BackgroundBrush}" >

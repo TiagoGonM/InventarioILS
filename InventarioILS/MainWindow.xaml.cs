@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
-using Microsoft.Data.Sqlite;
 using System.Windows.Media;
 
 namespace InventarioILS
@@ -25,6 +24,8 @@ namespace InventarioILS
         readonly DbConnection client;
 
         bool sidebarCollapsed = false;
+
+        GridLength prevWidth;
 
         bool bottomBarCollapsed = true;
 
@@ -169,6 +170,7 @@ namespace InventarioILS
         {
             AddItemPopup.IsOpen = false;
         }
+
         private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
             AddOrderBtn.Visibility = Visibility.Collapsed;
@@ -198,11 +200,16 @@ namespace InventarioILS
             OrderTabBtn.IsEnabled = false;
         }
 
+        // TODO: Refactor this method to reduce complexity
         private void CollapseSidebarBtn_Click(object sender, RoutedEventArgs e)
         {
             var col = Grid.GetColumn(CollapseSidebarBtn);
             var colDef = MainGrid.ColumnDefinitions[col];
 
+            colDef.MinWidth = 0;
+            
+            if (!sidebarCollapsed) prevWidth = colDef.Width;
+            
             colDef.Width = new GridLength(!sidebarCollapsed ? 0 : 320);
 
             sidebarCollapsed = !sidebarCollapsed;
@@ -224,7 +231,12 @@ namespace InventarioILS
                 AddItemCollapsedBtn.Visibility = Visibility.Collapsed;
             }
 
-                DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
+            DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
+            if (!sidebarCollapsed)
+            {
+                colDef.MinWidth = 220;
+                colDef.Width = prevWidth;
+            }
         }
 
         private void AddOrderBtn_Click(object sender, RoutedEventArgs e)
