@@ -21,16 +21,14 @@ namespace InventarioILS
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly DbConnection client;
+        //readonly DbConnection client;
+        readonly StockItems client;
 
         bool sidebarCollapsed = false;
 
         GridLength prevWidth;
 
         bool bottomBarCollapsed = true;
-
-        readonly Map<string, string> appliedFilters;
-        ObservableCollection<Item> items;
 
         int orderSectionHeight = 400;
 
@@ -39,9 +37,8 @@ namespace InventarioILS
         public MainWindow()
         {
             InitializeComponent();
-            client = new DbConnection();
-            appliedFilters = new Map<string, string>();
-            items = new ObservableCollection<Item>();
+            //client = new DbConnection();
+            client = new StockItems();
         }
 
         private void AddItemBtn_Click(object sender, RoutedEventArgs e)
@@ -63,26 +60,19 @@ namespace InventarioILS
             //UpdateMessageStatus("Ítem guardado exitosamente.", Brushes.Green);
         }
 
-        public class Map<TKey, TValue> : Dictionary<TKey, TValue>
-        {
-            public void AddOrUpdate(TKey key, TValue value)
-            {
-                if (!this.ContainsKey(key))
-                    this.Add(key, value);
-                else 
-                    this[key] = value;
-            }
-        }
-
         public void SetItems()
         {
-            items.Clear();
+            //items.Clear();
 
-            items = !isStock
-                ? client.GetItems(appliedFilters).ToObservableCollection<Item>()
-                : client.GetStockItems(appliedFilters).ToObservableCollection<Item>();
+            ////items = !isStock
+            ////    ? client.GetItems(appliedFilters).ToObservableCollection<Item>()
+            ////    : client.GetStockItems(appliedFilters).ToObservableCollection<Item>();
 
-            ItemView.ItemsSource = items;
+
+            //ItemView.ItemsSource = items;
+
+            client.Load();
+            ItemView.ItemsSource = client.Items;
         }
 
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -93,7 +83,7 @@ namespace InventarioILS
 
             var content = ((ComboBoxItem)selectedItem).Content;
 
-            appliedFilters.AddOrUpdate("className", content.ToString());
+            client.AddFilter(Filters.CLASS_NAME, content.ToString());
 
             SetItems();
         }
@@ -102,12 +92,12 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
-                appliedFilters.Remove("productCode");
+                client.RemoveFilter(Filters.PRODUCT_CODE);
                 SetItems();
                 return;
             }
 
-            appliedFilters.AddOrUpdate("productCode", ProductCodeInput.Text);
+            client.AddFilter(Filters.PRODUCT_CODE, ProductCodeInput.Text);
 
             SetItems();
         }
@@ -116,19 +106,19 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(KeywordInput.Text))
             {
-                appliedFilters.Remove("keyword");
+                client.RemoveFilter(Filters.KEYWORD);
                 SetItems();
                 return;
             }
 
-            appliedFilters.AddOrUpdate("keyword", KeywordInput.Text);
+            client.AddFilter(Filters.KEYWORD, KeywordInput.Text);
 
             SetItems();
         }
 
         private void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
-            appliedFilters.Clear();
+            client.ClearFilters();
 
             ClassComboBox.SelectedItem = null;
             ProductCodeInput.Text = string.Empty;
@@ -139,7 +129,6 @@ namespace InventarioILS
 
         private void ItemView_Loaded(object sender, RoutedEventArgs e)
         {
-
             SetItems();
         }
 

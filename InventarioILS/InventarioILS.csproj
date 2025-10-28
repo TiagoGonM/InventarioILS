@@ -148,6 +148,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Order.cs" />
     <Compile Include="View\UserControls\AddOrderSection.xaml.cs">
       <DependentUpon>AddOrderSection.xaml</DependentUpon>
     </Compile>
@@ -160,10 +161,7 @@
     <Compile Include="Model\DbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Model\ItemStorage.cs" />
-    <Compile Include="Model\Window1.xaml.cs">
-      <DependentUpon>Window1.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Model\Storage.cs" />
     <Compile Include="View\UserControls\Sidebar.xaml.cs">
       <DependentUpon>Sidebar.xaml</DependentUpon>
     </Compile>
@@ -193,10 +191,6 @@
     </Page>
     <Page Include="View\UserControls\OrderSection.xaml">
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Model\Window1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControls\Sidebar.xaml">
       <SubType>Designer</SubType>

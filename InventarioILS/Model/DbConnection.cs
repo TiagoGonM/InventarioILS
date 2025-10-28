@@ -12,17 +12,19 @@ namespace InventarioILS.Model
     {
         readonly string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "inventory.db");
 
-        public static SqliteConnection Connection { get; private set; }
+        public SqliteConnection Connection { get; private set; }
 
         public DbConnection()
         {
             if (File.Exists(dbPath))
             {
                 Connection = new SqliteConnection($"Data Source={dbPath}");
+                Connection.Open();
             }
             else
             {
                 MessageBox.Show($"Error opening database", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Connection.Close();
             }
         }
 
@@ -34,32 +36,7 @@ namespace InventarioILS.Model
             }
         }
 
-        // TODO: i don't like what i did here
-        public class DynamicQueryBuilder
-        {
-            readonly DynamicParameters parameters;
-
-            public string Query { get; private set; }
-
-            public DynamicQueryBuilder(string mainQuery)
-            {
-                parameters = new DynamicParameters();
-                Query = mainQuery;
-            }
-
-            public void AddFilter(string tableColumn, string paramName, string filterValue)
-            {
-                Query += $" AND {tableColumn} LIKE @{paramName} COLLATE NOCASE";
-                parameters.Add(paramName, $"%{filterValue}%");
-            }
-
-            public (string, DynamicParameters) GetQueryTuple()
-            {
-                return (Query, parameters);
-            }
-        }
-
-        public List<StockItem> GetStockItems(Dictionary<string, string> filters)
+        List<StockItem> GetStockItems(Dictionary<string, string> filters)
         {
             if (Connection == null) return new List<StockItem>();
 
@@ -73,25 +50,37 @@ namespace InventarioILS.Model
                              JOIN State st ON sto.stateId = st.stateId
                              WHERE 1=1";
 
-            var queryObj = new DynamicQueryBuilder(query);
+            var parameters = new DynamicParameters();
 
-            if (filters.ContainsKey("productCode")) queryObj.AddFilter("it.productCode", "productCode", filters["productCode"]);
-            if (filters.ContainsKey("keyword")) queryObj.AddFilter("it.description", "keyword", filters["keyword"]);
-            if (filters.ContainsKey("className")) queryObj.AddFilter("class.name", "className", filters["className"]);
+            if (filters.ContainsKey("productCode"))
+            {
+                query += " AND it.productCode LIKE @productCode COLLATE NOCASE";
+                parameters.Add("productCode", $"%{filters["productCode"]}%");
+            }
 
-            (string sql, var parameters) = queryObj.GetQueryTuple();
+            if (filters.ContainsKey("keyword"))
+            {
+                query += " AND it.description LIKE @keyword COLLATE NOCASE";
+                parameters.Add("keyword", $"%{filters["keyword"]}%");
+            }
 
-            sql += @" GROUP BY 
+            if (filters.ContainsKey("className"))
+            {
+                query += " AND class.name LIKE @className COLLATE NOCASE";
+                parameters.Add("className", $"%{filters["className"]}%");
+            }
+
+            query += @" GROUP BY 
                             it.productCode,
                             c.name,
                             s.name,
                             class.name
                         LIMIT 50;";
 
-            return Connection.Query<StockItem>(sql, parameters).ToList();
+            return Connection.Query<StockItem>(query, parameters).ToList();
         }
 
-        public List<OrderItem> GetItems(Dictionary<string, string> filters)
+        List<OrderItem> GetItems(Dictionary<string, string> filters)
         {
             if (Connection == null) return new List<OrderItem>();
 
@@ -133,7 +122,7 @@ namespace InventarioILS.Model
             return Connection.Query<OrderItem>(query, parameters).ToList();
         }
 
-        public void SaveItem(Item item)
+        void SaveItem(Item item)
         {
             if (Connection == null) return;
 
