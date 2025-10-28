@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Dapper;
 
 namespace InventarioILS
 {
@@ -25,6 +26,7 @@ namespace InventarioILS
 
     public abstract class Item
     {
+        public int Id { get; set; }
         public string ProductCode { get; set; }
         public string CategoryName { get; set; }
         public string SubcategoryName { get; set; }
