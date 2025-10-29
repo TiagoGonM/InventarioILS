@@ -47,6 +47,7 @@ bld/
 *.pidb
 *.svclog
 *.scc
+*.htm
 
 # Archivos temporales de usuario
 *.user
