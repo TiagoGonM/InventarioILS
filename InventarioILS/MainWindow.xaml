@@ -33,10 +33,17 @@
             <!--Tabs-->
             <!--Filtros-->
             <StackPanel Margin="16,0,16,0" Grid.Row="0">
-                <StackPanel Orientation="Horizontal" Margin="16,16,0,16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button x:Name="InventoryTabBtn" Click="InventoryTabBtn_Click" Content="Inventario" Style="{x:Null}" Foreground="White" Background="Transparent" BorderBrush="Transparent" FontWeight="Normal" Padding="8,4"/>
-                    <Button x:Name="OrderTabBtn" Content="Pedidos" Click="OrderTabBtn_Click" Style="{x:Null}" Foreground="#FF232323" Background="#FFEFEFEF" BorderBrush="Transparent" FontWeight="Bold" Padding="24,4" Margin="8,0,0,0"/>
-                </StackPanel>
+                <Grid Margin="0,16,0,16" HorizontalAlignment="Stretch" Height="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" x:Name="InventoryTabBtn" Click="InventoryTabBtn_Click" Content="Inventario" Style="{StaticResource TabButton}" Background="Transparent" BorderBrush="Transparent" Foreground="{StaticResource AccentForegroundBrush}" FontWeight="Bold" FontSize="13"/>
+                    <Button Grid.Column="1" x:Name="OrderTabBtn" Click="OrderTabBtn_Click" Content="Pedidos" Style="{StaticResource TabButton}" Background="Transparent" Foreground="{StaticResource ForegroundBrush}" BorderBrush="Transparent" FontWeight="Normal" FontSize="13"/>
+                    <Button Grid.Column="2" x:Name="SettingsBtn" Click="SettingsBtn_Click" Content="Ajustes" Style="{StaticResource TabButton}" Background="Transparent" Foreground="{StaticResource ForegroundBrush}" BorderBrush="Transparent" FontWeight="Normal" FontSize="13"/>
+                </Grid>
                 <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}" />
                 <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" TextChanged="ProductCodeInput_TextChanged" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
 
@@ -96,14 +103,14 @@
                 <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
                             Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- Tabla de datos -->
+        
         <Grid x:Name="RightGrid" Grid.Column="1" Background="{StaticResource BackgroundBrush}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -117,7 +124,23 @@
                 <userControls:AddOrderSection Grid.Row="1" Visibility="Collapsed" x:Name="AddOrderSection" />
             </Grid>
 
-            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" />
+            <!-- Tabla de datos -->
+            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded"/>
+            <Grid x:Name="SettingsSection" Visibility="Collapsed" d:Visibility="Visible">
+                <Button x:Name="SettingsBackBtn" Click="SettingsBackBtn_Click" Content="← Volver" 
+                        Width="100" Height="50" Margin="10"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        BorderBrush="Transparent"
+                        Style="{StaticResource RoundedButton}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        Foreground="{StaticResource AccentBrush}"/>
+                <TextBlock Text="Ajustes de la app" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50"/>
+            </Grid>
+            
+            
             <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -175,7 +198,7 @@
                         Visibility="Hidden"
                         d:Visibility="Visible"
                         Background="#FF9BE8D6">
-                    <TextBlock Text="🠖" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Height="50" Width="50" />
+                    <TextBlock Text="🠖" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Height="50" Width="50" />
                 </Button>
             </Grid>
         </Grid>

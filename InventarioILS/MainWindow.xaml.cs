@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
 using System.Windows.Media;
+using Windows.UI.Text;
 
 namespace InventarioILS
 {
@@ -162,6 +163,15 @@ namespace InventarioILS
 
         private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
+            InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
+            InventoryTabBtn.FontWeight = FontWeights.Bold;
+
+            OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            OrderTabBtn.FontWeight = FontWeights.Normal;
+
+            SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            SettingsBtn.FontWeight = FontWeights.Normal;
+
             AddOrderBtn.Visibility = Visibility.Collapsed;
             AddItemBtn.Visibility = Visibility.Visible;
             RightGrid.RowDefinitions[1].Height = new GridLength(0);
@@ -169,13 +179,19 @@ namespace InventarioILS
             Grid.SetRow(CollapsedButtonBar, 0);
 
             bottomBarCollapsed = true;
-
-            InventoryTabBtn.IsEnabled = false;
-            OrderTabBtn.IsEnabled = true;
         }
 
         private void OrderTabBtn_Click(object sender, RoutedEventArgs e)
         {
+            InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            InventoryTabBtn.FontWeight = FontWeights.Normal;
+
+            SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            SettingsBtn.FontWeight = FontWeights.Normal;
+
+            OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
+            OrderTabBtn.FontWeight = FontWeights.Bold;
+
             var row = Grid.GetRow(OrderListSection);
             RightGrid.RowDefinitions[row].Height = new GridLength(orderSectionHeight);
             AddOrderBtn.Visibility = Visibility.Visible;
@@ -184,9 +200,6 @@ namespace InventarioILS
             Grid.SetRow(CollapsedButtonBar, 1);
 
             bottomBarCollapsed = false;
-
-            InventoryTabBtn.IsEnabled = true;
-            OrderTabBtn.IsEnabled = false;
         }
 
         // TODO: Refactor this method to reduce complexity
@@ -271,6 +284,33 @@ namespace InventarioILS
 
             OrderListSection.Visibility = Visibility.Collapsed;
             AddOrderSection.Visibility = Visibility.Visible;
+        }
+
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            InventoryTabBtn.FontWeight = FontWeights.Normal;
+
+            OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            OrderTabBtn.FontWeight = FontWeights.Normal;
+
+            SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
+            SettingsBtn.FontWeight = FontWeights.Bold;
+
+            InventoryTabBtn.IsEnabled = false;
+            OrderTabBtn.IsEnabled = false;
+
+            ItemView.Visibility = Visibility.Collapsed;
+            SettingsSection.Visibility = Visibility.Visible;
+        }
+
+        private void SettingsBackBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InventoryTabBtn.IsEnabled = true;
+            OrderTabBtn.IsEnabled = true;
+
+            ItemView.Visibility = Visibility.Visible;
+            SettingsSection.Visibility = Visibility.Collapsed;
         }
     }
 }
