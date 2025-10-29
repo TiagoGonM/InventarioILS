@@ -2,7 +2,7 @@ name: Bump build version
 
 on:
   push:
-    branches: [ migrate ]
+    branches: [ main ]
 
 jobs:
   bump:
@@ -35,4 +35,4 @@ jobs:
           git config user.email "tiagogonzalez2024@gmail.com"
           git add .
           git commit -m "Bump project version to ${{ steps.bump.outputs.newVersion }}"
-          git push
+          git push origin migrate
