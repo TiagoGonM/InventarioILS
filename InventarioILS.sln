@@ -1,9 +1,16 @@
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
+<<<<<<< Updated upstream
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventarioILS_new", "InventarioILS_new\InventarioILS_new.csproj", "{82BC91B7-3795-4196-983C-5FD1700CC628}"
 EndProject
+=======
+>>>>>>> Stashed changes
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventarioILS", "InventarioILS\InventarioILS.csproj", "{867B2C5C-7DD3-4080-967E-9680740950BA}"
 EndProject
 Global
