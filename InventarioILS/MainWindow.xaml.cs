@@ -44,7 +44,10 @@ namespace InventarioILS
 
         private void AddItemBtn_Click(object sender, RoutedEventArgs e)
         {
-            AddItemPopup.IsOpen = true;
+            AddItemSection.Visibility = Visibility.Visible;
+            OrderListSection.Visibility = Visibility.Collapsed;
+            ShowBottomBar();
+            //AddItemPopup.IsOpen = true;
             var item = new StockItem("R-10", "Resistencia", "estandar / no definido", "Resistencia de 10 ohm", Class.INSUMO, "suficientes", "Cajón 1", 5);
 
             //items.Add(item);
@@ -174,11 +177,20 @@ namespace InventarioILS
 
             AddOrderBtn.Visibility = Visibility.Collapsed;
             AddItemBtn.Visibility = Visibility.Visible;
-            RightGrid.RowDefinitions[1].Height = new GridLength(0);
+
+            ShowBottomBar(false);
 
             Grid.SetRow(CollapsedButtonBar, 0);
+        }
 
-            bottomBarCollapsed = true;
+        private void ShowBottomBar(bool show = true)
+        {
+            var row = Grid.GetRow(OrderListSection);
+            RightGrid.RowDefinitions[row].Height = new GridLength(show ? orderSectionHeight : 0);
+
+            Grid.SetRow(CollapsedButtonBar, show ? 1 : 0);
+
+            bottomBarCollapsed = show;
         }
 
         private void OrderTabBtn_Click(object sender, RoutedEventArgs e)
@@ -192,14 +204,10 @@ namespace InventarioILS
             OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
             OrderTabBtn.FontWeight = FontWeights.Bold;
 
-            var row = Grid.GetRow(OrderListSection);
-            RightGrid.RowDefinitions[row].Height = new GridLength(orderSectionHeight);
+            ShowBottomBar();
+
             AddOrderBtn.Visibility = Visibility.Visible;
             AddItemBtn.Visibility = Visibility.Collapsed;
-
-            Grid.SetRow(CollapsedButtonBar, 1);
-
-            bottomBarCollapsed = false;
         }
 
         // TODO: Refactor this method to reduce complexity

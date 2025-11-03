@@ -40,7 +40,7 @@ namespace InventarioILS.Model
 
         public Storage() 
         {
-            Items = new ObservableCollection<T>();
+            Items = [];
             Connection = new DbConnection().Connection;
         }
     }
@@ -51,7 +51,7 @@ namespace InventarioILS.Model
 
         public StockItems() : base()
         {
-            QueryFilters = new Map<Filters, string>();
+            QueryFilters = [];
         }
 
         public void AddFilter(Filters type, string value)
@@ -229,7 +229,7 @@ namespace InventarioILS.Model
 
         public Orders() : base()
         {
-            QueryFilters = new Map<Filters, string>();
+            QueryFilters = [];
         }
 
         public void Add(Item item)
@@ -243,9 +243,36 @@ namespace InventarioILS.Model
 
             var collection = Connection.Query<Order>(query).ToList().ToObservableCollection();
 
-            foreach (var obj in collection)
+            //foreach (var obj in collection)
+            //{
+            //    MessageBox.Show($"Order ID: {obj.Id}, Name: {obj.Name}, Description: {obj.Description}, Created At: {obj.CreatedAt}");
+            //}
+
+            var currentIds = Items.Select(x => x.Id).ToList();
+            var newIds = collection.Select(x => x.Id).ToList();
+
+            // Eliminar items que ya no existen en la nueva colección
+            var itemsToRemove = Items.Where(x => !newIds.Contains(x.Id)).ToList();
+            foreach (var item in itemsToRemove)
             {
-                MessageBox.Show($"Order ID: {obj.Id}, Name: {obj.Name}, Description: {obj.Description}, Created At: {obj.CreatedAt}");
+                Items.Remove(item);
+            }
+
+            // Actualizar items existentes y agregar nuevos
+            foreach (var newItem in collection)
+            {
+                var existingItem = Items.FirstOrDefault(x => x.Id == newItem.Id);
+                if (existingItem != null)
+                {
+                    // Actualizar el item existente con los nuevos datos
+                    var index = Items.IndexOf(existingItem);
+                    Items[index] = newItem;
+                }
+                else
+                {
+                    // Agregar nuevo item
+                    Items.Add(newItem);
+                }
             }
         }
 
