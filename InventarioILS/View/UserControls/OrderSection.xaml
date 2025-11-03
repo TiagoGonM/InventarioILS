@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="InventarioILS.View.UserControls.OrderSection"
+             x:Name="orderSection"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,9 +7,16 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1952">
-    <Grid Grid.Row="1" Margin="12" Background="Transparent">
-        <StackPanel>
-            <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
+    <Grid Margin="12" Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Count, FallbackValue=0}" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center" Margin="5,0" FontSize="15"/>
+            </StackPanel>
 
             <!--<ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
                 <ListView.ItemsPanel>
@@ -46,19 +54,26 @@
 
             <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
             <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
-                <WrapPanel ItemHeight="120" ItemWidth="600" HorizontalAlignment="Center" Margin="10" MaxWidth="1500">
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
-                    <local:OrderCard Margin="5,0"/>
+                <WrapPanel x:Name="OrdersPanel" 
+               HorizontalAlignment="Center" 
+               Margin="10" 
+               MaxWidth="1500">
+                    <ItemsControl x:Name="ItemControl" 
+                     ItemsSource="{Binding OrderList, Mode=OneWay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel ItemHeight="120" ItemWidth="600"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="local:OrderCard">
+                                <local:OrderCard Title="{Binding Name}"
+                                   CreationDate="{Binding CreatedAt}"
+                                   Description="{Binding Description}"
+                                   Margin="5,0"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </WrapPanel>
             </ScrollViewer>
         </StackPanel>
