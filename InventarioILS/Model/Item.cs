@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Dapper;
+using InventarioILS.Model;
 
 namespace InventarioILS
 {
@@ -24,7 +25,7 @@ namespace InventarioILS
         REPUESTO_DESCARTAR = 5 
     }
 
-    public abstract class Item
+    public abstract class Item : IIdentifiable
     {
         public int Id { get; set; }
         public string ProductCode { get; set; }

@@ -33,7 +33,20 @@ namespace InventarioILS.Model
         }
     }
 
-    internal class Storage<T>
+    public static class ObservableCollectionExt
+    {
+        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+        {
+            return new ObservableCollection<T>(source);
+        }
+    }
+
+    public interface IIdentifiable
+    {
+        int Id { get; }
+    }
+
+    internal class Storage<T> where T: IIdentifiable
     {
         public ObservableCollection<T> Items { get; set; }
         static protected SqliteConnection Connection { get; set; }
@@ -42,6 +55,101 @@ namespace InventarioILS.Model
         {
             Items = [];
             Connection = new DbConnection().Connection;
+        }
+
+        protected void UpdateItems(ObservableCollection<T> collection)
+        {
+            var currentIds = Items.Select(x => x.Id).ToList();
+            var newIds = collection.Select(x => x.Id).ToList();
+
+            // Eliminar items que ya no existen en la nueva colección
+            var itemsToRemove = Items.Where(x => !newIds.Contains(x.Id)).ToList();
+            foreach (var item in itemsToRemove)
+            {
+                Items.Remove(item);
+            }
+
+            // Actualizar items existentes y agregar nuevos
+            foreach (var newItem in collection)
+            {
+                var existingItem = Items.FirstOrDefault(x => x.Id == newItem.Id);
+                if (existingItem != null)
+                {
+                    // Actualizar el item existente con los nuevos datos
+                    var index = Items.IndexOf(existingItem);
+                    Items[index] = newItem;
+                }
+                else
+                {
+                    // Agregar nuevo item
+                    Items.Add(newItem);
+                }
+            }
+        }
+    }
+    internal class ItemCategories : Storage<ItemMisc>, ILoadSave
+    {
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @"SELECT categoryId id, name FROM Category;";
+            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ItemSubCategories : Storage<ItemMisc>, ILoadSave
+    {
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @"SELECT subcategoryId id, name FROM Subcategory;";
+            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ItemClasses : Storage<ItemMisc>, ILoadSave
+    {
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @"SELECT classId id, name FROM Class;";
+            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -116,32 +224,7 @@ namespace InventarioILS.Model
 
             var collection = Connection.Query<StockItem>(query, parameters).ToList().ToObservableCollection();
 
-            var currentIds = Items.Select(x => x.Id).ToList();
-            var newIds = collection.Select(x => x.Id).ToList();
-
-            // Eliminar items que ya no existen en la nueva colección
-            var itemsToRemove = Items.Where(x => !newIds.Contains(x.Id)).ToList();
-            foreach (var item in itemsToRemove)
-            {
-                Items.Remove(item);
-            }
-
-            // Actualizar items existentes y agregar nuevos
-            foreach (var newItem in collection)
-            {
-                var existingItem = Items.FirstOrDefault(x => x.Id == newItem.Id);
-                if (existingItem != null)
-                {
-                    // Actualizar el item existente con los nuevos datos
-                    var index = Items.IndexOf(existingItem);
-                    Items[index] = newItem;
-                }
-                else
-                {
-                    // Agregar nuevo item
-                    Items.Add(newItem);
-                }
-            }
+            UpdateItems(collection);
         }
 
         public void Add(Item item)
@@ -248,32 +331,7 @@ namespace InventarioILS.Model
             //    MessageBox.Show($"Order ID: {obj.Id}, Name: {obj.Name}, Description: {obj.Description}, Created At: {obj.CreatedAt}");
             //}
 
-            var currentIds = Items.Select(x => x.Id).ToList();
-            var newIds = collection.Select(x => x.Id).ToList();
-
-            // Eliminar items que ya no existen en la nueva colección
-            var itemsToRemove = Items.Where(x => !newIds.Contains(x.Id)).ToList();
-            foreach (var item in itemsToRemove)
-            {
-                Items.Remove(item);
-            }
-
-            // Actualizar items existentes y agregar nuevos
-            foreach (var newItem in collection)
-            {
-                var existingItem = Items.FirstOrDefault(x => x.Id == newItem.Id);
-                if (existingItem != null)
-                {
-                    // Actualizar el item existente con los nuevos datos
-                    var index = Items.IndexOf(existingItem);
-                    Items[index] = newItem;
-                }
-                else
-                {
-                    // Agregar nuevo item
-                    Items.Add(newItem);
-                }
-            }
+            UpdateItems(collection);
         }
 
         public void Save()
@@ -281,4 +339,5 @@ namespace InventarioILS.Model
             throw new NotImplementedException();
         }
     }
+
 }
