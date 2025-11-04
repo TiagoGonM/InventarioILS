@@ -1,17 +1,10 @@
-﻿using System;
+﻿using InventarioILS.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace InventarioILS.View.UserControls
 {
@@ -20,14 +13,28 @@ namespace InventarioILS.View.UserControls
     /// </summary>
     public partial class AddItemSection : UserControl
     {
+        readonly ItemCategories categories = null;
+        readonly ItemSubCategories subCategories = null;
+        readonly ItemClasses classes = null;
+
         public AddItemSection()
         {
             InitializeComponent();
-        }
 
-        private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+            categories = new ItemCategories();
+            subCategories = new ItemSubCategories();
+            classes = new ItemClasses();
 
+            categories.Load();
+            subCategories.Load();
+            classes.Load();
+
+            this.DataContext = new
+            {
+                CategoryList = categories.Items,
+                SubcategoryList = subCategories.Items,
+                ClassList = classes.Items
+            };
         }
     }
 }

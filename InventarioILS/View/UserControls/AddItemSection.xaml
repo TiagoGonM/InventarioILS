@@ -15,23 +15,10 @@
             <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
             <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
 
-            <TextBlock Text="Categoría" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <ComboBox x:Name="CategoryComboBox" Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource BackgroundBrush}">
-                <ComboBoxItem Content="Resistencia" Foreground="{StaticResource ForegroundBrush}"/>
-                <ComboBoxItem Content="Capacitor" Foreground="{StaticResource ForegroundBrush}"/>
-            </ComboBox>
-
-            <TextBlock Text="Subcategoría" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <ComboBox x:Name="SubcategoryComboBox" Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource BackgroundBrush}">
-                <ComboBoxItem Content="Resistencia" Foreground="{StaticResource ForegroundBrush}"/>
-                <ComboBoxItem Content="Capacitor" Foreground="{StaticResource ForegroundBrush}"/>
-            </ComboBox>
-
-            <TextBlock Text="Tipo" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <ComboBox x:Name="ClassComboBox" Margin="0,4,0,8" Height="28" Style="{StaticResource BlackComboBox}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1" IsReadOnly="True" Background="{StaticResource BackgroundBrush}" SelectionChanged="ClassComboBox_SelectionChanged">
-                <ComboBoxItem Content="Insumo" Foreground="{StaticResource ForegroundBrush}"/>
-                <ComboBoxItem Content="Dispositivo" Foreground="{StaticResource ForegroundBrush}"/>
-            </ComboBox>
+            <local:QueryableComboBox Title="Categoría" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+            <local:QueryableComboBox Title="Subcategoría" ItemsSource="{Binding SubcategoryList, Mode=OneWay}" SelectedItem="{Binding SelectedSubcategory, Mode=TwoWay}" />
+            <local:QueryableComboBox Title="Tipo" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
+        
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="16,0,16,0">
             <TextBlock Text="Descripción" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>

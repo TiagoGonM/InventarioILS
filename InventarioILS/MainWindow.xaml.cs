@@ -1,29 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
 using System.Windows.Media;
-using Windows.UI.Text;
 
 namespace InventarioILS
 {
-    public static class ObservableCollectionExt
-    {
-        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
-        {
-            return new ObservableCollection<T>(source);
-        }
-    }
-
     /// <summary>
     /// Lógica de interacción para MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        //readonly DbConnection client;
-        readonly StockItems client;
+        readonly StockItems items;
+        readonly ItemClasses itemClasses;
 
         bool sidebarCollapsed = false;
 
@@ -31,15 +20,35 @@ namespace InventarioILS
 
         bool bottomBarCollapsed = true;
 
-        int orderSectionHeight = 400;
+        int _bottomBarHeight = 0;
+
+        int defaultBottomBarHeight = 400;
+
+        int BottomBarHeight { 
+            get => _bottomBarHeight; 
+            set => _bottomBarHeight = value; 
+        }
 
         bool isStock = true;
+
+        public object SelectedClassItem { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            //client = new DbConnection();
-            client = new StockItems();
+
+            items = new StockItems();
+            itemClasses = new ItemClasses();
+
+            items.Load();
+            itemClasses.Load();
+
+            this.DataContext = new
+            {
+                BottomBarHeight,
+                items.Items,
+                ItemClassList = itemClasses.Items,
+            };
         }
 
         private void AddItemBtn_Click(object sender, RoutedEventArgs e)
@@ -66,28 +75,19 @@ namespace InventarioILS
 
         public void SetItems()
         {
-            //items.Clear();
-
-            ////items = !isStock
-            ////    ? client.GetItems(appliedFilters).ToObservableCollection<Item>()
-            ////    : client.GetStockItems(appliedFilters).ToObservableCollection<Item>();
-
-
-            //ItemView.ItemsSource = items;
-
-            client.Load();
-            ItemView.ItemsSource = client.Items;
+            items.Load();
+            //ItemView.ItemsSource = client.Items;
         }
 
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedItem = ClassComboBox.SelectedItem;
+            if (SelectedClassItem == null) return;
 
-            if (selectedItem == null) return;
+            var content = ((ComboBoxItem)SelectedClassItem).Content;
 
-            var content = ((ComboBoxItem)selectedItem).Content;
+            MessageBox.Show(content.ToString());
 
-            client.AddFilter(Filters.CLASS_NAME, content.ToString());
+            items.AddFilter(Filters.CLASS_NAME, content.ToString());
 
             SetItems();
         }
@@ -96,12 +96,12 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
-                client.RemoveFilter(Filters.PRODUCT_CODE);
+                items.RemoveFilter(Filters.PRODUCT_CODE);
                 SetItems();
                 return;
             }
 
-            client.AddFilter(Filters.PRODUCT_CODE, ProductCodeInput.Text);
+            items.AddFilter(Filters.PRODUCT_CODE, ProductCodeInput.Text);
 
             SetItems();
         }
@@ -110,21 +110,21 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(KeywordInput.Text))
             {
-                client.RemoveFilter(Filters.KEYWORD);
+                items.RemoveFilter(Filters.KEYWORD);
                 SetItems();
                 return;
             }
 
-            client.AddFilter(Filters.KEYWORD, KeywordInput.Text);
+            items.AddFilter(Filters.KEYWORD, KeywordInput.Text);
 
             SetItems();
         }
 
         private void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
-            client.ClearFilters();
+            items.ClearFilters();
 
-            ClassComboBox.SelectedItem = null;
+            SelectedClassItem = null;
             ProductCodeInput.Text = string.Empty;
             KeywordInput.Text = string.Empty;
 
@@ -154,16 +154,6 @@ namespace InventarioILS
             StatusMessageLabel.Visibility = Visibility.Hidden;
         }
 
-        private void CancelEdit_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemPopup.IsOpen = false;
-        }
-
-        private void SaveEdit_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemPopup.IsOpen = false;
-        }
-
         private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
             InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
@@ -186,7 +176,7 @@ namespace InventarioILS
         private void ShowBottomBar(bool show = true)
         {
             var row = Grid.GetRow(OrderListSection);
-            RightGrid.RowDefinitions[row].Height = new GridLength(show ? orderSectionHeight : 0);
+            RightGrid.RowDefinitions[row].Height = new GridLength(show ? defaultBottomBarHeight : 0);
 
             Grid.SetRow(CollapsedButtonBar, show ? 1 : 0);
 
