@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1952">
-    <Grid Margin="12" Background="Transparent">
+    <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>

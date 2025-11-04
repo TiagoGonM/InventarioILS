@@ -49,8 +49,8 @@
             </Grid>
 
             <!-- Descripción grande con borde turquesa -->
-            <TextBox Height="88" Style="{StaticResource RoundedInput}" AcceptsReturn="True" TextWrapping="Wrap"
-             BorderBrush="{StaticResource AccentBrush}" Background="#222" Foreground="#E6E6E6" Padding="12" />
+            <TextBox MinHeight="28" MaxHeight="130" Style="{StaticResource RoundedInput}" AcceptsReturn="True" TextWrapping="Wrap"
+             BorderBrush="{StaticResource AccentBrush}" Background="#222" Foreground="#E6E6E6" />
 
             <!-- Espacio -->
             <Rectangle Height="12" Fill="Transparent"/>
