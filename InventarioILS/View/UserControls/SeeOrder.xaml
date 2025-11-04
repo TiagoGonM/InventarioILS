@@ -1,0 +1,170 @@
+﻿<Window x:Class="InventarioILS.View.UserControls.SeeOrder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventarioILS.View.UserControls"
+        mc:Ignorable="d"
+        Title="Pedido" Width="1000" Height="700"
+        Background="{StaticResource BackgroundBrush}">
+    <Window.Resources>
+        <!-- Encabezados y celdas -->
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#232323"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="#E6E6E6"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="56"/>
+        </Style>
+
+        <!-- Checkbox cuadrado maqueta -->
+        <Style x:Key="SquareCheckboxStyle" TargetType="CheckBox">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Border x:Name="Box" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+                                    CornerRadius="4" BorderThickness="2" BorderBrush="#6F6F6F" Background="Transparent"/>
+                            <Path x:Name="Tick" Data="M3,11 L8,16 L19,4" Stroke="{StaticResource SecondaryBrush}" StrokeThickness="2" Visibility="Collapsed"
+                                  StrokeEndLineCap="Round" StrokeStartLineCap="Round" StrokeLineJoin="Round"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Tick" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="Tick" Property="Stroke" Value="{StaticResource SecondaryBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Box" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Botón confirmar centrado (usa RoundedButton de App.xaml) -->
+        <Style x:Key="ConfirmButtonStyle" TargetType="Button" BasedOn="{StaticResource RoundedButton}">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Width" Value="220"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Botón cerrar simple -->
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#E6E6E6"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="6"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- barra superior -->
+            <RowDefinition Height="Auto"/>  <!-- descripción -->
+            <RowDefinition Height="*"/>     <!-- datagrid -->
+            <RowDefinition Height="Auto"/>  <!-- botón confirmar -->
+        </Grid.RowDefinitions>
+
+        <!-- Barra superior con línea turquesa -->
+        <Border Grid.Row="0" BorderBrush="{StaticResource AccentBrush}" BorderThickness="0,3,0,0" Padding="6" Margin="0,0,0,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="06/08/2025" Foreground="#E6E6E6" VerticalAlignment="Center" Margin="8,0"/>
+                <TextBlock Grid.Column="1" Text="Pedido #2" Foreground="#E6E6E6" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Button Grid.Column="2" Content="✕" Width="28" Height="28" Style="{StaticResource CloseButtonStyle}" Click="Close_Click" HorizontalAlignment="Right"/>
+            </Grid>
+        </Border>
+
+        <!-- Descripción -->
+        <StackPanel Grid.Row="1" Margin="16,0,16,12">
+            <TextBlock Text="Descripción" Foreground="#E6E6E6" FontWeight="Bold" Margin="0,0,0,6"/>
+            <TextBox x:Name="PedidoDescripcionTextBox"
+                     Text="{Binding OrderDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True" TextWrapping="Wrap"
+                     Background="#222" Foreground="#E6E6E6"
+                     BorderBrush="{StaticResource AccentBrush}" BorderThickness="3"
+                     Height="110" Padding="12"
+                     Style="{StaticResource RoundedInput}"/>
+        </StackPanel>
+
+        <!-- DataGrid dentro de borde turquesa -->
+        <Border Grid.Row="2" BorderBrush="{StaticResource AccentBrush}" BorderThickness="3" CornerRadius="4" Padding="8" Margin="16,0" Background="{StaticResource SecondaryBrush}">
+            <DataGrid x:Name="RecepcionDataGrid"
+                      ItemsSource="{Binding OrderItems}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="True"
+                      CanUserDeleteRows="True"
+                      IsReadOnly="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None"
+                      ColumnHeaderHeight="44"
+                      RowHeight="48"
+                      FontSize="14"
+                      Background="Transparent"
+                      ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
+                      CellStyle="{StaticResource DataGridCellStyle}"
+                      RowStyle="{StaticResource DataGridRowStyle}"
+                      Margin="4">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Código" Binding="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="180"/>
+                    <DataGridTextColumn Header="Descripción" Binding="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTextColumn Header="Cant." Binding="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                    <DataGridTextColumn Header="Estado de envio" Binding="{Binding ShippingState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="160"/>
+
+                    <!-- columna llegada con checkbox que reproduzca diseño -->
+                    <DataGridTemplateColumn Header="Llegada" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Received, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Style="{StaticResource SquareCheckboxStyle}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="6"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </DataGridTemplateColumn.CellStyle>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Botón confirmar centrado -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+            <Button Style="{StaticResource ConfirmButtonStyle}" Content="Confirmar Recibidos" Click="ConfirmarRecibidos_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
