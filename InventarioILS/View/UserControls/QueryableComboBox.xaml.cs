@@ -2,24 +2,17 @@
 using System.Windows.Controls;
 using System.Collections;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace InventarioILS.View.UserControls
 {
-    public partial class QueryableComboBox : UserControl, INotifyPropertyChanged
+    public partial class QueryableComboBox : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public event EventHandler SelectedItemChanged;
 
         public QueryableComboBox()
         {
             InitializeComponent();
-            ComboBox.SelectionChanged += OnComboBoxSelectionChanged;
+            ComboBox.SelectionChanged += ComboBox_SelectionChanged;
         }
 
         public QueryableComboBox(string title, IEnumerable itemsSource, object selectedItem) : this()
@@ -77,7 +70,7 @@ namespace InventarioILS.View.UserControls
                 nameof(SelectedItem),
                 typeof(object),
                 typeof(QueryableComboBox),
-                new PropertyMetadata(null, OnSelectedItem)
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItem)
             );
 
         public object SelectedItem
@@ -89,20 +82,21 @@ namespace InventarioILS.View.UserControls
             }
         }
 
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                SelectedItem = e.AddedItems[0]; // <- esto actualiza el DP correctamente
+                SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         private static void OnSelectedItem(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (QueryableComboBox)d;
             control.ComboBox.SelectedItem = (object)e.NewValue;
-        }
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            OnPropertyChanged("SelectionChanged");
-        }
 
-        private void OnComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            SelectedItem = ComboBox.SelectedItem;
+            control.SelectedItemChanged?.Invoke(control, EventArgs.Empty);
         }
-
     }
 }

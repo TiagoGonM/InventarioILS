@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
 using System.Windows.Media;
+using System;
+using InventarioILS.View.UserControls;
 
 namespace InventarioILS
 {
@@ -76,16 +78,19 @@ namespace InventarioILS
         public void SetItems()
         {
             items.Load();
-            //ItemView.ItemsSource = client.Items;
         }
 
-        private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
         {
-            if (SelectedClassItem == null) return;
+            var combo = (QueryableComboBox)sender;
 
-            var content = ((ComboBoxItem)SelectedClassItem).Content;
+            var selectedItem = (ItemMisc)combo.SelectedItem;
+            
+            if (selectedItem == null) return;
 
-            MessageBox.Show(content.ToString());
+            var content = selectedItem.Name;
+
+            //MessageBox.Show("Contenido:" + content);
 
             items.AddFilter(Filters.CLASS_NAME, content.ToString());
 
@@ -124,7 +129,7 @@ namespace InventarioILS
         {
             items.ClearFilters();
 
-            SelectedClassItem = null;
+            ClassComboBox.SelectedItem = null;
             ProductCodeInput.Text = string.Empty;
             KeywordInput.Text = string.Empty;
 

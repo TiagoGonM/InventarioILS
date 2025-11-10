@@ -19,8 +19,7 @@
               IsReadOnly="True" 
               Background="{StaticResource BackgroundBrush}"
               ItemsSource="{Binding ItemsSource, Mode=OneWay}"
-              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-              SelectionChanged="ComboBox_SelectionChanged">
+              SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" Tag="{Binding Id}"/>
