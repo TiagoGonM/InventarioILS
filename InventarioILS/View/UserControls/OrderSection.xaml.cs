@@ -30,5 +30,10 @@ namespace InventarioILS.View.UserControls
             set { _orders = value; }
             get { return _orders; }
         }
+
+        private void OrderCard_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            new ViewOrderPopup().Show();
+        }
     }
 }

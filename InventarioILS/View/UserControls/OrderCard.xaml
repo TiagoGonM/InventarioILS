@@ -38,7 +38,10 @@
                            Text="{Binding Description, ElementName=orderCard, FallbackValue=descripcion}" 
                            Foreground="#BFBFBF" TextWrapping="Wrap"/>
             </StackPanel>
-            <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="72" Content="Ver"/>
+
+            <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="72">
+                Ver
+            </Button>
         </Grid>
     </Border>
 </UserControl>
