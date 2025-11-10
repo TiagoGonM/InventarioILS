@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
@@ -288,7 +289,7 @@ namespace InventarioILS.Model
         }
     }
 
-    internal class OrderItems : Storage<OrderItem>, ILoadSave
+    internal class OrderItems : Storage<OrderItem>
     {
         public void Add(Item item)
         {
@@ -297,7 +298,31 @@ namespace InventarioILS.Model
 
         public void Load()
         {
-            throw new NotImplementedException();
+            if (Connection == null) return;
+
+            string query = @"SELECT ordDet.orderDetailId id, o.name, it.productCode, it.description, ss.name as shipmentState, ordDet.quantity
+                             FROM OrderDetail ordDet
+                             JOIN 'Order' o ON ordDet.orderId = o.orderId
+                             JOIN Item it ON ordDet.itemId = it.itemId
+                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId;";
+
+            var collection = Connection.Query<OrderItem>(query).ToList().ToObservableCollection();
+            UpdateItems(collection);
+        }
+
+        public void LoadSingle(int orderId)
+        {
+            if (Connection == null) return;
+
+            string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, ss.name as shipmentState, ordDet.quantity
+                             FROM OrderDetail ordDet
+                             JOIN 'Order' ord ON ordDet.orderId = ord.orderId
+                             JOIN Item it ON ordDet.itemId = it.itemId
+                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
+                             WHERE ord.orderId = @OrderId;";
+
+            var collection = Connection.Query<OrderItem>(query, new {OrderId = orderId}).ToList().ToObservableCollection();
+            UpdateItems(collection);
         }
 
         public void Save()
