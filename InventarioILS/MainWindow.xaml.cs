@@ -1,28 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
 using System.Windows.Media;
+using System;
+using InventarioILS.View.UserControls;
 
 namespace InventarioILS
 {
-    public static class ObservableCollectionExt
-    {
-        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
-        {
-            return new ObservableCollection<T>(source);
-        }
-    }
-
     /// <summary>
     /// Lógica de interacción para MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        //readonly DbConnection client;
-        readonly StockItems client;
+        readonly StockItems items;
+        readonly ItemClasses itemClasses;
 
         bool sidebarCollapsed = false;
 
@@ -30,20 +22,43 @@ namespace InventarioILS
 
         bool bottomBarCollapsed = true;
 
-        int orderSectionHeight = 400;
+        int _bottomBarHeight = 0;
+
+        int defaultBottomBarHeight = 400;
+
+        int BottomBarHeight { 
+            get => _bottomBarHeight; 
+            set => _bottomBarHeight = value; 
+        }
 
         bool isStock = true;
+
+        public object SelectedClassItem { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            //client = new DbConnection();
-            client = new StockItems();
+
+            items = new StockItems();
+            itemClasses = new ItemClasses();
+
+            items.Load();
+            itemClasses.Load();
+
+            this.DataContext = new
+            {
+                BottomBarHeight,
+                items.Items,
+                ItemClassList = itemClasses.Items,
+            };
         }
 
         private void AddItemBtn_Click(object sender, RoutedEventArgs e)
         {
-            AddItemPopup.IsOpen = true;
+            AddItemSection.Visibility = Visibility.Visible;
+            OrderListSection.Visibility = Visibility.Collapsed;
+            ShowBottomBar();
+            //AddItemPopup.IsOpen = true;
             var item = new StockItem("R-10", "Resistencia", "estandar / no definido", "Resistencia de 10 ohm", Class.INSUMO, "suficientes", "Cajón 1", 5);
 
             //items.Add(item);
@@ -62,28 +77,22 @@ namespace InventarioILS
 
         public void SetItems()
         {
-            //items.Clear();
-
-            ////items = !isStock
-            ////    ? client.GetItems(appliedFilters).ToObservableCollection<Item>()
-            ////    : client.GetStockItems(appliedFilters).ToObservableCollection<Item>();
-
-
-            //ItemView.ItemsSource = items;
-
-            client.Load();
-            ItemView.ItemsSource = client.Items;
+            items.Load();
         }
 
-        private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
         {
-            var selectedItem = ClassComboBox.SelectedItem;
+            var combo = (QueryableComboBox)sender;
 
+            var selectedItem = (ItemMisc)combo.SelectedItem;
+            
             if (selectedItem == null) return;
 
-            var content = ((ComboBoxItem)selectedItem).Content;
+            var content = selectedItem.Name;
 
-            client.AddFilter(Filters.CLASS_NAME, content.ToString());
+            //MessageBox.Show("Contenido:" + content);
+
+            items.AddFilter(Filters.CLASS_NAME, content.ToString());
 
             SetItems();
         }
@@ -92,12 +101,12 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
-                client.RemoveFilter(Filters.PRODUCT_CODE);
+                items.RemoveFilter(Filters.PRODUCT_CODE);
                 SetItems();
                 return;
             }
 
-            client.AddFilter(Filters.PRODUCT_CODE, ProductCodeInput.Text);
+            items.AddFilter(Filters.PRODUCT_CODE, ProductCodeInput.Text);
 
             SetItems();
         }
@@ -106,19 +115,19 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(KeywordInput.Text))
             {
-                client.RemoveFilter(Filters.KEYWORD);
+                items.RemoveFilter(Filters.KEYWORD);
                 SetItems();
                 return;
             }
 
-            client.AddFilter(Filters.KEYWORD, KeywordInput.Text);
+            items.AddFilter(Filters.KEYWORD, KeywordInput.Text);
 
             SetItems();
         }
 
         private void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
-            client.ClearFilters();
+            items.ClearFilters();
 
             ClassComboBox.SelectedItem = null;
             ProductCodeInput.Text = string.Empty;
@@ -150,43 +159,50 @@ namespace InventarioILS
             StatusMessageLabel.Visibility = Visibility.Hidden;
         }
 
-        private void CancelEdit_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemPopup.IsOpen = false;
-        }
-
-        private void SaveEdit_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemPopup.IsOpen = false;
-        }
-
         private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
+            InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
+            InventoryTabBtn.FontWeight = FontWeights.Bold;
+
+            OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            OrderTabBtn.FontWeight = FontWeights.Normal;
+
+            SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            SettingsBtn.FontWeight = FontWeights.Normal;
+
             AddOrderBtn.Visibility = Visibility.Collapsed;
             AddItemBtn.Visibility = Visibility.Visible;
-            RightGrid.RowDefinitions[1].Height = new GridLength(0);
+
+            ShowBottomBar(false);
 
             Grid.SetRow(CollapsedButtonBar, 0);
+        }
 
-            bottomBarCollapsed = true;
+        private void ShowBottomBar(bool show = true)
+        {
+            var row = Grid.GetRow(OrderListSection);
+            RightGrid.RowDefinitions[row].Height = new GridLength(show ? defaultBottomBarHeight : 0);
 
-            InventoryTabBtn.IsEnabled = false;
-            OrderTabBtn.IsEnabled = true;
+            Grid.SetRow(CollapsedButtonBar, show ? 1 : 0);
+
+            bottomBarCollapsed = show;
         }
 
         private void OrderTabBtn_Click(object sender, RoutedEventArgs e)
         {
-            var row = Grid.GetRow(OrderListSection);
-            RightGrid.RowDefinitions[row].Height = new GridLength(orderSectionHeight);
+            InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            InventoryTabBtn.FontWeight = FontWeights.Normal;
+
+            SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            SettingsBtn.FontWeight = FontWeights.Normal;
+
+            OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
+            OrderTabBtn.FontWeight = FontWeights.Bold;
+
+            ShowBottomBar();
+
             AddOrderBtn.Visibility = Visibility.Visible;
             AddItemBtn.Visibility = Visibility.Collapsed;
-
-            Grid.SetRow(CollapsedButtonBar, 1);
-
-            bottomBarCollapsed = false;
-
-            InventoryTabBtn.IsEnabled = true;
-            OrderTabBtn.IsEnabled = false;
         }
 
         // TODO: Refactor this method to reduce complexity
@@ -271,6 +287,33 @@ namespace InventarioILS
 
             OrderListSection.Visibility = Visibility.Collapsed;
             AddOrderSection.Visibility = Visibility.Visible;
+        }
+
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InventoryTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            InventoryTabBtn.FontWeight = FontWeights.Normal;
+
+            OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
+            OrderTabBtn.FontWeight = FontWeights.Normal;
+
+            SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
+            SettingsBtn.FontWeight = FontWeights.Bold;
+
+            InventoryTabBtn.IsEnabled = false;
+            OrderTabBtn.IsEnabled = false;
+
+            ItemView.Visibility = Visibility.Collapsed;
+            SettingsSection.Visibility = Visibility.Visible;
+        }
+
+        private void SettingsBackBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InventoryTabBtn.IsEnabled = true;
+            OrderTabBtn.IsEnabled = true;
+
+            ItemView.Visibility = Visibility.Visible;
+            SettingsSection.Visibility = Visibility.Collapsed;
         }
     }
 }

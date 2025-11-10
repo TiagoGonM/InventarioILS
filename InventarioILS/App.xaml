@@ -13,9 +13,30 @@
         <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
         <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource Foreground}"/>
         <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
-        <SolidColorBrush x:Key="AccentForegroundBrush" Color="{StaticResource AccentForeground}"/>
-        
-        
+        <SolidColorBrush x:Key="AccentForegroundBrush" Color="{StaticResource AccentForeground}"/>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Border"
+                                Padding="5"
+                                Background="Transparent">
+                            <ContentPresenter x:Name="ContentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="#DD98E8D6"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="ContentPresenter" Property="TextElement.FontWeight" Value="Bold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -37,6 +58,7 @@
                     <ControlTemplate TargetType="TextBox">
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="5"
+                                Padding="2,0"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ScrollViewer x:Name="PART_ContentHost"
@@ -45,6 +67,29 @@
                                           VerticalAlignment="Center"
                             />
                         </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TabButton" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -317,7 +362,7 @@
                             </Grid.ColumnDefinitions>
                             <ToggleButton Name="ToggleButton"
                                     Grid.ColumnSpan="2"
-                                    Background="Transparent"
+                                    Background="{TemplateBinding Background}"
                                     Foreground="{TemplateBinding Foreground}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="1"
@@ -327,6 +372,7 @@
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="5"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}">
                                             <Grid>
@@ -374,11 +420,12 @@
                                     RecognizesAccessKey="True"/>
                             </ToggleButton>
                             <Popup Name="Popup"
-                                Placement="Bottom"
-                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                                AllowsTransparency="True"
-                                Focusable="False"
-                                PopupAnimation="Slide">
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                   PopupAnimation="Slide">
                                 <Border
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -386,7 +433,7 @@
                                     BorderThickness="1">
                                     <ScrollViewer 
                                         Foreground="{TemplateBinding Foreground}">
-                                        <StackPanel IsItemsHost="True"/>
+                                        <StackPanel x:Name="ItemList" IsItemsHost="True"/>
                                     </ScrollViewer>
                                 </Border>
                             </Popup>
