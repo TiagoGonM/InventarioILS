@@ -121,7 +121,7 @@
             </Grid>
 
             <!-- Tabla de datos -->
-            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" ItemsSource="{Binding Items}"/>
+            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" d:Visibility="Hidden" ItemsSource="{Binding Items}"/>
             <Grid x:Name="SettingsSection" Visibility="Collapsed" d:Visibility="Visible">
                 <Button x:Name="SettingsBackBtn" Click="SettingsBackBtn_Click" Content="← Volver" 
                         Width="100" Height="50" Margin="10"
@@ -194,7 +194,7 @@
                         Visibility="Hidden"
                         d:Visibility="Visible"
                         Background="#FF9BE8D6">
-                    <TextBlock Text="🠖" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Height="50" Width="50" />
+                    <TextBlock Text="🠖" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" Margin="0,8,0,0" HorizontalAlignment="Center" Height="50" Width="50" />
                 </Button>
             </Grid>
         </Grid>
