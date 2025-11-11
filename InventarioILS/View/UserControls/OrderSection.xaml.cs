@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace InventarioILS.View.UserControls
@@ -33,7 +34,12 @@ namespace InventarioILS.View.UserControls
 
         private void OrderCard_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            new ViewOrderPopup().Show();
+            if (sender is OrderCard card)
+            {
+                var order = new Order((int)card.Tag, card.Title, card.Description, card.CreationDate);
+
+                new ViewOrderPopup(order).Show();
+            }
         }
     }
 }

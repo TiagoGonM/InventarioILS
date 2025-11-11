@@ -5,90 +5,56 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventarioILS.View.UserControls"
         mc:Ignorable="d"
-        Width="1000" Height="700"
+        Width="1128" Height="700"
         Background="{StaticResource BackgroundBrush}">
 
-    <Window.Resources>
-        <!-- Column header style to match the supplied design -->
-        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-
-        <!-- Cell style with spacing and white text -->
-        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <!-- Row style for even spacing -->
-        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
-            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Height" Value="56"/>
-        </Style>
-    </Window.Resources>
-    
-    <Grid Margin="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- barra superior -->
-            <RowDefinition Height="Auto"/>  <!-- descripción -->
-            <RowDefinition Height="*"/>     <!-- datagrid -->
-            <RowDefinition Height="Auto"/>  <!-- botón confirmar -->
-        </Grid.RowDefinitions>
+    <StackPanel Margin="12">
+        <!--<.RowDefinitions>
+            <RowDefinition Height="Auto"/>  --><!-- barra superior --><!--
+            <RowDefinition Height="Auto"/>  --><!-- descripción --><!--
+            <RowDefinition Height="*"/>     --><!-- datagrid --><!--
+            <RowDefinition Height="Auto"/>  --><!-- botón confirmar --><!--
+        </.RowDefinitions>-->
 
         <!-- Barra superior con línea turquesa -->
         <Border Grid.Row="0" BorderBrush="{StaticResource AccentBrush}" BorderThickness="0,3,0,0" Padding="6" Margin="0,0,0,14">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Text="{Binding OrderCreationDate, StringFormat=dd/MM/yyyy, FallbackValue=--/--/----}" Foreground="#E6E6E6" VerticalAlignment="Center" Margin="8,0"/>
-                <TextBlock Grid.Column="1" Text="{Binding OrderName, Mode=OneWay}" Foreground="#E6E6E6" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{Binding OrderName, Mode=OneWay, FallbackValue=Pedido #N}" Foreground="#E6E6E6" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Grid.Column="2" Content="✕" Width="28" Height="28" Style="{StaticResource RoundedButton}" HorizontalAlignment="Right"/>
             </Grid>
         </Border>
 
         <!-- Descripción -->
         <StackPanel Grid.Row="1" Margin="16,0,16,12">
-            <TextBlock Text="Descripción" Foreground="#E6E6E6" FontWeight="Bold" Margin="0,0,0,6"/>
-            <TextBox x:Name="PedidoDescripcionTextBox"
-                     Text="{Binding OrderDescription, Mode=OneWay}"
-                     AcceptsReturn="True" TextWrapping="Wrap"
-                     Background="#222" Foreground="#E6E6E6"
-                     BorderBrush="{StaticResource AccentBrush}" BorderThickness="3"
-                     Height="110" Padding="12"
-                     Style="{StaticResource RoundedInput}"/>
+            <TextBlock Text="Descripción" Margin="0,0,0,4" Foreground="{StaticResource AccentForegroundBrush}"/>
+            <TextBox x:Name="DescriptionInput" Text="{Binding OrderDescription, Mode=OneWay}" Margin="0,4,0,8" MinHeight="28" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
         </StackPanel>
 
         <!-- DataGrid dentro de borde turquesa -->
-        <Border Grid.Row="2" BorderBrush="{StaticResource AccentBrush}" BorderThickness="3" CornerRadius="4" Padding="8" Margin="16,0" Background="{StaticResource SecondaryBrush}">
-            <DataGrid x:Name="ItemView" CanUserAddRows="False" CanUserDeleteRows="False" RowBackground="#FF232323"
-                      AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0" ColumnHeaderHeight="40" 
+        <Border Grid.Row="2" BorderBrush="{StaticResource AccentBrush}" BorderThickness="0" Margin="16,0" Background="{StaticResource SecondaryBrush}">
+            <DataGrid x:Name="ItemView" CanUserAddRows="False" CanUserDeleteRows="False" RowBackground="#FF232323" MinHeight="450"
+                      AlternatingRowBackground="#FF232323" BorderBrush="{StaticResource SecondaryBrush}" GridLinesVisibility="None" Margin="0,0,0,0" ColumnHeaderHeight="40" 
                       RowHeight="40" FontSize="16" HorizontalAlignment="Center" HeadersVisibility="Column" AutoGenerateColumns="False" Background="{DynamicResource BackgroundBrush}"
                       ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}" CellStyle="{StaticResource DataGridCellStyle}" RowStyle="{StaticResource DataGridRowStyle}" ItemsSource="{Binding Items}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
+                    <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" MinWidth="100" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                     <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                    <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                    <DataGridTextColumn Header="Envio" Binding="{Binding ShipmentState}" Width="120" Foreground="{StaticResource ForegroundBrush}"/>
-                    <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantity}" Width="40" Foreground="{StaticResource ForegroundBrush}"/>
+                    <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" MinWidth="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
+                    <DataGridTextColumn Header="Envio" Binding="{Binding ShipmentState}" MinWidth="120" Foreground="{StaticResource ForegroundBrush}"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding Quantity}" MinWidth="70" Foreground="{StaticResource ForegroundBrush}"/>
+                    <DataGridCheckBoxColumn Header="Recibido" Binding="{Binding IsReceived, Mode=TwoWay}" MinWidth="90"/>
                 </DataGrid.Columns>
                 </DataGrid>
         </Border>
 
         <!-- Botón confirmar centrado -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-            <Button Style="{StaticResource RoundedButton}" Content="Confirmar Recibidos"/>
-        </StackPanel>
-    </Grid>
+            <Button Grid.Row="3" Style="{StaticResource RoundedButton}" Background="{StaticResource AccentBrush}" Margin="0,10,0,0" MaxWidth="150" MinHeight="40" Padding="2" Content="Confirmar Recibidos"/>
+    </StackPanel>
 </Window>

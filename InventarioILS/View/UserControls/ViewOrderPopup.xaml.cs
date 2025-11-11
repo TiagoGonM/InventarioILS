@@ -12,14 +12,18 @@ namespace InventarioILS.View.UserControls
         public ViewOrderPopup()
         {
             InitializeComponent();
+        }
 
+        public ViewOrderPopup(Order order) : this()
+        {
             var orderItems = new OrderItems();
-            orderItems.LoadSingle(1);
+            orderItems.LoadSingle(order.Id);
+
             DataContext = new
             {
-                OrderName = "Pedido #1",
-                OrderDescription = "pedido de prueba",
-                OrderCreationDate = DateTime.Now.ToString("dd/MM/yyyy"),
+                OrderName = order.Name,
+                OrderDescription = order.Description,
+                OrderCreationDate = order.CreatedAt.ToString("dd/MM/yyyy"),
                 orderItems.Items
             };
         }

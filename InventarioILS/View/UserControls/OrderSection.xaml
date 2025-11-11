@@ -70,6 +70,7 @@
                                 <local:OrderCard Title="{Binding Name}"
                                    CreationDate="{Binding CreatedAt}"
                                    Description="{Binding Description}"
+                                   Tag="{Binding Id}"
                                    Margin="5,0" MouseDoubleClick="OrderCard_MouseDoubleClick"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
