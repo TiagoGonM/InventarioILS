@@ -6,47 +6,38 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="1000">
-    
-    <UserControl.Resources>
-        <!-- Column header style to match the supplied design -->
-        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-
-        <!-- Cell style with spacing and white text -->
-        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <!-- Row style for even spacing -->
-        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
-            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Height" Value="56"/>
-        </Style>
-    </UserControl.Resources>
-    
+   
     <Grid Background="{StaticResource BackgroundBrush}">
-        <DataGrid x:Name="ItemView" CanUserAddRows="False" CanUserDeleteRows="False" RowBackground="#FF232323"
-          AlternatingRowBackground="#FF232323" GridLinesVisibility="None" Margin="0,0,0,0" ColumnHeaderHeight="40" 
-          RowHeight="40" FontSize="16" HorizontalAlignment="Center" HeadersVisibility="Column" AutoGenerateColumns="False" Background="{DynamicResource BackgroundBrush}"
-          ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}" CellStyle="{StaticResource DataGridCellStyle}" RowStyle="{StaticResource DataGridRowStyle}">
+        <DataGrid x:Name="ItemView"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserSortColumns="True"
+                  RowBackground="#FF232323"
+                  MinHeight="450"
+                  AlternatingRowBackground="#FF232323"
+                  BorderBrush="{StaticResource SecondaryBrush}"
+                  CanUserResizeColumns="True"
+                  GridLinesVisibility="None"
+                  Margin="0"
+                  ColumnHeaderHeight="40"
+                  RowHeight="40"
+                  FontSize="16"
+                  HorizontalAlignment="Stretch"
+                  HeadersVisibility="Column"
+                  AutoGenerateColumns="False"
+                  Background="{DynamicResource BackgroundBrush}"
+                  ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
+                  CellStyle="{StaticResource DataGridCellStyle}"
+                  RowStyle="{StaticResource DataGridRowStyle}"
+                  ItemsSource="{Binding Items}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                <DataGridTextColumn Header="Estado" Binding="{Binding State}" Width="120" Foreground="{StaticResource ForegroundBrush}" Visibility="Visible"/>
-                <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantity}" Width="40" Foreground="{StaticResource ForegroundBrush}"/>
-                <DataGridTextColumn Header="Ubicación" Binding="{Binding Location}" Width="160" Foreground="{StaticResource ForegroundBrush}"/>
-                <DataGridTextColumn Header="Notas" Binding="{Binding AdditionalNotes}" Width="80" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" SortMemberPath="ProductCode" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" SortMemberPath="Description" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" SortMemberPath="Class" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Estado" Binding="{Binding State}" SortMemberPath="State" Width="120" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Ubicación" Binding="{Binding Location}" SortMemberPath="Location" Width="160" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding Quantity}" SortMemberPath="Quantity" Width="70" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTextColumn Header="Notas" Binding="{Binding AdditionalNotes}" SortMemberPath="AdditionalNotes" Width="80" Foreground="{StaticResource ForegroundBrush}" CanUserResize="False"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
