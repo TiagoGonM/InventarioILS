@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using Dapper;
-using InventarioILS.Model;
-
-namespace InventarioILS
+﻿namespace InventarioILS.Model
 {
     public enum Class
     {

@@ -300,7 +300,7 @@ namespace InventarioILS.Model
         {
             if (Connection == null) return;
 
-            string query = @"SELECT ordDet.orderDetailId id, o.name, it.productCode, it.description, ss.name as shipmentState, ordDet.quantity
+            string query = @"SELECT ordDet.orderDetailId id, o.name, it.productCode, it.description, it.class, ss.name as shipmentState, ordDet.quantity
                              FROM OrderDetail ordDet
                              JOIN 'Order' o ON ordDet.orderId = o.orderId
                              JOIN Item it ON ordDet.itemId = it.itemId
@@ -314,11 +314,12 @@ namespace InventarioILS.Model
         {
             if (Connection == null) return;
 
-            string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, ss.name as shipmentState, ordDet.quantity
+            string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, c.name class, ss.name shipmentState, ordDet.quantity
                              FROM OrderDetail ordDet
                              JOIN 'Order' ord ON ordDet.orderId = ord.orderId
                              JOIN Item it ON ordDet.itemId = it.itemId
                              JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
+                             JOIN Class c ON it.classId = c.classId 
                              WHERE ord.orderId = @OrderId;";
 
             var collection = Connection.Query<OrderItem>(query, new {OrderId = orderId}).ToList().ToObservableCollection();
