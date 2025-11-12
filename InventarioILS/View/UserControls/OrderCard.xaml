@@ -28,7 +28,7 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Name="TitleLabel" 
-                               Text="{Binding Title, ElementName=orderCard, FallbackValue=Pedido #N}" 
+                               Text="{Binding Title, ElementName=orderCard, FallbackValue=Pedido #N}"
                                FontWeight="Bold" FontSize="16" Foreground="White"/>
                     <TextBlock x:Name="CreationDateLabel" 
                                Text="{Binding CreationDate, ElementName=orderCard, StringFormat=dd/MM/yyyy, FallbackValue=--/--/----}" 
@@ -39,9 +39,9 @@
                            Foreground="#BFBFBF" TextWrapping="Wrap"/>
             </StackPanel>
 
-            <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="72">
+            <!--<Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="72">
                 Ver
-            </Button>
+            </Button>-->
         </Grid>
     </Border>
 </UserControl>
