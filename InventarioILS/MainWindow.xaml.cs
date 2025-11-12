@@ -45,7 +45,7 @@ namespace InventarioILS
             items.Load();
             itemClasses.Load();
 
-            this.DataContext = new
+            DataContext = new
             {
                 BottomBarHeight,
                 items.Items,
