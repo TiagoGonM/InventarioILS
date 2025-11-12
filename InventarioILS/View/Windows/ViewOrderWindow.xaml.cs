@@ -2,19 +2,19 @@
 using System;
 using System.Windows;
 
-namespace InventarioILS.View.UserControls
+namespace InventarioILS.View.Windows
 {
     /// <summary>
     /// Lógica de interacción para ViewOrderPopup.xaml
     /// </summary>
-    public partial class ViewOrderPopup : Window
+    public partial class ViewOrderWindow : Window
     {
-        public ViewOrderPopup()
+        public ViewOrderWindow()
         {
             InitializeComponent();
         }
 
-        public ViewOrderPopup(Order order) : this()
+        public ViewOrderWindow(Order order) : this()
         {
             var orderItems = new OrderItems();
             orderItems.LoadSingle(order.Id);
