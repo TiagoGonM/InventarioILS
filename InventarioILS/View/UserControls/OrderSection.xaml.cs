@@ -1,7 +1,8 @@
-﻿using InventarioILS.Model;
-using System.Linq;
-using System.Windows;
+﻿using System.Linq;
 using System.Windows.Controls;
+
+using InventarioILS.Model;
+using InventarioILS.View.Windows;
 
 namespace InventarioILS.View.UserControls
 {
@@ -38,7 +39,7 @@ namespace InventarioILS.View.UserControls
             {
                 var order = new Order((int)card.Tag, card.Title, card.Description, card.CreationDate);
 
-                new ViewOrderPopup(order).Show();
+                new ViewOrderWindow(order).Show();
             }
         }
     }
