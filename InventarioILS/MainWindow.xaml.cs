@@ -39,11 +39,8 @@ namespace InventarioILS
         {
             InitializeComponent();
 
-            items = new StockItems();
-            itemClasses = new ItemClasses();
-
-            items.Load();
-            itemClasses.Load();
+            items = StockItems.Instance;
+            itemClasses = ItemClasses.Instance;
 
             DataContext = new
             {
@@ -58,21 +55,6 @@ namespace InventarioILS
             AddItemSection.Visibility = Visibility.Visible;
             OrderListSection.Visibility = Visibility.Collapsed;
             ShowBottomBar();
-            //AddItemPopup.IsOpen = true;
-            var item = new StockItem("R-10", "Resistencia", "estandar / no definido", "Resistencia de 10 ohm", Class.INSUMO, "suficientes", "Cajón 1", 5);
-
-            //items.Add(item);
-
-            //try
-            //{
-            //    client.SaveItem(item);
-            //} catch (SqliteException ex)
-            //{
-            //    UpdateMessageStatus($"Error al guardar el ítem: {ex.Message}", Brushes.Red);
-            //    return;
-            //}
-
-            //UpdateMessageStatus("Ítem guardado exitosamente.", Brushes.Green);
         }
 
         public void SetItems()
@@ -92,7 +74,7 @@ namespace InventarioILS
 
             //MessageBox.Show("Contenido:" + content);
 
-            items.AddFilter(Filters.CLASS_NAME, content.ToString());
+            items.QueryFilters.AddFilter(StockItems.Filters.CLASS_NAME, content.ToString());
 
             SetItems();
         }
@@ -101,12 +83,12 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
-                items.RemoveFilter(Filters.PRODUCT_CODE);
+                items.QueryFilters.RemoveFilter(StockItems.Filters.PRODUCT_CODE);
                 SetItems();
                 return;
             }
 
-            items.AddFilter(Filters.PRODUCT_CODE, ProductCodeInput.Text);
+            items.QueryFilters.AddFilter(StockItems.Filters.PRODUCT_CODE, ProductCodeInput.Text);
 
             SetItems();
         }
@@ -115,19 +97,19 @@ namespace InventarioILS
         {
             if (string.IsNullOrEmpty(KeywordInput.Text))
             {
-                items.RemoveFilter(Filters.KEYWORD);
+                items.QueryFilters.RemoveFilter(StockItems.Filters.KEYWORD);
                 SetItems();
                 return;
             }
 
-            items.AddFilter(Filters.KEYWORD, KeywordInput.Text);
+            items.QueryFilters.AddFilter(StockItems.Filters.KEYWORD, KeywordInput.Text);
 
             SetItems();
         }
 
         private void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
-            items.ClearFilters();
+            items.QueryFilters.ClearFilters();
 
             ClassComboBox.SelectedItem = null;
             ProductCodeInput.Text = string.Empty;
