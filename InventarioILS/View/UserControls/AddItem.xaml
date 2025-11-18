@@ -5,31 +5,40 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+             d:DesignHeight="200" d:DesignWidth="1500">
 
-        <StackPanel Grid.Column="0" Orientation="Vertical" Margin="16,0,16,0">
+        <Border BorderBrush="White" Grid.ColumnSpan="2" BorderThickness="1" Padding="0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Vertical" Margin="16,0,16,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Código" VerticalAlignment="Center" Foreground="{StaticResource AccentForegroundBrush}"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                <TextBlock x:Name="CodeCategoryShorthand" Foreground="{StaticResource ForegroundBrush}"/>
+                                <TextBlock x:Name="CodeSeparator" Text="-" Foreground="{StaticResource ForegroundBrush}"/>
+                                <TextBlock x:Name="CodeMain" Foreground="{StaticResource ForegroundBrush}"/>
+                                <TextBlock x:Name="CodeUnit" Foreground="{StaticResource ForegroundBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <local:QueryableComboBox Title="Categoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItemChanged="CategoryComboBox_SelectedItemChanged" />
+                        <local:QueryableComboBox Title="Subcategoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding SubcategoryList, Mode=OneWay}" SelectedItemChanged="SubcategoryComboBox_SelectedItemChanged" />
+                        <local:QueryableComboBox Title="Tipo" MinWidth="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="16,0,16,0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Descripción" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox x:Name="DescriptionInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
 
-            <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
+                    <TextBlock Text="Notas" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <local:QueryableComboBox Title="Categoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
-                <local:QueryableComboBox Title="Subcategoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding SubcategoryList, Mode=OneWay}" SelectedItem="{Binding SelectedSubcategory, Mode=TwoWay}" />
-                <local:QueryableComboBox Title="Tipo" MinWidth="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
-            </StackPanel>
+                    <Button x:Name="ConfirmButton" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmButton_Click"/>
+                </StackPanel>
+        </Grid>
+        </Border>
 
-        </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="16,0,16,0">
-            <TextBlock Text="Descripción" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <TextBox x:Name="DescriptionInput" Margin="0,4,0,8" MinHeight="28" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
-
-            <TextBlock Text="Notas" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
-        </StackPanel>
-    </Grid>
 </UserControl>
