@@ -8,77 +8,41 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1952">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                <TextBlock Text="{Binding Count, FallbackValue=0}" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center" Margin="5,0" FontSize="15"/>
-            </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="Pedidos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding Count, FallbackValue=0}" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center" Margin="5,0" FontSize="15"/>
+        </StackPanel>
 
-            <!--<ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" ItemHeight="120" ItemWidth="600" HorizontalAlignment="Center" Margin="10" MaxWidth="1500" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-
-                <ListViewItem>
-                    <local:OrderCard Margin="5,0" />
-                </ListViewItem>
-
-                <ListViewItem>
-                    <local:OrderCard Margin="5,0" />
-                </ListViewItem>
-            </ListView>-->
-
-            <!--<ScrollViewer>
-                <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel ItemHeight="120" ItemWidth="600" HorizontalAlignment="Center" Margin="10" MaxWidth="1500" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                    <local:OrderCard Margin="5,0" />
-                </ListView>
-            </ScrollViewer>-->
-
-            <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
-            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
-                <WrapPanel x:Name="OrdersPanel" 
+        <!-- Contenedor de tarjetas: muestra tarjetas de ejemplo en filas y columnas -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <WrapPanel x:Name="OrdersPanel" 
                HorizontalAlignment="Center" 
                Margin="10" 
                MaxWidth="1500">
-                    <ItemsControl x:Name="ItemControl" 
+                <ItemsControl x:Name="ItemControl" 
                      ItemsSource="{Binding OrderList, Mode=OneWay}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel ItemHeight="120" ItemWidth="600"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="local:OrderCard">
-                                <local:OrderCard Title="{Binding Name}"
-                                   CreationDate="{Binding CreatedAt}"
-                                   Description="{Binding Description}"
-                                   Tag="{Binding Id}"
-                                   Cursor="Hand"
-                                   FocusVisualStyle="{x:Null}"
-                                   Margin="5,0" MouseDoubleClick="OrderCard_MouseDoubleClick"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </WrapPanel>
-            </ScrollViewer>
-        </StackPanel>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="local:OrderCard">
+                            <local:OrderCard MinWidth="500" Title="{Binding Name}"
+                                    CreationDate="{Binding CreatedAt}"
+                                    Description="{Binding Description}"
+                                    Tag="{Binding Id}"
+                                    Cursor="Hand"
+                                    FocusVisualStyle="{x:Null}"
+                                    Margin="5,0" MouseDoubleClick="OrderCard_MouseDoubleClick"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </WrapPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

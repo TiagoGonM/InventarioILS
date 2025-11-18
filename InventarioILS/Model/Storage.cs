@@ -292,6 +292,7 @@ namespace InventarioILS.Model
         {
             if (Connection == null) return;
 
+            // TODO: might be nice to use ids directly instead of names? QueryableComboBox.Tag has these ids if ItemsSource implements IIdentifiable
             var categoryId = Connection.QuerySingleOrDefault<int>(
                 "SELECT categoryId FROM Category WHERE name = @CategoryName COLLATE NOCASE",
                 new { item.CategoryName });

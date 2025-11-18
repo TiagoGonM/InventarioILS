@@ -19,7 +19,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Border Background="{StaticResource BackgroundBrush}" CornerRadius="4" Padding="10" Height="100" BorderBrush="#111" BorderThickness="1" Width="Auto" Margin="0,15,0,15">
+    <Border Background="{StaticResource BackgroundBrush}" Padding="10" Height="100" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2,0,0,0" Width="Auto" Margin="0,15,0,15">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
