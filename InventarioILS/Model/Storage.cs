@@ -5,22 +5,24 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace InventarioILS.Model
 {
+    class SQLUtils
+    {
+        public static string StringCapitalize(string col = "name") =>
+            @$"CONCAT(
+                UPPER(SUBSTRING({col}, 1, 1)),
+                LOWER(SUBSTRING({col}, 2, LENGTH({col})))
+            )";
+    }
     public interface ILoadSave
     {
         void Add(Item item);
         void Save();
         void Load();
-    }
-
-    public enum Filters
-    {
-        PRODUCT_CODE,
-        KEYWORD,
-        CLASS_NAME
     }
 
     public class Map<TKey, TValue> : Dictionary<TKey, TValue>
@@ -63,119 +65,178 @@ namespace InventarioILS.Model
             var currentIds = Items.Select(x => x.Id).ToList();
             var newIds = collection.Select(x => x.Id).ToList();
 
-            // Eliminar items que ya no existen en la nueva colección
             var itemsToRemove = Items.Where(x => !newIds.Contains(x.Id)).ToList();
             foreach (var item in itemsToRemove)
             {
                 Items.Remove(item);
             }
 
-            // Actualizar items existentes y agregar nuevos
             foreach (var newItem in collection)
             {
                 var existingItem = Items.FirstOrDefault(x => x.Id == newItem.Id);
                 if (existingItem != null)
                 {
-                    // Actualizar el item existente con los nuevos datos
                     var index = Items.IndexOf(existingItem);
                     Items[index] = newItem;
                 }
                 else
                 {
-                    // Agregar nuevo item
                     Items.Add(newItem);
                 }
             }
         }
     }
-    internal class ItemCategories : Storage<ItemMisc>, ILoadSave
+
+    /// <summary>
+    /// Clase base para implementar Singleton sin duplicar código
+    /// </summary>
+    internal abstract class SingletonStorage<T, TDerived> : Storage<T> 
+        where T : IIdentifiable 
+        where TDerived : SingletonStorage<T, TDerived>, new()
     {
-        public void Add(Item item)
-        {
-            throw new NotImplementedException();
-        }
+        private static TDerived _instance;
+        private static readonly Lock _lock = new();
 
-        public void Load()
-        {
-            if (Connection == null) return;
-            string query = @"SELECT categoryId id, name FROM Category;";
-            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+        protected SingletonStorage() { }
 
-            UpdateItems(collection);
-        }
-
-        public void Save()
+        /// <summary>
+        /// Singleton pattern implementation
+        /// </summary>
+        public static TDerived Instance
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (_instance != null) return _instance;
+                
+                lock (_lock)
+                {
+                    _instance ??= new TDerived();
+                }
+                return _instance;
+            }
         }
     }
 
-    internal class ItemSubCategories : Storage<ItemMisc>, ILoadSave
+    internal class FiltersImpl<T> where T : Enum
     {
-        public void Add(Item item)
+        public Map<T, string> FilterList { get; }
+
+        public FiltersImpl()
         {
-            throw new NotImplementedException();
+            FilterList = [];
         }
 
-        public void Load()
+        public void AddFilter(T type, string value)
         {
-            if (Connection == null) return;
-            string query = @"SELECT subcategoryId id, name FROM Subcategory;";
-            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
-
-            UpdateItems(collection);
+            FilterList.AddOrUpdate(type, value);
         }
 
-        public void Save()
+        public void RemoveFilter(T type)
         {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class ItemClasses : Storage<ItemMisc>, ILoadSave
-    {
-        public void Add(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Load()
-        {
-            if (Connection == null) return;
-            string query = @"SELECT classId id, name FROM Class;";
-            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
-
-            UpdateItems(collection);
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class StockItems : Storage<StockItem>, ILoadSave
-    {
-        Map<Filters, string> QueryFilters { get; }
-
-        public StockItems() : base()
-        {
-            QueryFilters = [];
-        }
-
-        public void AddFilter(Filters type, string value)
-        {
-            QueryFilters.AddOrUpdate(type, value);
-        }
-
-        public void RemoveFilter(Filters type)
-        {
-            QueryFilters.Remove(type);
+            FilterList.Remove(type);
         }
 
         public void ClearFilters()
         {
-            QueryFilters.Clear();
+            FilterList.Clear();
+        }
+    }
+
+    internal class ItemCategories : SingletonStorage<Category, ItemCategories>, ILoadSave
+    {
+        public ItemCategories()
+        {
+            Load();
+        }
+
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name , * FROM Category3 ORDER BY name ASC;";
+            var collection = Connection.Query<Category>(query).ToList().ToObservableCollection();
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ItemSubCategories : SingletonStorage<ItemMisc, ItemSubCategories>, ILoadSave
+    {
+        public ItemSubCategories()
+        {
+            Load();
+        }
+
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name FROM Subcategory ORDER BY name ASC;";
+            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ItemClasses : SingletonStorage<ItemMisc, ItemClasses>, ILoadSave
+    {
+        public ItemClasses()
+        {
+            Load();
+        }
+
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @$"SELECT 
+                             classId id, 
+                             {SQLUtils.StringCapitalize()} name
+                             FROM Class ORDER BY name ASC;";
+            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class StockItems : SingletonStorage<StockItem, StockItems>, ILoadSave
+    {
+        public enum Filters
+        {
+            PRODUCT_CODE,
+            KEYWORD,
+            CLASS_NAME
+        }
+
+        public FiltersImpl<Filters> QueryFilters = new();
+
+        public StockItems()
+        {
+            Load();
         }
 
         public void Save()
@@ -186,7 +247,7 @@ namespace InventarioILS.Model
         {
             if (Connection == null) return;
 
-            string query = @"SELECT sto.itemStockId id, it.productCode, c.name category, s.name subcategory, class.name class, it.description, st.name state, sto.location, sto.additionalNotes, COUNT(*) quantity
+            string query = @$"SELECT sto.itemStockId id, it.productCode, c.name category, s.name subcategory, {SQLUtils.StringCapitalize("class.name")} class, it.description, {SQLUtils.StringCapitalize("st.name")} state, {SQLUtils.StringCapitalize("sto.location")} location, sto.additionalNotes, COUNT(*) quantity
                                  FROM ItemStock sto
                                  JOIN Item it ON sto.itemId = it.itemId
                                  JOIN Class class ON it.classId = class.classId
@@ -198,33 +259,32 @@ namespace InventarioILS.Model
 
             var parameters = new DynamicParameters();
 
-            if (QueryFilters.ContainsKey(Filters.PRODUCT_CODE))
+            if (QueryFilters.FilterList.ContainsKey(Filters.PRODUCT_CODE))
             {
                 query += " AND it.productCode LIKE @productCode COLLATE NOCASE";
-                parameters.Add("productCode", $"%{QueryFilters[Filters.PRODUCT_CODE]}%");
+                parameters.Add("productCode", $"%{QueryFilters.FilterList[Filters.PRODUCT_CODE]}%");
             }
 
-            if (QueryFilters.ContainsKey(Filters.KEYWORD))
+            if (QueryFilters.FilterList.ContainsKey(Filters.KEYWORD))
             {
                 query += " AND it.description LIKE @keyword COLLATE NOCASE";
-                parameters.Add("keyword", $"%{QueryFilters[Filters.KEYWORD]}%");
+                parameters.Add("keyword", $"%{QueryFilters.FilterList[Filters.KEYWORD]}%");
             }
 
-            if (QueryFilters.ContainsKey(Filters.CLASS_NAME))
+            if (QueryFilters.FilterList.ContainsKey(Filters.CLASS_NAME))
             {
                 query += " AND class.name LIKE @className COLLATE NOCASE";
-                parameters.Add("className", $"%{QueryFilters[Filters.CLASS_NAME]}%");
+                parameters.Add("className", $"%{QueryFilters.FilterList[Filters.CLASS_NAME]}%");
             }
 
             query += @" GROUP BY 
-                                it.productCode,
-                                c.name,
-                                s.name,
-                                class.name
-                            LIMIT 50;";
+                            it.productCode,
+                            c.name,
+                            s.name,
+                            class.name
+                        LIMIT 50;";
 
             var collection = Connection.Query<StockItem>(query, parameters).ToList().ToObservableCollection();
-
             UpdateItems(collection);
         }
 
@@ -248,26 +308,17 @@ namespace InventarioILS.Model
 
             MessageBox.Show($"CategoryId: {categoryId}, SubcategoryId: {subcategoryId}, CatSubcatId: {catSubcatId}");
 
-            // Si no existe la relación, crearla
-            //if (catSubcatId == 0)
-            //{
-            //    connection.Execute(
-            //        "INSERT INTO CatSubcat (categoryId, subcategoryId) VALUES (@categoryId, @subcategoryId)",
-            //        new { categoryId, subcategoryId });
-
-            //    catSubcatId = connection.QuerySingle<int>(
-            //        "SELECT last_insert_rowid()");
-            //}
-
-            Connection.Execute(@"INSERT INTO Item (productCode, catSubcatId, classId, description)
-                                 VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
-            new
-            {
-                item.ProductCode,
-                CatSubcatId = catSubcatId,
-                ClassId = item.Class,
-                item.Description,
-            });
+            Connection.Execute(
+                @"INSERT INTO Item (productCode, catSubcatId, classId, description)
+                  VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
+                new
+                {
+                    item.ProductCode,
+                    CatSubcatId = catSubcatId,
+                    ClassId = item.Class,
+                    item.Description,
+                }
+            );
 
             if (item is StockItem stockItem)
             {
@@ -275,21 +326,23 @@ namespace InventarioILS.Model
                     "SELECT stateId FROM State WHERE name = @State COLLATE NOCASE",
                     new { stockItem.State });
 
-                Connection.Execute(@"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                                     VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
-                new
-                {
-                    ItemId = Connection.QuerySingle<int>(
-                        "SELECT last_insert_rowid()"),
-                    StateId = stateId,
-                    stockItem.Location,
-                    stockItem.AdditionalNotes
-                });
+                Connection.Execute(
+                    @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                      VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
+                    new
+                    {
+                        ItemId = Connection.QuerySingle<int>(
+                            "SELECT last_insert_rowid()"),
+                        StateId = stateId,
+                        stockItem.Location,
+                        stockItem.AdditionalNotes
+                    }
+                );
             }
         }
     }
 
-    internal class OrderItems : Storage<OrderItem>
+    internal class OrderItems : SingletonStorage<OrderItem, OrderItems>
     {
         public void Add(Item item)
         {
@@ -332,13 +385,20 @@ namespace InventarioILS.Model
         }
     }
 
-    internal class Orders : Storage<Order>, ILoadSave
+    internal class Orders : SingletonStorage<Order, Orders>, ILoadSave
     {
-        Map<Filters, string> QueryFilters { get; }
-
-        public Orders() : base()
+        public enum Filters
         {
-            QueryFilters = [];
+            PRODUCT_CODE,
+            KEYWORD,
+            CLASS_NAME
+        }
+
+        public FiltersImpl<Filters> QueryFilters = new();
+
+        public Orders()
+        {
+            Load();
         }
 
         public void Add(Item item)
@@ -349,14 +409,7 @@ namespace InventarioILS.Model
         public void Load()
         {
             string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o;";
-
             var collection = Connection.Query<Order>(query).ToList().ToObservableCollection();
-
-            //foreach (var obj in collection)
-            //{
-            //    MessageBox.Show($"Order ID: {obj.Id}, Name: {obj.Name}, Description: {obj.Description}, Created At: {obj.CreatedAt}");
-            //}
-
             UpdateItems(collection);
         }
 
@@ -365,5 +418,4 @@ namespace InventarioILS.Model
             throw new NotImplementedException();
         }
     }
-
 }
