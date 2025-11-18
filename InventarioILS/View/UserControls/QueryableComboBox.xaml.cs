@@ -12,7 +12,6 @@ namespace InventarioILS.View.UserControls
         public QueryableComboBox()
         {
             InitializeComponent();
-            ComboBox.SelectionChanged += ComboBox_SelectionChanged;
         }
 
         public QueryableComboBox(string title, IEnumerable itemsSource, object selectedItem) : this()
@@ -82,20 +81,14 @@ namespace InventarioILS.View.UserControls
             }
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
-            {
-                SelectedItem = e.AddedItems[0]; // <- esto actualiza el DP correctamente
-                SelectedItemChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
         private static void OnSelectedItem(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (QueryableComboBox)d;
-            control.ComboBox.SelectedItem = (object)e.NewValue;
+            
+            if (control.ComboBox == null)
+                return;
 
+            control.ComboBox.SelectedItem = (object)e.NewValue;
             control.SelectedItemChanged?.Invoke(control, EventArgs.Empty);
         }
     }
