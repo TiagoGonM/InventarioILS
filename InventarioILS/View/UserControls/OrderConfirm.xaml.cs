@@ -3,11 +3,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace InventarioILS.View.UserControls
 {
-    public partial class OrderConfirm : Window, INotifyPropertyChanged
+    public partial class OrderConfirm : UserControl, INotifyPropertyChanged
     {
         private string _orderCode = "[CÓDIGO]";
         public string OrderCode
@@ -102,8 +103,8 @@ namespace InventarioILS.View.UserControls
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
-            Close();
+            //DialogResult = false;
+            //Close();
         }
 
         private void Confirmar_Click(object sender, RoutedEventArgs e)
@@ -115,8 +116,8 @@ namespace InventarioILS.View.UserControls
             }
 
             // confirmar y cerrar
-            DialogResult = true;
-            Close();
+            //DialogResult = true;
+            //Close();
         }
 
         private void PrevPage_Click(object sender, RoutedEventArgs e)
