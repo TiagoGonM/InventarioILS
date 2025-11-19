@@ -157,7 +157,7 @@ namespace InventarioILS.Model
         public void Load()
         {
             if (Connection == null) return;
-            string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name , * FROM Category3 ORDER BY name ASC;";
+            string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name, * FROM Category ORDER BY name ASC;";
             var collection = Connection.Query<Category>(query).ToList().ToObservableCollection();
             UpdateItems(collection);
         }
@@ -293,40 +293,44 @@ namespace InventarioILS.Model
             if (Connection == null) return;
 
             // TODO: might be nice to use ids directly instead of names? QueryableComboBox.Tag has these ids if ItemsSource implements IIdentifiable
-            var categoryId = Connection.QuerySingleOrDefault<int>(
-                "SELECT categoryId FROM Category WHERE name = @CategoryName COLLATE NOCASE",
-                new { item.CategoryName });
+            //var categoryId = Connection.QuerySingleOrDefault<int>(
+            //    "SELECT categoryId FROM Category WHERE name = @CategoryName COLLATE NOCASE",
+            //    new { item.CategoryName });
 
-            var subcategoryId = Connection.QuerySingleOrDefault<int>(
-                "SELECT subcategoryId FROM Subcategory WHERE name = @SubcategoryName COLLATE NOCASE",
-                new { item.SubcategoryName });
+            //var subcategoryId = Connection.QuerySingleOrDefault<int>(
+            //    "SELECT subcategoryId FROM Subcategory WHERE name = @SubcategoryName COLLATE NOCASE",
+            //    new { item.SubcategoryName });
+
+            ////var classId = Connection.QuerySingleOrDefault<int>
 
             var catSubcatId = Connection.QuerySingleOrDefault<int>(
                 @"SELECT catSubcatId FROM CatSubcat 
-                  WHERE categoryId = @categoryId 
-                  AND subcategoryId = @subcategoryId COLLATE NOCASE",
-                new { categoryId, subcategoryId });
+                  WHERE categoryId = @CategoryId 
+                  AND subcategoryId = @SubcategoryId COLLATE NOCASE",
+                new { item.CategoryId, item.SubcategoryId });
 
-            MessageBox.Show($"CategoryId: {categoryId}, SubcategoryId: {subcategoryId}, CatSubcatId: {catSubcatId}");
+            MessageBox.Show($"CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}, CatSubcatId: {catSubcatId}");
 
-            Connection.Execute(
+            var n = Connection.Execute(
                 @"INSERT INTO Item (productCode, catSubcatId, classId, description)
                   VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
                 new
                 {
                     item.ProductCode,
                     CatSubcatId = catSubcatId,
-                    ClassId = item.Class,
+                    item.ClassId,
                     item.Description,
                 }
             );
 
+            if (n <= 0)
+            {
+                MessageBox.Show("Failed to insert Item record.");
+                return;
+            }
+
             if (item is StockItem stockItem)
             {
-                var stateId = Connection.QuerySingleOrDefault<int>(
-                    "SELECT stateId FROM State WHERE name = @State COLLATE NOCASE",
-                    new { stockItem.State });
-
                 Connection.Execute(
                     @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
                       VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
@@ -334,12 +338,14 @@ namespace InventarioILS.Model
                     {
                         ItemId = Connection.QuerySingle<int>(
                             "SELECT last_insert_rowid()"),
-                        StateId = stateId,
+                        stockItem.StateId,
                         stockItem.Location,
                         stockItem.AdditionalNotes
                     }
                 );
             }
+
+            Load();
         }
     }
 

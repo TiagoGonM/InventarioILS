@@ -4,18 +4,27 @@
     {
         public int Id { get; set; }
         public string ProductCode { get; set; }
-        public string CategoryName { get; set; }
-        public string SubcategoryName { get; set; }
+
+
+        public string Category { get; set; }
+        public int CategoryId { get; set; }
+
+
+        public string Subcategory { get; set; }
+        public int SubcategoryId { get; set; }
+
+
         public string Class { get; set; }
+        public int ClassId { get; set; }
         public string Description { get; set; }
         
-        protected Item(string productCode, string categoryName, string subcategoryName, string description, string type)
+        protected Item(string productCode, int categoryId, int subcategoryId, string description, int classId)
         {
             ProductCode = productCode;
-            CategoryName = categoryName;
-            SubcategoryName = subcategoryName;
+            CategoryId = categoryId;
+            SubcategoryId = subcategoryId;
             Description = description;
-            Class = type;
+            ClassId = classId;
         }
 
         protected Item() { }
@@ -23,20 +32,25 @@
 
     public class StockItem : Item
     {
+        public string State { get; set; }
+        public int StateId { get; set; }
+        public string Location { get; set; }
+        public int Quantity { get; set; }
+        public string AdditionalNotes { get; set; }
+        
         public StockItem(
             string productCode,
-            string categoryName,
-            string subcategoryName,
+            int categoryId,
+            int subcategoryId,
             string description,
-            string type,
-            string state,
+            int classId,
+            int stateId,
             string location,
             int quantity,
             string additionalNotes = "") 
-            : base(productCode, categoryName, subcategoryName, description, type)
+            : base(productCode, categoryId, subcategoryId, description, classId)
         {
-            
-            State = state;
+            StateId = stateId;
             Location = location;
             Quantity = quantity;
             AdditionalNotes = additionalNotes;
@@ -44,10 +58,6 @@
 
         public StockItem() { }
 
-        public string State { get; set; }
-        public string Location { get; set; }
-        public int Quantity { get; set; }
-        public string AdditionalNotes { get; set; }
     }
 
     public class OrderItem : Item
