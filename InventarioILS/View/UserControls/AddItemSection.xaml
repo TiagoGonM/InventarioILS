@@ -7,38 +7,33 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1600">
     <Grid>
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>-->
-            
-        <!--<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="16,0,16,0">
-            
-            <TextBlock Text="Código" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <TextBox x:Name="ProductCodeInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <local:QueryableComboBox Title="Categoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
-                <local:QueryableComboBox Title="Subcategoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding SubcategoryList, Mode=OneWay}" SelectedItem="{Binding SelectedSubcategory, Mode=TwoWay}" />
-                <local:QueryableComboBox Title="Tipo" MinWidth="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
-            </StackPanel>
-        
-        </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="16,0,16,0">
-            <TextBlock Text="Descripción" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <TextBox x:Name="DescriptionInput" Margin="0,4,0,8" MinHeight="28" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Text="Agregar elementos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" TextAlignment="Center" />
+        <Button Grid.Column="2" Content="Confirmar" Height="28" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}"/>
+        <local:AddItem Grid.ColumnSpan="3" Grid.Row="1" OnConfirm="AddItem_OnConfirm" HorizontalAlignment="Stretch"/>
 
-            <TextBlock Text="Notas" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold"/>
-        </StackPanel>-->
-
-        <StackPanel>
-            <TextBlock Text="Agregar elementos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" Grid.ColumnSpan="2" HorizontalAlignment="Center" TextAlignment="Center" />
-            <local:AddItem />
-        </StackPanel>
+        <!--<ScrollViewer Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <WrapPanel x:Name="OrdersPanel"    
+                HorizontalAlignment="Center" 
+                   Margin="10" 
+                   MaxWidth="1500">
+                <ItemsControl x:Name="ItemControl" 
+                    ItemsSource="{Binding OrderList, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </WrapPanel>
+        </ScrollViewer>-->
     </Grid>
 </UserControl>

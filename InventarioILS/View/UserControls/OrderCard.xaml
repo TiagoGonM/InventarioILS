@@ -19,7 +19,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Border Background="{StaticResource BackgroundBrush}" CornerRadius="4" Padding="10" Height="100" BorderBrush="#111" BorderThickness="1" Width="Auto" Margin="0,15,0,15">
+    <Border Background="{StaticResource BackgroundBrush}" Padding="10" Height="100" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2,0,0,0" Width="Auto" Margin="0,15,0,15">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -28,7 +28,7 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Name="TitleLabel" 
-                               Text="{Binding Title, ElementName=orderCard, FallbackValue=Pedido #N}" 
+                               Text="{Binding Title, ElementName=orderCard, FallbackValue=Pedido #N}"
                                FontWeight="Bold" FontSize="16" Foreground="White"/>
                     <TextBlock x:Name="CreationDateLabel" 
                                Text="{Binding CreationDate, ElementName=orderCard, StringFormat=dd/MM/yyyy, FallbackValue=--/--/----}" 
@@ -38,7 +38,10 @@
                            Text="{Binding Description, ElementName=orderCard, FallbackValue=descripcion}" 
                            Foreground="#BFBFBF" TextWrapping="Wrap"/>
             </StackPanel>
-            <Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="72" Content="Ver"/>
+
+            <!--<Button Grid.Column="1" Style="{StaticResource CardButton}" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="72">
+                Ver
+            </Button>-->
         </Grid>
     </Border>
 </UserControl>

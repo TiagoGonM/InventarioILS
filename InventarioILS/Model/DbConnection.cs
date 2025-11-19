@@ -23,7 +23,7 @@ namespace InventarioILS.Model
             }
             else
             {
-                MessageBox.Show($"Error opening database", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageBox.Show($"Error opening database", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Connection.Close();
             }
         }
@@ -85,11 +85,11 @@ namespace InventarioILS.Model
 
             var categoryId = Connection.QuerySingleOrDefault<int>(
                 "SELECT categoryId FROM Category WHERE name = @CategoryName COLLATE NOCASE",
-                new { item.CategoryName });
+                new { item.CategoryId });
 
             var subcategoryId = Connection.QuerySingleOrDefault<int>(
                 "SELECT subcategoryId FROM Subcategory WHERE name = @SubcategoryName COLLATE NOCASE",
-                new { item.SubcategoryName });
+                new { item.SubcategoryId });
 
             var catSubcatId = Connection.QuerySingleOrDefault<int>(
                 @"SELECT catSubcatId FROM CatSubcat 
@@ -114,7 +114,7 @@ namespace InventarioILS.Model
             new {
                 item.ProductCode,
                 CatSubcatId = catSubcatId,
-                ClassId = item.Class,
+                ClassId = item.ClassId,
                 item.Description,
             });
 
@@ -122,7 +122,7 @@ namespace InventarioILS.Model
             {
                 var stateId = Connection.QuerySingleOrDefault<int>(
                     "SELECT stateId FROM State WHERE name = @State COLLATE NOCASE",
-                    new { stockItem.State });
+                    new { stockItem.StateId });
 
                 Connection.Execute(@"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
                                      VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
