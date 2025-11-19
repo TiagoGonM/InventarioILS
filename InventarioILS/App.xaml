@@ -432,7 +432,7 @@
                             >
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="{TemplateBinding Background}"
+                                        <Border x:Name="Border" Background="{TemplateBinding Background}"
                                                 CornerRadius="5"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}">
@@ -468,6 +468,9 @@
                                                         <RotateTransform Angle="180" CenterX="4" CenterY="2"/>
                                                     </Setter.Value>
                                                 </Setter>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

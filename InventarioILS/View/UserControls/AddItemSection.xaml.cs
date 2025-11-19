@@ -9,6 +9,8 @@ namespace InventarioILS.View.UserControls
     /// </summary>
     public partial class AddItemSection : UserControl
     {
+        StockItems Items => StockItems.Instance;
+
         public AddItemSection()
         {
             InitializeComponent();
@@ -17,6 +19,7 @@ namespace InventarioILS.View.UserControls
         private void AddItem_OnConfirm(object sender, StockItemEventArgs e)
         {
             MessageBox.Show($"Event fired!, got {e.Item.Description}");
+            Items.Add(e.Item);
         }
     }
 }

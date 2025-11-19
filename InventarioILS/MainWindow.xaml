@@ -87,7 +87,7 @@
                 </Button>
 
                 <Button x:Name="CancelOrderFormBtn" Click="CancelOrderFormBtn_Click" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
-        Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
+                        Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="-" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBlock Text="Cancelar" VerticalAlignment="Center"/>
@@ -143,7 +143,6 @@
                         Foreground="{StaticResource AccentBrush}"/>
                 <TextBlock Text="Ajustes de la app" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50"/>
             </Grid>
-
 
             <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>

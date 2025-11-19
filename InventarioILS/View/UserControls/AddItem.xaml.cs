@@ -15,8 +15,13 @@ namespace InventarioILS.View.UserControls
         readonly ItemClasses classes = null;
 
         string selectedCategory = "";
+        int selectedCategoryId = -1;
+
         string selectedSubcategory = "";
+        int selectedSubcategoryId = -1;
+
         string selectedClass = "";
+        int selectedClassId = -1;
 
         public AddItem()
         {
@@ -42,7 +47,7 @@ namespace InventarioILS.View.UserControls
             DescriptionInput.Text = $"{selectedCategory} {selectedSubcategory}";
         }
 
-        private void CategoryComboBox_SelectedItemChanged(object sender, System.EventArgs e)
+        private void CategoryComboBox_SelectedItemChanged(object sender, EventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -52,12 +57,14 @@ namespace InventarioILS.View.UserControls
 
             CodeCategoryShorthand.Text = category.Shorthand;
 
+            // No se puede asignar la instancia directamente 💔
             selectedCategory = category.Name;
+            selectedCategoryId = category.Id;
 
             UpdateDescription();
         }
 
-        private void SubcategoryComboBox_SelectedItemChanged(object sender, System.EventArgs e)
+        private void SubcategoryComboBox_SelectedItemChanged(object sender, EventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -66,11 +73,12 @@ namespace InventarioILS.View.UserControls
             if (subcat == null) return;
 
             selectedSubcategory = subcat.Name;
+            selectedSubcategoryId = subcat.Id;
 
             UpdateDescription();
         }
 
-        private void ClassComboBox_SelectedItemChanged(object sender, System.EventArgs e)
+        private void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -79,23 +87,24 @@ namespace InventarioILS.View.UserControls
             if (itemClass == null) return;
 
             selectedClass = itemClass.Name;
+            selectedClassId = itemClass.Id;
         }
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(selectedCategory) || string.IsNullOrEmpty(selectedSubcategory) || string.IsNullOrEmpty(selectedClass))
+            if (selectedCategoryId <= -1 || selectedSubcategoryId <= -1 || selectedClassId <= -1)
                 return;
 
             // Crear la instancia de StockItem con los datos del formulario
             var stockItem = new StockItem(
-                productCode: "",
-                categoryName: selectedCategory,
-                subcategoryName: selectedSubcategory,
+                productCode: "R-500K",
+                categoryId: selectedCategoryId,
+                subcategoryId: selectedSubcategoryId,
                 description: DescriptionInput.Text,
-                type: selectedClass,
-                state: "",
+                classId: selectedClassId,
+                stateId: 1,
                 location: "",
-                quantity: 0,
+                quantity: 1,
                 additionalNotes: NotesInput.Text
             );
             // Disparar el evento OnConfirm
