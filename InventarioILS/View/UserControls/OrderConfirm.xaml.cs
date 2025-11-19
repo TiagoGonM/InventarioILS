@@ -10,7 +10,7 @@ namespace InventarioILS.View.UserControls
 {
     public partial class OrderConfirm : UserControl, INotifyPropertyChanged
     {
-        private string _orderCode = "[CÓDIGO]";
+        private string _orderCode = "[CÃ“DIGO]";
         public string OrderCode
         {
             get => _orderCode;
@@ -55,7 +55,7 @@ namespace InventarioILS.View.UserControls
         public ObservableCollection<string> States { get; } = new ObservableCollection<string>()
         {
             "En Funcionamiento",
-            "Dañado",
+            "DaÃ±ado",
             "Pendiente",
             "Desconocido"
         };
@@ -96,7 +96,7 @@ namespace InventarioILS.View.UserControls
             SelectedState = States[0];
             Quantity = 1;
             TotalPages = 5; // ejemplo; asigna el total real al abrir
-            OrderCode = "[CÓDIGO]";
+            OrderCode = "[CÃ“DIGO]";
             Description = "Value";
             Notes = "Value";
         }
@@ -111,7 +111,7 @@ namespace InventarioILS.View.UserControls
         {
             if (!int.TryParse(QuantityText, out var q) || q < 0)
             {
-                MessageBox.Show("Introduce una cantidad válida (número positivo).", "Entrada inválida", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Introduce una cantidad vÃ¡lida (nÃºmero positivo).", "Entrada invÃ¡lida", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
