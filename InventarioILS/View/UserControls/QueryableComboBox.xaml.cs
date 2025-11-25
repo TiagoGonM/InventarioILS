@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Collections;
 using System;
 
@@ -75,10 +76,7 @@ namespace InventarioILS.View.UserControls
         public object SelectedItem
         {
             get => GetValue(SelectedItemProperty);
-            set
-            {
-                SetValue(SelectedItemProperty, value);
-            }
+            set => SetValue(SelectedItemProperty, value);
         }
 
         private static void OnSelectedItem(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -90,6 +88,28 @@ namespace InventarioILS.View.UserControls
 
             control.ComboBox.SelectedItem = (object)e.NewValue;
             control.SelectedItemChanged?.Invoke(control, EventArgs.Empty);
+        }
+
+        // Background Property
+        public static readonly DependencyProperty ComboBoxBackgroundProperty =
+            DependencyProperty.Register(
+                nameof(ComboBoxBackground),
+                typeof(Brush),
+                typeof(QueryableComboBox),
+                new PropertyMetadata(null, OnComboBoxBackgroundChanged)
+            );
+
+        public Brush ComboBoxBackground
+        {
+            get => (Brush)GetValue(ComboBoxBackgroundProperty);
+            set => SetValue(ComboBoxBackgroundProperty, value);
+        }
+
+        private static void OnComboBoxBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (QueryableComboBox)d;
+            if (control.ComboBox != null)
+                control.ComboBox.Background = (Brush)e.NewValue;
         }
     }
 }

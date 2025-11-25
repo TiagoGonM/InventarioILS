@@ -13,7 +13,6 @@
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Margin" Value="0,6,0,4"/>
         </Style>
-
     </UserControl.Resources>
 
     <Grid Margin="12">
@@ -68,7 +67,7 @@
                          VerticalContentAlignment="Center"
                          Padding="8"/>
 
-                <local:QueryableComboBox Title="Estado" ItemsSource="{Binding States}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
+                <local:QueryableComboBox Title="Estado" ItemsSource="{Binding States}" ComboBoxBackground="{StaticResource SecondaryBrush}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
                                          BorderBrush="{StaticResource AccentBrush}" Margin="0,8,0,0"/>
 
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Ubicación"/>
