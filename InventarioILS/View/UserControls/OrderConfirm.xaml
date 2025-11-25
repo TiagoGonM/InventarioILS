@@ -13,6 +13,7 @@
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Margin" Value="0,6,0,4"/>
         </Style>
+
     </UserControl.Resources>
 
     <Grid Margin="12">
@@ -63,19 +64,23 @@
                          Height="28"
                          Style="{StaticResource RoundedInput}"
                          BorderBrush="{StaticResource AccentBrush}"
+                         Background="{StaticResource BackgroundBrush}"
+                         Foreground="{StaticResource ForegroundBrush}"
                          PreviewTextInput="CantidadTextBox_PreviewTextInput"
                          VerticalContentAlignment="Center"
                          Padding="8"/>
 
-                <local:QueryableComboBox Title="Estado" ItemsSource="{Binding States}" ComboBoxBackground="{StaticResource SecondaryBrush}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
+                <local:QueryableComboBox Title="Estado" ItemsSource="{Binding States}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
                                          BorderBrush="{StaticResource AccentBrush}" Margin="0,8,0,0"/>
 
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Ubicación"/>
-                <TextBox Text="{Binding Location, Mode=TwoWay}" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="8"/>
+                <TextBox Text="{Binding Location, Mode=TwoWay}" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" 
+                         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource ForegroundBrush}" Padding="8"/>
 
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Notas" Margin="0,12,0,0"/>
                 <TextBox Text="{Binding Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48"
-                         Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="8"/>
+                         Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="8"
+                         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>
 
             <!-- espacio central -->
@@ -85,7 +90,8 @@
             <StackPanel Grid.Column="2">
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Descripción" HorizontalAlignment="Left"/>
                 <TextBox Text="{Binding Description, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap"
-                         MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="12"  Foreground="#E6E6E6"/>
+                         MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="12" 
+                         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>
         </Grid>
 
