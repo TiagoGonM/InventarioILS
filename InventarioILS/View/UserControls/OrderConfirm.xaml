@@ -85,7 +85,7 @@
             <StackPanel Grid.Column="2">
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Descripción" HorizontalAlignment="Left"/>
                 <TextBox Text="{Binding Description, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap"
-                         MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="12" Background="#222" Foreground="#E6E6E6"/>
+                         MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="12"  Foreground="#E6E6E6"/>
             </StackPanel>
         </Grid>
 
