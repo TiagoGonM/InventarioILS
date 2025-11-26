@@ -18,8 +18,8 @@ namespace InventarioILS.View.UserControls
 
         private void AddItem_OnConfirm(object sender, StockItemEventArgs e)
         {
-            MessageBox.Show($"Event fired!, got {e.Item.Description}");
-            Items.Add(e.Item);
+            for (int i = 0; i < e.Item.Quantity; i++)
+                Items.Add(e.Item);
         }
     }
 }
