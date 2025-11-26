@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -157,7 +156,7 @@ namespace InventarioILS.Model
         public void Load()
         {
             if (Connection == null) return;
-            string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name, * FROM Category ORDER BY name ASC;";
+            string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Category ORDER BY name ASC;";
             var collection = Connection.Query<Category>(query).ToList().ToObservableCollection();
             UpdateItems(collection);
         }
@@ -213,6 +212,35 @@ namespace InventarioILS.Model
                              classId id, 
                              {SQLUtils.StringCapitalize()} name
                              FROM Class ORDER BY name ASC;";
+            var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
+            UpdateItems(collection);
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ItemState : SingletonStorage<ItemMisc, ItemState>, ILoadSave
+    {
+        public ItemState()
+        {
+            Load();
+        }
+
+        public void Add(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            if (Connection == null) return;
+            string query = @$"SELECT 
+                             stateId id, 
+                             {SQLUtils.StringCapitalize()} name
+                             FROM State ORDER BY name ASC;";
             var collection = Connection.Query<ItemMisc>(query).ToList().ToObservableCollection();
             UpdateItems(collection);
         }
@@ -303,11 +331,21 @@ namespace InventarioILS.Model
 
             ////var classId = Connection.QuerySingleOrDefault<int>
 
-            var catSubcatId = Connection.QuerySingleOrDefault<int>(
-                @"SELECT catSubcatId FROM CatSubcat 
-                  WHERE categoryId = @CategoryId 
-                  AND subcategoryId = @SubcategoryId COLLATE NOCASE",
-                new { item.CategoryId, item.SubcategoryId });
+            int catSubcatId = -1;
+            
+            try
+            {
+                catSubcatId = Connection.QuerySingleOrDefault<int>(
+                    @"SELECT catSubcatId FROM CatSubcat 
+                      WHERE categoryId = @CategoryId 
+                      AND subcategoryId = @SubcategoryId COLLATE NOCASE",
+                    new { item.CategoryId, item.SubcategoryId });
+            } catch (Exception ex)
+            {
+                MessageBox.Show("Failed to retrieve CatSubcatId. " + ex);
+                return;
+            }
+
 
             MessageBox.Show($"CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}, CatSubcatId: {catSubcatId}");
 
