@@ -117,7 +117,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border Background="{TemplateBinding Background}"
+                        <Border x:Name="Border" Background="{TemplateBinding Background}"
                                 CornerRadius="5"
                                 Padding="2,0"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -128,6 +128,11 @@
                                           VerticalAlignment="Center"
                             />
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

@@ -222,9 +222,9 @@ namespace InventarioILS.Model
         }
     }
 
-    internal class ItemState : SingletonStorage<ItemMisc, ItemState>, ILoadSave
+    internal class ItemStates : SingletonStorage<ItemMisc, ItemStates>, ILoadSave
     {
-        public ItemState()
+        public ItemStates()
         {
             Load();
         }
@@ -347,7 +347,7 @@ namespace InventarioILS.Model
             }
 
 
-            MessageBox.Show($"CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}, CatSubcatId: {catSubcatId}");
+            //MessageBox.Show($"CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}, CatSubcatId: {catSubcatId}");
 
             var n = Connection.Execute(
                 @"INSERT INTO Item (productCode, catSubcatId, classId, description)
