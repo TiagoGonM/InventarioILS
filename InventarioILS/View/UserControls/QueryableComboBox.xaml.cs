@@ -111,5 +111,10 @@ namespace InventarioILS.View.UserControls
             if (control.ComboBox != null)
                 control.ComboBox.Background = (Brush)e.NewValue;
         }
+
+        private void ComboBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            TitleLabel.Foreground = ComboBox.IsEnabled ? (Brush)FindResource("AccentForegroundBrush") : Brushes.Gray;
+        }
     }
 }
