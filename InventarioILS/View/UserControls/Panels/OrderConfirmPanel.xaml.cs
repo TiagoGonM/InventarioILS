@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -130,10 +131,9 @@ namespace InventarioILS.View.UserControls
             if (CurrentPage < TotalPages) CurrentPage++;
         }
 
-        private static readonly Regex _digitsOnly = new Regex("[^0-9]+");
         private void CantidadTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = _digitsOnly.IsMatch(e.Text);
+            e.Handled = !e.Text.All(char.IsDigit);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

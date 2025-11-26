@@ -9,7 +9,7 @@ namespace InventarioILS.View.UserControls
     /// </summary>
     public partial class AddItemSection : UserControl
     {
-        StockItems Items => StockItems.Instance;
+        static readonly StockItems Items = StockItems.Instance;
 
         public AddItemSection()
         {

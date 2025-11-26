@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -24,12 +21,12 @@ namespace InventarioILS.View.UserControls
             e.Handled = !e.Text.All(char.IsDigit);
         }
 
-        public readonly DependencyProperty TextProperty = 
+        public static readonly DependencyProperty TextProperty = 
             DependencyProperty.Register(
-                nameof(TextProperty),
+                nameof(Text),
                 typeof(string),
                 typeof(DigitTextBox),
-                new PropertyMetadata(string.Empty, OnTextChanged)
+                new PropertyMetadata(String.Empty, OnTextChanged)
             );
 
         public string Text
