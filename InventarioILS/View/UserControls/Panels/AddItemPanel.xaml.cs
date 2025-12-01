@@ -26,10 +26,10 @@ namespace InventarioILS.View.UserControls
             if (itemList.Contains(e.Item) || e.Type != StockItemEventArgs.EventType.CREATE) // Double check validation
                 return;
 
-            //itemList.Add(e.Item);
+            itemList.Add(e.Item);
 
-            //AddItemForm.Visibility = Visibility.Collapsed;
-            //ItemListView.Visibility = Visibility.Visible;
+            AddItemForm.Visibility = Visibility.Collapsed;
+            ItemListView.Visibility = Visibility.Visible;
         }
 
         private void AddItem_OnEdit(object sender, StockItemEventArgs e)
@@ -70,7 +70,7 @@ namespace InventarioILS.View.UserControls
 
         private void AddNewItem_Click(object sender, RoutedEventArgs e)
         {
-            itemList.Add(new StockItem());
+            itemList.Add(new StockItem("R-100K", 0, 0, "", 0, 0, "", 10));
         }
     }
 }

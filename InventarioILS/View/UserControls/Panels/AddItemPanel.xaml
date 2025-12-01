@@ -19,7 +19,7 @@
             </WrapPanel>
             <Button x:Name="ConfirmBtn" Click="ConfirmBtn_Click" Content="Confirmar" Height="28" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}"/>
 
-            <local:AddItemForm x:Name="AddItemForm" Grid.Row="1"/>
+            <local:AddItemForm x:Name="AddItemForm" OnConfirm="AddItem_OnConfirm" Grid.Row="1"/>
 
             <ScrollViewer x:Name="ItemListView" Visibility="Collapsed" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                 <!--<local:AddItem Grid.Row="1" OnConfirm="AddItem_OnConfirm" OnEdit="AddItem_OnEdit" OnDelete="AddItem_OnDelete" HorizontalAlignment="Stretch"/>-->
