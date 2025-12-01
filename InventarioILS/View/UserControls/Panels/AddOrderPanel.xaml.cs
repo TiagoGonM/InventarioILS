@@ -18,9 +18,9 @@ namespace InventarioILS.View.UserControls
     /// <summary>
     /// Lógica de interacción para AddOrderSection.xaml
     /// </summary>
-    public partial class AddOrderSection : UserControl
+    public partial class AddOrderPanel : UserControl
     {
-        public AddOrderSection()
+        public AddOrderPanel()
         {
             InitializeComponent();
         }

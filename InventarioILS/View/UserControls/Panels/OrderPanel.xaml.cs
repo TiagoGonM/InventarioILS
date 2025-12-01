@@ -7,13 +7,13 @@ using InventarioILS.View.Windows;
 namespace InventarioILS.View.UserControls
 {
     /// <summary>
-    /// Lógica de interacción para OrderSection.xaml
+    /// Lógica de interacción para OrderPanel.xaml
     /// </summary>
-    public partial class OrderSection : UserControl
+    public partial class OrderPanel : UserControl
     {
         Orders _orders = null;
 
-        public OrderSection()
+        public OrderPanel()
         {
             InitializeComponent();
             _orders = new Orders();
@@ -22,7 +22,7 @@ namespace InventarioILS.View.UserControls
             
             this.DataContext = new
             {
-                Count = _orders.Items.Count(),
+                Count = _orders.Items.Count,
                 OrderList = _orders.Items
             };
         }

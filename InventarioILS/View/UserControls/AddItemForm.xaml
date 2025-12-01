@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="InventarioILS.View.UserControls.AddItem"
+﻿<UserControl x:Class="InventarioILS.View.UserControls.AddItemForm"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -66,7 +66,7 @@
                 <TextBlock Text="Notas" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
                 <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
 
-                <Button x:Name="ConfirmButton" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmButton_Click"/>
+                <Button x:Name="ConfirmBtn" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
             </StackPanel>
         </Grid>
     </Border>
