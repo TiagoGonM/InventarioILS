@@ -11,26 +11,17 @@ namespace InventarioILS.View.UserControls
     /// </summary>
     public partial class OrderPanel : UserControl
     {
-        Orders _orders = null;
+        Orders orders = Orders.Instance;
 
         public OrderPanel()
         {
             InitializeComponent();
-            _orders = new Orders();
-           
-            _orders.Load();
             
             this.DataContext = new
             {
-                Count = _orders.Items.Count,
-                OrderList = _orders.Items
+                Count = orders.Items.Count,
+                OrderList = orders.Items
             };
-        }
-
-        internal Orders OrderList
-        {
-            set { _orders = value; }
-            get { return _orders; }
         }
 
         private void OrderCard_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
