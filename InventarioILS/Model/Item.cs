@@ -57,7 +57,31 @@
         }
 
         public StockItem() { }
+    }
 
+    public class StockItemExtra : StockItem
+    {
+        public string ModelOrValue { get; set; }
+
+        public StockItemExtra(
+            string productCode,
+            string modelOrVal,
+            int categoryId,
+            int subcategoryId,
+            string description,
+            int classId,
+            int stateId,
+            string location,
+            int quantity,
+            string additionalNotes = "")
+            : base(productCode, categoryId, subcategoryId, description, classId, stateId, location, quantity, additionalNotes)
+        {
+            ModelOrValue = modelOrVal;
+            StateId = stateId;
+            Location = location;
+            Quantity = quantity;
+            AdditionalNotes = additionalNotes;
+        }
     }
 
     public class OrderItem : Item
