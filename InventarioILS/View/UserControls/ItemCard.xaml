@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
+             x:Name="itemCard"
              mc:Ignorable="d" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -12,7 +13,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Text="{Binding ProductCode, FallbackValue=code}" FontSize="20" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="0" Text="{Binding ProductCode, ElementName=itemCard, FallbackValue=code}" FontSize="20" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <Button Grid.Column="1" x:Name="EditItemBtn" Click="EditItemBtn_Click" Content="Editar" Style="{StaticResource RoundedButtonPrimary}"/>
         <Button Grid.Column="2" x:Name="RemoveItemBtn" Click="RemoveItemBtn_Click" Content="Eliminar" Style="{StaticResource RoundedButtonSecondary}" Margin="10,0,0,0"/>
     </Grid>

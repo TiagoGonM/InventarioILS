@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace InventarioILS.View.UserControls
@@ -8,8 +9,10 @@ namespace InventarioILS.View.UserControls
         public ItemCard()
         {
             InitializeComponent();
-            DataContext = this;
         }
+
+        public event EventHandler<int> OnEdit;
+        public event EventHandler<int> OnDelete;
 
         public static readonly DependencyProperty ProductCodeProperty =
             DependencyProperty.Register(
@@ -33,12 +36,12 @@ namespace InventarioILS.View.UserControls
 
         private void EditItemBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            OnEdit?.Invoke(this, (int)Tag);
         }
 
         private void RemoveItemBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            OnDelete?.Invoke(this, (int)Tag);
         }
     }
 }

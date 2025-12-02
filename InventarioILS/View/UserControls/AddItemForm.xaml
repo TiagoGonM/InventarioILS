@@ -19,13 +19,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <TextBlock Text="Código" VerticalAlignment="Center" Foreground="{StaticResource AccentForegroundBrush}"/>
-                    <TextBlock x:Name="ProductCode"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                        <TextBlock x:Name="CodeCategoryShorthand" Foreground="{StaticResource ForegroundBrush}"/>
-                        <TextBlock x:Name="CodeSeparator" Text="-" Foreground="{StaticResource ForegroundBrush}"/>
-                        <TextBlock x:Name="CodeMain" Foreground="{StaticResource ForegroundBrush}"/>
-                        <TextBlock x:Name="CodeUnit" Foreground="{StaticResource ForegroundBrush}"/>
-                    </StackPanel>
+                    <TextBlock x:Name="ProductCode" Margin="5,0" Foreground="{StaticResource ForegroundBrush}"/>
                 </StackPanel>
                 <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,10,0,0">
                     <local:QueryableComboBox x:Name="CategoryComboBox" Title="Categoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItemChanged="CategoryComboBox_SelectedItemChanged" />
@@ -50,14 +44,12 @@
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="0,0,20,0">
                         <TextBlock Text="Cantidad" Foreground="{StaticResource AccentForegroundBrush}"/>
-                        <!--<local:DigitTextBox x:Name="QuantityInput" Margin="0,4,0,8"/>-->
                         <TextBox x:Name="QuantityInput" Style="{StaticResource RoundedInput}" Foreground="{StaticResource ForegroundBrush}" Margin="0,4,0,8" MinHeight="28" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" PreviewTextInput="QuantityInput_PreviewTextInput"/>
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="Ubicación" Foreground="{StaticResource AccentForegroundBrush}"/>
                         <TextBox x:Name="LocationInput" Margin="0,4,0,8" MinHeight="28" MinWidth="170" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
                     </StackPanel>
-
                 </StackPanel>
 
                 <TextBlock Text="Descripción" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
@@ -66,7 +58,10 @@
                 <TextBlock Text="Notas" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
                 <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
 
-                <Button x:Name="ConfirmBtn" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="ConfirmBtn" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
+                    <Button x:Name="DummyBtn" Content="Agregar dummy" Margin="10,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="DummyBtn_Click"/>
+                </StackPanel>
             </StackPanel>
         </Grid>
     </Border>

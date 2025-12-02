@@ -320,17 +320,6 @@ namespace InventarioILS.Model
         {
             if (Connection == null) return;
 
-            // TODO: might be nice to use ids directly instead of names? QueryableComboBox.Tag has these ids if ItemsSource implements IIdentifiable
-            //var categoryId = Connection.QuerySingleOrDefault<int>(
-            //    "SELECT categoryId FROM Category WHERE name = @CategoryName COLLATE NOCASE",
-            //    new { item.CategoryName });
-
-            //var subcategoryId = Connection.QuerySingleOrDefault<int>(
-            //    "SELECT subcategoryId FROM Subcategory WHERE name = @SubcategoryName COLLATE NOCASE",
-            //    new { item.SubcategoryName });
-
-            ////var classId = Connection.QuerySingleOrDefault<int>
-
             int catSubcatId = -1;
             
             try
@@ -363,7 +352,7 @@ namespace InventarioILS.Model
 
             if (n <= 0)
             {
-                MessageBox.Show("Failed to insert ItemCard record.");
+                MessageBox.Show("Failed to insert Item record.");
                 return;
             }
 

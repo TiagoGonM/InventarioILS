@@ -82,7 +82,7 @@ namespace InventarioILS.View.UserControls
         private static void OnSelectedItem(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (QueryableComboBox)d;
-            
+
             if (control.ComboBox == null)
                 return;
 
