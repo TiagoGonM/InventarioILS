@@ -507,7 +507,42 @@ namespace InventarioILS.Model
 
             Load();
         }
-        
+
+        public void AddAsync(Item item)
+        {
+            int rowId = Utils.AddItem(item);
+
+            if (item is StockItem stockItem)
+            {
+                Connection.Execute(
+                    @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                      VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
+                    new
+                    {
+                        ItemId = rowId,
+                        stockItem.StateId,
+                        stockItem.Location,
+                        stockItem.AdditionalNotes
+                    }
+                );
+            }
+
+            Load();
+        }
+
+        public void AddRange(ObservableCollection<StockItem> collection)
+        {
+            if (collection.Count == 0) return;
+
+            foreach (var item in collection)
+            {
+                for (int i = 0; i < item.Quantity; i++)
+                {
+                    Add(item);
+                }
+            }
+        }
+
         public async Task AddRangeAsync(ObservableCollection<StockItem> collection)
         {
             if (collection.Count == 0) return;

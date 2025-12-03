@@ -1,18 +1,19 @@
 ﻿using InventarioILS.Model;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
 
 namespace InventarioILS.View.UserControls
 {
     public partial class AddItemPanel : UserControl
     {
         static readonly StockItems ItemsStorage = StockItems.Instance;
-        public static ObservableCollection<StockItemExtra> itemList = [];
-        public StockItemExtra ItemToEdit { get; set; }
+        public static ObservableCollection<StockItem> itemList = [];
+        public StockItem ItemToEdit { get; set; }
 
-        public AddItemForm itemForm = null;
+        public ItemForm itemForm = null;
 
         public AddItemPanel()
         {
@@ -27,7 +28,7 @@ namespace InventarioILS.View.UserControls
             };
         }
 
-        public static int Count => itemList.Count();
+        public static int Count => itemList.Count;
 
         private void ShowItemForm(bool show = true)
         {
@@ -39,18 +40,18 @@ namespace InventarioILS.View.UserControls
         {
             CleanForm();
 
-            itemForm = new AddItemForm();
+            itemForm = new ItemForm();
             itemForm.OnConfirm += ItemForm_OnConfirm;
 
             FormContainer.Content = itemForm;
             ShowItemForm();
         }
 
-        private void ShowEditForm(StockItemExtra item)
+        private void ShowEditForm(StockItem item)
         {
             CleanForm();
 
-            itemForm = new AddItemForm
+            itemForm = new ItemForm
             {
                 PresetData = item
             };
@@ -72,7 +73,7 @@ namespace InventarioILS.View.UserControls
             itemForm = null;
         }
 
-        private void ItemForm_OnConfirm(object sender, StockItemExtraEventArgs e)
+        private void ItemForm_OnConfirm(object sender, StockItemEventArgs e)
         {
             itemList.Add(e.Item);
             SetIndexTag(e.Item);
@@ -80,7 +81,7 @@ namespace InventarioILS.View.UserControls
             ShowItemForm(false);
         }
 
-        private void ItemForm_OnEdit(object sender, StockItemExtraEventArgs e)
+        private void ItemForm_OnEdit(object sender, StockItemEventArgs e)
         {
             int ind = itemList.IndexOf(e.OldItem);
             var old = itemList[ind];
@@ -93,7 +94,7 @@ namespace InventarioILS.View.UserControls
             ShowItemForm(false);
         }
 
-        private void SetIndexTag(StockItemExtra item)
+        private void SetIndexTag(StockItem item)
         {
             int ind = itemList.IndexOf(item);
             itemList.ElementAt(ind).Id = ind;
@@ -109,17 +110,9 @@ namespace InventarioILS.View.UserControls
             itemList.RemoveAt(e);
         }
 
-        private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (itemList.Count == 0) return;
-
-            foreach (var item in itemList)
-            {
-                for (int i = 0; i < item.Quantity; i++)
-                {
-                    ItemsStorage.Add(item);
-                }
-            }
+            await ItemsStorage.AddRangeAsync(itemList);
         }
 
         private void AddNewItem_Click(object sender, RoutedEventArgs e)
