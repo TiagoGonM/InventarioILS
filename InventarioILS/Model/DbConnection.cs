@@ -42,7 +42,7 @@ namespace InventarioILS.Model
             if (Connection == null) return new List<OrderItem>();
 
             string query = @"SELECT it.productCode, c.name category, s.name subcategory, class.name class, it.description, it.createdAt, it.updatedAt, COUNT(*) quantity
-                             FROM Item it
+                             FROM ItemCard it
                              JOIN Class class ON it.classId = class.classId
                              JOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId
                              JOIN Category c ON cs.categoryId = c.categoryId
@@ -109,7 +109,7 @@ namespace InventarioILS.Model
             //        "SELECT last_insert_rowid()");
             //}
 
-            Connection.Execute(@"INSERT INTO Item (productCode, catSubcatId, classId, description)
+            Connection.Execute(@"INSERT INTO ItemCard (productCode, catSubcatId, classId, description)
                                  VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
             new {
                 item.ProductCode,

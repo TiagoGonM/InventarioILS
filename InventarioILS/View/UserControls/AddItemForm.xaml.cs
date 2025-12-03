@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,10 +8,7 @@ using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
-    /// <summary>
-    /// Lógica de interacción para AddItem.xaml
-    /// </summary>
-    public partial class AddItem : UserControl
+    public partial class AddItemForm : UserControl
     {
         readonly ItemCategories categories = null;
         readonly ItemSubCategories subCategories = null;
@@ -29,7 +27,18 @@ namespace InventarioILS.View.UserControls
         string selectedState = "";
         int selectedStateId = -1;
 
-        public AddItem()
+        string ResultingProductCode {  get; set; }
+
+        bool isEditing = false;
+
+        public event EventHandler<StockItemEventArgs> OnConfirm;
+        public event EventHandler<StockItemEventArgs> OnEdit;
+        public event EventHandler<StockItemEventArgs> OnDelete;
+
+        StockItem resultingItem = null;
+        StockItem oldResultingItem = null;
+
+        public AddItemForm()
         {
             InitializeComponent();
 
@@ -44,11 +53,9 @@ namespace InventarioILS.View.UserControls
                 SubcategoryList = subCategories.Items,
                 ClassList = classes.Items,
                 StateList = states.Items,
+                ResultingProductCode,
             };
         }
-
-        // Evento personalizado OnConfirm
-        public event EventHandler<StockItemEventArgs> OnConfirm;
 
         private void UpdateDescription()
         {
@@ -67,7 +74,7 @@ namespace InventarioILS.View.UserControls
 
             // No se puede asignar la instancia directamente 💔
             selectedCategory = category.Name;
-            selectedCategoryId = category.Id;
+            selectedCategoryId = (int)category.Id;
 
             UpdateDescription();
         }
@@ -83,7 +90,7 @@ namespace InventarioILS.View.UserControls
             CodeMain.Text = subcat.Name.ToUpper();
 
             selectedSubcategory = subcat.Name;
-            selectedSubcategoryId = subcat.Id;
+            selectedSubcategoryId = (int)subcat.Id;
 
             UpdateDescription();
         }
@@ -99,7 +106,7 @@ namespace InventarioILS.View.UserControls
             //StateComboBox.IsEnabled = itemClass.Name != "Insumo";
 
             selectedClass = itemClass.Name;
-            selectedClassId = itemClass.Id;
+            selectedClassId = (int)itemClass.Id;
         }
 
         private void StateComboBox_SelectedItemChanged(object sender, EventArgs e)
@@ -111,17 +118,19 @@ namespace InventarioILS.View.UserControls
             if (itemState == null) return;
 
             selectedState = itemState.Name;
-            selectedStateId = itemState.Id;
+            selectedStateId = (int)itemState.Id;
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
             if (selectedCategoryId <= -1 || selectedSubcategoryId <= -1 || selectedClassId <= -1)
                 return;
 
+            string code = $"{CodeCategoryShorthand.Text}-{CodeMain.Text}";
+
             // Crear la instancia de StockItem con los datos del formulario
-            var stockItem = new StockItem(
-                productCode: $"{CodeCategoryShorthand.Text}-{CodeMain.Text}",
+            resultingItem = new StockItem(
+                productCode: code,
                 categoryId: selectedCategoryId,
                 subcategoryId: selectedSubcategoryId,
                 description: DescriptionInput.Text,
@@ -132,8 +141,16 @@ namespace InventarioILS.View.UserControls
                 additionalNotes: NotesInput.Text
             );
 
-            // Disparar el evento OnConfirm
-            OnConfirm?.Invoke(this, new StockItemEventArgs(stockItem));
+            //ProductCodeAfterConfirmLabel.Text = code;
+            ResultingProductCode = code;
+
+            if (!isEditing)
+                OnConfirm?.Invoke(this, new StockItemEventArgs(resultingItem));
+            else
+                OnEdit?.Invoke(this, new StockItemEventArgs(oldResultingItem, resultingItem));
+
+
+            oldResultingItem = resultingItem;
         }
 
         private void ExtraValueCheckbox_Checked(object sender, RoutedEventArgs e)
@@ -148,6 +165,7 @@ namespace InventarioILS.View.UserControls
         {
             ExtraValueInput.IsEnabled = false;
             CodeMain.Text = selectedSubcategory.ToUpper();
+
             UpdateDescription();
             ExtraValueLabel.Foreground = SystemColors.GrayTextBrush;
         }
@@ -164,11 +182,36 @@ namespace InventarioILS.View.UserControls
         }
     }
 
-    /// <summary>
-    /// Clase personalizada para pasar datos del evento OnConfirm
-    /// </summary>
-    public class StockItemEventArgs(StockItem stockItem) : EventArgs
+    public class StockItemEventArgs : EventArgs
     {
-        public StockItem Item { get; } = stockItem;
+        public enum EventType
+        {
+            CREATE,
+            EDIT,
+            DELETE
+        }
+
+        public StockItem? OldItem { get; }
+        public StockItem Item { get; }
+        public EventType Type { get; set; }
+
+        public StockItemEventArgs(StockItem item, EventType eventType = EventType.CREATE)
+        {
+            Item = item;
+            Type = eventType;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldItem">has to be filled when editing an item</param>
+        /// <param name="item"></param>
+        /// <param name="eventType"></param>
+        public StockItemEventArgs(StockItem oldItem, StockItem item, EventType eventType = EventType.EDIT)
+        {
+            OldItem = oldItem;
+            Item = item;
+            Type = eventType;
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 nameof(ItemsSource),
-                typeof(IEnumerable<Item>),
+                typeof(IEnumerable<ItemCard>),
                 typeof(InventoryDataView),
                 new PropertyMetadata(null, OnItemsSourceChanged));
 
@@ -35,9 +35,9 @@ namespace InventarioILS.View.UserControls
             set => SetValue(AutoGenerateColumnsProperty, value);
         }
 
-        public IEnumerable<Item> ItemsSource
+        public IEnumerable<ItemCard> ItemsSource
         {
-            get => (IEnumerable<Item>)GetValue(ItemsSourceProperty);
+            get => (IEnumerable<ItemCard>)GetValue(ItemsSourceProperty);
             set => SetValue(ItemsSourceProperty, value);
         }
 
@@ -53,7 +53,7 @@ namespace InventarioILS.View.UserControls
         {
             if (d is InventoryDataView view)
             {
-                view.ItemView.ItemsSource = (IEnumerable<Item>)e.NewValue;
+                view.ItemView.ItemsSource = (IEnumerable<ItemCard>)e.NewValue;
             }
         }
     }

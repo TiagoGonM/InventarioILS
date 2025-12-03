@@ -2,7 +2,7 @@
 {
     public abstract class Item : IIdentifiable
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string ProductCode { get; set; }
 
 

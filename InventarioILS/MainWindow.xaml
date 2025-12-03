@@ -122,9 +122,9 @@
             <GridSplitter Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" ResizeDirection="Rows" Panel.ZIndex="3" Width="2500" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
             <Grid x:Name="BottomBar" Grid.Row="1" Panel.ZIndex="2" Background="{StaticResource SecondaryBrush}">
                 <Grid x:Name="InnerGrid" Margin="10,10,10,10">
-                    <userControls:OrderSection Grid.Row="1" x:Name="OrderListSection" />
-                    <userControls:AddOrderSection Grid.Row="1" Visibility="Collapsed" x:Name="AddOrderSection" />
-                    <userControls:AddItemSection Grid.Row="1" Visibility="Collapsed" x:Name="AddItemSection" />
+                    <userControls:OrderPanel Grid.Row="1" x:Name="OrderListSection" />
+                    <userControls:AddOrderPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddOrderSection" />
+                    <userControls:AddItemPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddItemSection" />
                 </Grid>
             </Grid>
 
