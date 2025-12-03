@@ -64,7 +64,7 @@
                          Height="28"
                          Style="{StaticResource RoundedInput}"
                          BorderBrush="{StaticResource AccentBrush}"
-                         Background="{StaticResource BackgroundBrush}"
+                         Background="{StaticResource SecondaryBrush}"
                          Foreground="{StaticResource ForegroundBrush}"
                          PreviewTextInput="CantidadTextBox_PreviewTextInput"
                          VerticalContentAlignment="Center"
@@ -75,12 +75,12 @@
 
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Ubicación"/>
                 <TextBox Text="{Binding Location, Mode=TwoWay}" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" 
-                         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource ForegroundBrush}" Padding="8"/>
+                         Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}" Padding="8"/>
 
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Notas" Margin="0,12,0,0"/>
                 <TextBox Text="{Binding Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48"
                          Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="8"
-                         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+                         Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>
 
             <!-- espacio central -->
@@ -91,7 +91,7 @@
                 <TextBlock Style="{StaticResource LabelSmall}" Text="Descripción" HorizontalAlignment="Left"/>
                 <TextBox Text="{Binding Description, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap"
                          MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Padding="12" 
-                         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+                         Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>
         </Grid>
 
