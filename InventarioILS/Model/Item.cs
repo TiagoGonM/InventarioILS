@@ -1,8 +1,10 @@
-﻿namespace InventarioILS.Model
+﻿using InventarioILS.Model.Storage;
+
+namespace InventarioILS.Model
 {
     public abstract class Item : IIdentifiable
     {
-        public int? Id { get; set; }
+        public uint Id { get; set; }
         public string ProductCode { get; set; }
 
         public string ModelOrValue { get; set; }
@@ -36,6 +38,7 @@
 
     public class StockItem : Item
     {
+        public int LocalIndexTag { get; set; }
         public string State { get; set; }
         public int StateId { get; set; }
         public string Location { get; set; }
@@ -65,14 +68,16 @@
 
     public class OrderItem : Item
     {
+        public int LocalIndexTag { get; set; }
         public string ShipmentState { get; set; }
         public int ShipmentStateId { get; set; }
 
-        public OrderItem() { }
-        public OrderItem(string productCode, int categoryId, int subcategoryId, int shipmentStateId, int classId, string description, int quantity) 
-            : base(productCode, categoryId, subcategoryId, classId, description, quantity)
+        public OrderItem(string productCode, int categoryId, int subcategoryId, int shipmentStateId, int classId, string description, int quantity, string modelOrVal = null) 
+            : base(productCode, categoryId, subcategoryId, classId, description, quantity, modelOrVal)
         {
             ShipmentStateId = shipmentStateId;
         }
+
+        public OrderItem() { }
     }
 }

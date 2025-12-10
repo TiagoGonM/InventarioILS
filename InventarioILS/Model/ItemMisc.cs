@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InventarioILS.Model.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace InventarioILS.Model
 {
     internal class ItemMisc : IIdentifiable
     {
-        public int? Id { get; set; }
+        public uint Id { get; set; }
         public string Name { get; set; }
     }
     
