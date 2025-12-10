@@ -1,4 +1,5 @@
 ﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -34,8 +35,8 @@ namespace InventarioILS.View.UserControls
 
         bool isEditing = false;
 
-        public event EventHandler<StockItemEventArgs> OnConfirm;
-        public event EventHandler<StockItemEventArgs> OnEdit;
+        public event EventHandler<ItemEventArgs> OnConfirm;
+        public event EventHandler<ItemEventArgs> OnEdit;
 
         StockItem resultingItem = null;
 
@@ -75,7 +76,7 @@ namespace InventarioILS.View.UserControls
             }
         }
 
-        // No te asustes! Es solo una manera *fancy* de poder setear el elemento que se seleccionó antes correctamente sin tener que repetir esto mismo varias veces
+        // Solo una manera *fancy* de poder setear el elemento que se seleccionó antes correctamente sin tener que repetir esto mismo varias veces
         private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, int predicate) where T : IIdentifiable
         {
             foreach (var item in filterList)
@@ -214,10 +215,10 @@ namespace InventarioILS.View.UserControls
 
             if (!isEditing)
             {
-                OnConfirm?.Invoke(this, new StockItemEventArgs(resultingItem));
+                OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
                 return;
             }
-            OnEdit?.Invoke(this, new StockItemEventArgs(PresetData, resultingItem));
+            OnEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
             isEditing = false;
             ConfirmBtn.Content = "Agregar elemento";
         }
@@ -272,11 +273,11 @@ namespace InventarioILS.View.UserControls
                 additionalNotes: ""
             );
 
-            OnConfirm?.Invoke(this, new StockItemEventArgs(resultingItem));
+            OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
         }
     }
 
-    public class StockItemEventArgs : EventArgs
+    public class ItemEventArgs : EventArgs
     {
         public enum EventType
         {
@@ -285,11 +286,11 @@ namespace InventarioILS.View.UserControls
             DELETE
         }
 
-        public StockItem OldItem { get; }
-        public StockItem Item { get; }
+        public Item OldItem { get; }
+        public Item Item { get; }
         public EventType Type { get; set; }
 
-        public StockItemEventArgs(StockItem item, EventType eventType = EventType.CREATE)
+        public ItemEventArgs(Item item, EventType eventType = EventType.CREATE)
         {
             Item = item;
             Type = eventType;
@@ -301,7 +302,7 @@ namespace InventarioILS.View.UserControls
         /// <param name="oldItem">has to be filled when editing an item</param>
         /// <param name="item"></param>
         /// <param name="eventType"></param>
-        public StockItemEventArgs(StockItem oldItem, StockItem item, EventType eventType = EventType.EDIT)
+        public ItemEventArgs(Item oldItem, Item item, EventType eventType = EventType.EDIT)
         {
             OldItem = oldItem;
             Item = item;

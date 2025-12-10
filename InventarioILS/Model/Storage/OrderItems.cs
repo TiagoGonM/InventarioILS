@@ -2,10 +2,12 @@
 using System;
 using System.Linq;
 
+
 namespace InventarioILS.Model.Storage
 {
     internal class OrderItems : SingletonStorage<OrderItem, OrderItems>, ILoadSave
     {
+        // TODO: implement this
         public void Add(Item item)
         {
             throw new NotImplementedException();
@@ -25,6 +27,7 @@ namespace InventarioILS.Model.Storage
             var collection = Connection.Query<OrderItem>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
+
         public async void LoadAsync()
         {
             if (Connection == null) return;
@@ -54,7 +57,6 @@ namespace InventarioILS.Model.Storage
             var collection = Connection.Query<OrderItem>(query, new { OrderId = orderId });
             UpdateItems(collection.ToList().ToObservableCollection());
         }
-
 
         public async void LoadSingleAsync(uint orderId)
         {

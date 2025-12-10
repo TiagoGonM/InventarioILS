@@ -25,6 +25,11 @@ namespace InventarioILS.Model.Storage
         void Load();
     }
 
+    public interface IAsyncFactory
+    {
+        Task CreateAsync();
+    }
+
     public class Map<TKey, TValue> : Dictionary<TKey, TValue>
     {
         public void AddOrUpdate(TKey key, TValue value)
@@ -46,7 +51,7 @@ namespace InventarioILS.Model.Storage
 
     public interface IIdentifiable
     {
-        uint? Id { get; }
+        uint Id { get; }
     }
 
     internal class Storage<T> where T: IIdentifiable
@@ -64,27 +69,39 @@ namespace InventarioILS.Model.Storage
         {
             if (Connection == null) return;
 
-            var currentIds = Items.Select(x => x.Id).ToList();
-            var newIds = collection.Select(x => x.Id).ToList();
+            var existingItemsMap = Items.ToDictionary(item => item.Id, item => item);
 
-            var itemsToRemove = Items.Where(x => !newIds.Contains(x.Id)).ToList();
-            foreach (var item in itemsToRemove)
+            var newIds = new HashSet<uint>(collection.Select(item => (uint)item.Id));
+
+            for (int i = Items.Count - 1; i >= 0; i--)
             {
-                Items.Remove(item);
+                var existingItem = Items[i];
+
+                if (!newIds.Contains((uint)existingItem.Id))
+                {
+                    Items.RemoveAt(i); // RemoveAt es más eficiente que Items.Remove(item)
+                }
             }
 
             foreach (var newItem in collection)
             {
-                var existingItem = Items.FirstOrDefault(x => x.Id == newItem.Id);
-                if (existingItem != null)
+
+                // Búsqueda O(1) en el mapa
+                if (existingItemsMap.TryGetValue(newItem.Id, out T existingItem))
                 {
-                    var index = Items.IndexOf(existingItem);
-                    Items[index] = newItem;
+                    Items.Remove(existingItem);
+                    //// ACTUALIZACIÓN: Reemplazar el ítem existente
+                    //var index = Items.IndexOf(existingItem); // Esto sigue siendo O(N) en ObservableCollection.
+                    //                                         // Pero si no puedes usar Remove/Add, es necesario.
+                    //if (index >= 0)
+                    //{
+                    //    // En WPF, el reemplazo directo (Items[index] = newItem) es el más limpio
+                    //    // para que la UI sepa que debe refrescar la fila.
+                    //    Items[index] = newItem;
+                    //}
                 }
-                else
-                {
+                    // INSERCIÓN: El ítem es nuevo.
                     Items.Add(newItem);
-                }
             }
         }
 
@@ -105,8 +122,8 @@ namespace InventarioILS.Model.Storage
         }
     }
 
-    internal abstract class SingletonStorage<T, TDerived> : Storage<T> 
-        where T : IIdentifiable 
+    internal abstract class SingletonStorage<T, TDerived> : Storage<T>
+        where T : IIdentifiable
         where TDerived : SingletonStorage<T, TDerived>, new()
     {
         private static TDerived _instance;
@@ -122,7 +139,7 @@ namespace InventarioILS.Model.Storage
             get
             {
                 if (_instance != null) return _instance;
-                
+
                 lock (_lock)
                 {
                     _instance ??= new TDerived();

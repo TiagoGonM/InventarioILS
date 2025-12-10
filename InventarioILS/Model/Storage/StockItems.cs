@@ -1,8 +1,6 @@
 ﻿using Dapper;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
@@ -17,11 +15,6 @@ namespace InventarioILS.Model.Storage
         }
 
         public FiltersImpl<Filters> QueryFilters = new();
-
-        public StockItems()
-        {
-            Load();
-        }
 
         public void Save()
         {
@@ -73,7 +66,6 @@ namespace InventarioILS.Model.Storage
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
-        // TODO: finish this
         public async Task LoadAsync()
         {
             if (Connection == null) return;
@@ -119,6 +111,7 @@ namespace InventarioILS.Model.Storage
 
             await UpdateItemsAsync(collection.ToList().ToObservableCollection()).ConfigureAwait(false);
         }
+
         public void Add(Item item)
         {
             int rowId = Utils.AddItem(item);
@@ -160,15 +153,15 @@ namespace InventarioILS.Model.Storage
                 ).ConfigureAwait(false);
             }
 
-            Load();
+            await LoadAsync();
         }
 
 
-        public void AddRange(ObservableCollection<StockItem> collection)
+        public void AddRange(ObservableCollection<StockItem> items)
         {
-            if (collection.Count == 0) return;
+            if (items.Count == 0) return;
 
-            foreach (var item in collection)
+            foreach (var item in items)
             {
                 for (int i = 0; i < item.Quantity; i++)
                 {
@@ -176,22 +169,6 @@ namespace InventarioILS.Model.Storage
                 }
             }
         }
-
-        //public async Task AddRangeAsync(ObservableCollection<StockItem> collection)
-        //{
-        //    if (collection.Count == 0) return;
-
-        //    await Task.Run(async () =>
-        //    {
-        //        foreach (var item in collection)
-        //        {
-        //            for (int i = 0; i < item.Quantity; i++)
-        //            {
-        //                await AddAsync(item);
-        //            }
-        //        }
-        //    });
-        //}
 
         public async Task AddRangeAsync(ObservableCollection<StockItem> items)
         {
@@ -227,6 +204,7 @@ namespace InventarioILS.Model.Storage
 
                         // 2. Si todo fue bien, confirmar una vez.
                         transaction.Commit();
+                        await LoadAsync();
                     }
                     catch
                     {

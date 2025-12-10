@@ -16,22 +16,22 @@
 
         <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Grid.Column="1" Grid.Row="0" Text="Agregar elementos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding Count, ElementName=addItemPanel}" Margin="5,0" FontSize="15" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ItemCounter" Margin="5,0" FontSize="15" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center"/>
         </WrapPanel>
         <Button x:Name="ConfirmBtn" Click="ConfirmBtn_Click" Content="Confirmar" Height="28" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}"/>
 
         <ContentControl Grid.Row="1" x:Name="FormContainer"/>
 
-        <ScrollViewer x:Name="ItemListView" Visibility="Collapsed" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+        <ScrollViewer Margin="0,5" x:Name="ItemListView" Visibility="Collapsed" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
-                <ItemsControl ItemsSource="{Binding ItemList, Mode=OneWay}">
+                <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <local:ItemCard Tag="{Binding Id}" ProductCode="{Binding ProductCode}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="5,0"/>
+                            <local:ItemCard Tag="{Binding LocalIndexTag}" ProductCode="{Binding ProductCode}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Button x:Name="AddNewItem" Click="AddNewItem_Click" Content="Agregar nuevo" Style="{StaticResource RoundedButtonPrimary}" Height="40" Width="200" FontWeight="Bold"/>
+                <Button x:Name="AddNewItem" Click="AddNewItem_Click" Content="Agregar nuevo" Style="{StaticResource RoundedButtonPrimary}" Height="40" Width="200" FontWeight="Bold" Margin="0,5"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>
