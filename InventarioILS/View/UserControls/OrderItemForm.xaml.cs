@@ -27,9 +27,6 @@ namespace InventarioILS.View.UserControls
         string selectedClass = "";
         int selectedClassId = -1;
 
-        string selectedState = "";
-        int selectedStateId = -1;
-
         string ResultingProductCode { get; set; }
 
         bool isEditing = false;
@@ -183,8 +180,8 @@ namespace InventarioILS.View.UserControls
                 modelOrVal: ExtraValueInput.Text,
                 categoryId: selectedCategoryId,
                 subcategoryId: selectedSubcategoryId,
+                shipmentStateId: 1, // this isn't the best approach
                 classId: selectedClassId,
-                shipmentStateId: 1,
                 description: DescriptionInput.Text,
                 quantity: int.Parse(QuantityInput.Text)
             );
@@ -244,7 +241,6 @@ namespace InventarioILS.View.UserControls
                 modelOrVal: "230K",
                 categoryId: 2,
                 subcategoryId: 3,
-                shipmentStateId: 2,
                 description: "Resistencia Estándar 230K",
                 classId: 1,
                 quantity: 10

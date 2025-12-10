@@ -5,12 +5,23 @@ using System.Linq;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class OrderItems : SingletonStorage<OrderItem, OrderItems>, ILoadSave
+    internal class OrderItems : SingletonStorage<OrderItem, OrderItems>, ILoadSave<Item>
     {
         // TODO: implement this
         public void Add(Item item)
         {
-            throw new NotImplementedException();
+            string query = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
+                             VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity);";
+
+            // 1. Añadir un Order nuevo
+            // 2. Añadir tantas filas en Item por como la cantidad indicada
+            // 3. Añadir tantas filas en OrderDetail como la cantidad indicada con cantidad = 1 (campo redundante), shipmentState = pendiente y el id del item insertado previamente al crearlo
+
+            //Connection.Execute(query, new
+            //{
+            //    OrderId = LastRowInserted,
+
+            //};
         }
 
         public void Load()

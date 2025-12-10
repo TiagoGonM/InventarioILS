@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class StockItems : SingletonStorage<StockItem, StockItems>, ILoadSave
+    internal class StockItems : SingletonStorage<StockItem, StockItems>
     {
         public enum Filters
         {
@@ -112,48 +112,62 @@ namespace InventarioILS.Model.Storage
             await UpdateItemsAsync(collection.ToList().ToObservableCollection()).ConfigureAwait(false);
         }
 
-        public void Add(Item item)
+        public (int, int) Add(Item item)
         {
-            int rowId = Utils.AddItem(item);
+            int itemRowId = Utils.AddItem(item);
+            int stockItemRowId = -1;
 
             if (item is StockItem stockItem)
             {
-                Connection.Execute(
-                    @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                      VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
-                    new
-                    {
-                        ItemId = rowId,
-                        stockItem.StateId,
-                        stockItem.Location,
-                        stockItem.AdditionalNotes
-                    }
-                );
+                for (int i = 0; i < stockItem.Quantity; i++)
+                {
+                    stockItemRowId = Connection.ExecuteScalar<int>(
+                        @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                            VALUES (@ItemId, @StateId, @Location, @AdditionalNotes);
+                            SELECT last_insert_rowid();",
+                        new
+                        {
+                            ItemId = itemRowId,
+                            stockItem.StateId,
+                            stockItem.Location,
+                            stockItem.AdditionalNotes
+                        }
+                    );
+                }
             }
 
             Load();
+
+            return (itemRowId, stockItemRowId);
         }
 
-        public async Task AddAsync(Item item)
+        public async Task<(int, int)> AddAsync(Item item)
         {
-            int rowId = await Utils.AddItemAsync(item);
+            int itemRowId = Utils.AddItem(item);
+            int stockItemRowId = -1;
 
             if (item is StockItem stockItem)
             {
-                await Connection.ExecuteAsync(
-                    @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                      VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
-                    new
-                    {
-                        ItemId = rowId,
-                        stockItem.StateId,
-                        stockItem.Location,
-                        stockItem.AdditionalNotes
-                    }
-                ).ConfigureAwait(false);
+                for (int i = 0; i < stockItem.Quantity; i++)
+                {
+                    stockItemRowId = await Connection.ExecuteScalarAsync<int>(
+                        @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                          VALUES (@ItemId, @StateId, @Location, @AdditionalNotes);
+                          SELECT last_insert_rowid();",
+                        new
+                        {
+                            ItemId = itemRowId,
+                            stockItem.StateId,
+                            stockItem.Location,
+                            stockItem.AdditionalNotes
+                        }
+                    ).ConfigureAwait(false);
+                }
             }
 
-            await LoadAsync();
+            Load();
+
+            return (itemRowId, stockItemRowId);
         }
 
 
@@ -174,23 +188,19 @@ namespace InventarioILS.Model.Storage
         {
             await Task.Run(async () =>
             {
-                using (var transaction = Connection.BeginTransaction())
+                using var transaction = Connection.BeginTransaction();
+                try
                 {
-                    try
+                    foreach (var item in items)
                     {
-                        foreach (var item in items)
+                        for (int i = 0; i < item.Quantity; i++)
                         {
-                            // Nota: Aquí no necesitamos iterar por item.Quantity si ya aplanamos la lista
-                            // en AddRangeAsync para que 'items' ya contenga una fila por unidad.
-
                             // A. Insertar en Item y obtener el ID.
-                            //    'Utils.AddItem' debe aceptar la transacción y devolver el nuevo ID.
                             int itemId = await Utils.AddItemAsync(item, transaction).ConfigureAwait(false);
-
                             // B. Insertar en ItemStock usando el ID generado.
                             await Connection.ExecuteAsync(
                                 @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                          VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
+                              VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
                                 new
                                 {
                                     ItemId = itemId,
@@ -201,17 +211,17 @@ namespace InventarioILS.Model.Storage
                                 transaction: transaction
                             ).ConfigureAwait(false);
                         }
+                    }
 
-                        // 2. Si todo fue bien, confirmar una vez.
-                        transaction.Commit();
-                        await LoadAsync();
-                    }
-                    catch
-                    {
-                        // 3. Si hay un fallo, revertir todo el lote.
-                        transaction.Rollback();
-                        throw;
-                    }
+                    // 2. Si todo fue bien, confirmar una vez.
+                    transaction.Commit();
+                    await LoadAsync();
+                }
+                catch
+                {
+                    // 3. Si hay un fallo, revertir todo el lote.
+                    transaction.Rollback();
+                    throw;
                 }
             });
         }

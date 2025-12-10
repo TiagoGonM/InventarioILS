@@ -1,13 +1,11 @@
 ﻿using Dapper;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class Orders : SingletonStorage<Order, Orders>, ILoadSave
+    internal class Orders : SingletonStorage<Order, Orders>
     {
         public enum Filters
         {
@@ -23,9 +21,32 @@ namespace InventarioILS.Model.Storage
             Load();
         }
 
-        public void Add(Item item)
+        public int Add(Order order)
         {
-            throw new NotImplementedException();
+            string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
+                             SELECT last_insert_rowid();";
+
+            int rowId = Connection.ExecuteScalar<int>(query, new
+            {
+                order.Name,
+                order.Description
+            });
+
+            return rowId;
+        }
+
+        public async Task<int> AddAsync(Order order)
+        {
+            string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
+                             SELECT last_insert_rowid();";
+
+            int rowId = await Connection.ExecuteScalarAsync<int>(query, new
+            {
+                order.Name,
+                order.Description
+            });
+
+            return rowId;
         }
 
         public void Load()

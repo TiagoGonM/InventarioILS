@@ -18,9 +18,9 @@ namespace InventarioILS.Model.Storage
                 LOWER(SUBSTRING({col}, 2, LENGTH({col})))
             )";
     }
-    public interface ILoadSave
+    public interface ILoadSave<T>
     {
-        void Add(Item item);
+        void Add(T item);
         void Save();
         void Load();
     }
@@ -57,7 +57,9 @@ namespace InventarioILS.Model.Storage
     internal class Storage<T> where T: IIdentifiable
     {
         public ObservableCollection<T> Items { get; set; }
-        static public DbConnection Connection { get; set; }
+        public static DbConnection Connection { get; set; }
+
+        public static int LastRowInserted => (int)Connection?.QuerySingle<int>("SELECT last_insert_rowid()");
 
         public Storage()
         {
