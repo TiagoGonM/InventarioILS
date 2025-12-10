@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 
 using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using InventarioILS.View.Windows;
 
 namespace InventarioILS.View.UserControls
@@ -17,7 +18,7 @@ namespace InventarioILS.View.UserControls
         {
             InitializeComponent();
             
-            this.DataContext = new
+            DataContext = new
             {
                 Count = orders.Items.Count,
                 OrderList = orders.Items
@@ -28,7 +29,7 @@ namespace InventarioILS.View.UserControls
         {
             if (sender is OrderCard card)
             {
-                var order = new Order((int)card.Tag, card.Title, card.Description, card.CreationDate);
+                var order = new Order((uint)card.Tag, card.Title, card.Description, card.CreationDate);
 
                 new ViewOrderWindow(order).Show();
             }

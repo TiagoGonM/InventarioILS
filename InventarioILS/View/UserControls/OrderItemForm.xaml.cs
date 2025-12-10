@@ -1,4 +1,5 @@
 ﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace InventarioILS.View.UserControls
         readonly ItemCategories categories = null;
         readonly ItemSubCategories subCategories = null;
         readonly ItemClasses classes = null;
-        readonly ItemStates states = null;
 
         string codeCategoryShorthand = "";
         string codeMain = "";
@@ -34,10 +34,10 @@ namespace InventarioILS.View.UserControls
 
         bool isEditing = false;
 
-        public event EventHandler<StockItemEventArgs> OnConfirm;
-        public event EventHandler<StockItemEventArgs> OnEdit;
+        public event EventHandler<ItemEventArgs> OnConfirm;
+        public event EventHandler<ItemEventArgs> OnEdit;
 
-        StockItem resultingItem = null;
+        OrderItem resultingItem = null;
 
         public OrderItemForm()
         {
@@ -46,14 +46,12 @@ namespace InventarioILS.View.UserControls
             categories = ItemCategories.Instance;
             subCategories = ItemSubCategories.Instance;
             classes = ItemClasses.Instance;
-            states = ItemStates.Instance;
 
             DataContext = new
             {
                 CategoryList = categories.Items,
                 SubcategoryList = subCategories.Items,
                 ClassList = classes.Items,
-                StateList = states.Items,
                 ResultingProductCode,
             };
         }
@@ -61,14 +59,14 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty PresetDataProperty =
             DependencyProperty.Register(
                 nameof(PresetData),
-                typeof(StockItem),
+                typeof(OrderItem),
                 typeof(OrderItemForm),
                 new PropertyMetadata(null, OnPresetDataChanged)
             );
 
-        public StockItem PresetData
+        public OrderItem PresetData
         {
-            get => (StockItem)GetValue(PresetDataProperty);
+            get => (OrderItem)GetValue(PresetDataProperty);
             set { 
                 SetValue(PresetDataProperty, value);
                 FillData();
@@ -106,13 +104,12 @@ namespace InventarioILS.View.UserControls
             QuantityInput.Text = PresetData.Quantity.ToString();
 
             DescriptionInput.Text = PresetData.Description;
-            NotesInput.Text = PresetData.AdditionalNotes;
         }
 
         private static void OnPresetDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (OrderItemForm)d;
-            control.PresetData = (StockItem)e.NewValue;
+            control.PresetData = (OrderItem)e.NewValue;
         }
 
         private void UpdateDescription()
@@ -176,43 +173,31 @@ namespace InventarioILS.View.UserControls
             selectedClassId = (int)itemClass.Id;
         }
 
-        private void StateComboBox_SelectedItemChanged(object sender, EventArgs e)
-        {
-            var combo = (QueryableComboBox)sender;
-
-            var itemState = (ItemMisc)combo.SelectedItem;
-
-            if (itemState == null) return;
-
-            selectedState = itemState.Name;
-            selectedStateId = (int)itemState.Id;
-        }
-
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
             if (selectedCategoryId <= -1 || selectedSubcategoryId <= -1 || selectedClassId <= -1)
                 return;
 
-            //resultingItem = new OrderItem(
-            //    productCode: ProductCode.Text,
-            //    //modelOrVal: ExtraValueInput.Text,
-            //    categoryId: selectedCategoryId,
-            //    subcategoryId: selectedSubcategoryId,
-            //    description: DescriptionInput.Text,
-            //    classId: selectedClassId,
-            //    quantity: int.Parse(QuantityInput.Text),
-            //    additionalNotes: NotesInput.Text
-            //);
+            resultingItem = new OrderItem(
+                productCode: ProductCode.Text,
+                modelOrVal: ExtraValueInput.Text,
+                categoryId: selectedCategoryId,
+                subcategoryId: selectedSubcategoryId,
+                classId: selectedClassId,
+                shipmentStateId: 1,
+                description: DescriptionInput.Text,
+                quantity: int.Parse(QuantityInput.Text)
+            );
 
             //ProductCodeAfterConfirmLabel.Text = code;
             ResultingProductCode = ProductCode.Text;
 
             if (!isEditing)
             {
-                OnConfirm?.Invoke(this, new StockItemEventArgs(resultingItem));
+                OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
                 return;
             }
-            OnEdit?.Invoke(this, new StockItemEventArgs(PresetData, resultingItem));
+            OnEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
             isEditing = false;
             ConfirmBtn.Content = "Agregar elemento";
         }
@@ -254,20 +239,18 @@ namespace InventarioILS.View.UserControls
 
         private void DummyBtn_Click(object sender, RoutedEventArgs e)
         {
-            resultingItem = new StockItem(
+            resultingItem = new OrderItem(
                 productCode: "R-230K",
                 modelOrVal: "230K",
                 categoryId: 2,
                 subcategoryId: 3,
+                shipmentStateId: 2,
                 description: "Resistencia Estándar 230K",
                 classId: 1,
-                stateId: 2,
-                location: "Cajón 3",
-                quantity: 10,
-                additionalNotes: ""
+                quantity: 10
             );
 
-            OnConfirm?.Invoke(this, new StockItemEventArgs(resultingItem));
+            OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
         }
     }
 }

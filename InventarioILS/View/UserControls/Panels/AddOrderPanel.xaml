@@ -52,11 +52,22 @@
             <TextBox MinHeight="28" MaxHeight="130" Style="{StaticResource RoundedInput}" AcceptsReturn="True" TextWrapping="Wrap"
              BorderBrush="{StaticResource AccentBrush}" Background="#222" Foreground="#E6E6E6" />
 
-            <!-- Espacio -->
-            <Rectangle Height="12" Fill="Transparent"/>
+            <ContentControl Grid.Row="1" x:Name="FormContainer"/>
 
-            <!-- Contenedor de lista de items del pedido dentro de borde turquesa -->
-            <Border BorderBrush="{StaticResource AccentBrush}" BorderThickness="3" CornerRadius="4" Padding="12" Background="{StaticResource SecondaryBrush}">
+            <ScrollViewer Margin="0,5" x:Name="ItemListView" Visibility="Collapsed" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <local:ItemCard Tag="{Binding LocalIndexTag}" ProductCode="{Binding ProductCode}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button x:Name="AddNewItem" Click="AddNewItem_Click" Content="Agregar nuevo" Style="{StaticResource RoundedButtonPrimary}" Height="40" Width="200" FontWeight="Bold" Margin="0,5"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!--<Border BorderBrush="{StaticResource AccentBrush}" BorderThickness="3" CornerRadius="4" Padding="12" Background="{StaticResource SecondaryBrush}">
                 <DataGrid x:Name="OrderItemsGrid"
                           ItemsSource="{Binding OrderItems}" AutoGenerateColumns="False"
                           CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False"
@@ -90,7 +101,7 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-            </Border>
+            </Border>-->
         </StackPanel>
     </Grid>
 </UserControl>
