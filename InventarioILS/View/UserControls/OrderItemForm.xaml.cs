@@ -74,7 +74,7 @@ namespace InventarioILS.View.UserControls
         {
             foreach (var item in filterList)
             {
-                var it = (T)item;
+                var it = item;
 
                 if (it.Id == predicate)
                     combo.SelectedItem = it;
@@ -94,7 +94,7 @@ namespace InventarioILS.View.UserControls
             if (ExtraValueInput.Text != null || ExtraValueInput.Text != "")
                 ExtraValueCheckbox.IsChecked = true;
 
-            SetComboBoxItem<Category>(CategoryComboBox, categories.Items, PresetData.CategoryId);
+            SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, PresetData.CategoryId);
             SetComboBoxItem<ItemMisc>(SubcategoryComboBox, subCategories.Items, PresetData.SubcategoryId);
             SetComboBoxItem<ItemMisc>(ClassComboBox, classes.Items, PresetData.ClassId);
 
@@ -123,7 +123,7 @@ namespace InventarioILS.View.UserControls
         {
             var combo = (QueryableComboBox)sender;
 
-            var category = (Category)combo.SelectedItem;
+            var category = (ItemMisc)combo.SelectedItem;
 
             if (category == null) return;
 
@@ -236,15 +236,15 @@ namespace InventarioILS.View.UserControls
 
         private void DummyBtn_Click(object sender, RoutedEventArgs e)
         {
-            resultingItem = new OrderItem(
-                productCode: "R-230K",
-                modelOrVal: "230K",
-                categoryId: 2,
-                subcategoryId: 3,
-                description: "Resistencia Estándar 230K",
-                classId: 1,
-                quantity: 10
-            );
+            //resultingItem = new OrderItem(
+            //    productCode: "R-230K",
+            //    modelOrVal: "230K",
+            //    categoryId: 2,
+            //    subcategoryId: 3,
+            //    description: "Resistencia Estándar 230K",
+            //    classId: 1,
+            //    quantity: 10
+            //);
 
             OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
         }

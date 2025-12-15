@@ -87,23 +87,12 @@ namespace InventarioILS.Model.Storage
 
             foreach (var newItem in collection)
             {
-
-                // Búsqueda O(1) en el mapa
                 if (existingItemsMap.TryGetValue(newItem.Id, out T existingItem))
                 {
                     Items.Remove(existingItem);
-                    //// ACTUALIZACIÓN: Reemplazar el ítem existente
-                    //var index = Items.IndexOf(existingItem); // Esto sigue siendo O(N) en ObservableCollection.
-                    //                                         // Pero si no puedes usar Remove/Add, es necesario.
-                    //if (index >= 0)
-                    //{
-                    //    // En WPF, el reemplazo directo (Items[index] = newItem) es el más limpio
-                    //    // para que la UI sepa que debe refrescar la fila.
-                    //    Items[index] = newItem;
-                    //}
                 }
-                    // INSERCIÓN: El ítem es nuevo.
-                    Items.Add(newItem);
+                
+                Items.Add(newItem);
             }
         }
 

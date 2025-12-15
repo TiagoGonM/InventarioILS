@@ -11,11 +11,7 @@ namespace InventarioILS.Model
     {
         public uint Id { get; set; }
         public string Name { get; set; }
-    }
-    
-    internal class Category : ItemMisc
-    {
+
         public string Shorthand { get; set; }
     }
-
 }

@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class ItemStates : SingletonStorage<ItemMisc, ItemStates>, ILoadSave
+    internal class ItemStates : SingletonStorage<ItemMisc, ItemStates>, ILoadSave<ItemMisc>
     {
         public ItemStates()
         {
             Load();
         }
 
-        public void Add(Item item)
+        public void Add(ItemMisc item)
         {
             throw new NotImplementedException();
         }

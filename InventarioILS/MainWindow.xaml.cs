@@ -289,5 +289,13 @@ namespace InventarioILS
             ItemView.Visibility = Visibility.Visible;
             SettingsSection.Visibility = Visibility.Collapsed;
         }
+
+        //private void NewComboBoxBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (sender is Button btn && btn.Name == "NewClassComboBoxBtn")
+        //    {
+        //        MessageBox.Show("Good girl");
+        //    }
+        //}
     }
 }

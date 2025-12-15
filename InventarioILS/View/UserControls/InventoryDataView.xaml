@@ -10,7 +10,7 @@
     <Grid Background="{StaticResource BackgroundBrush}">
         <DataGrid x:Name="ItemView"
                   CanUserAddRows="False"
-                  CanUserDeleteRows="True"
+                  CanUserDeleteRows="False"
                   CanUserSortColumns="True"
                   RowBackground="{StaticResource RowBackgroundBrush}"
                   MinHeight="450"
@@ -30,7 +30,50 @@
                   RowStyle="{StaticResource DataGridRowStyle}"
                   ItemsSource="{Binding Items}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" SortMemberPath="ProductCode" FontWeight="Bold" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
+                <DataGridTemplateColumn Header="Código" SortMemberPath="ProductCode" Width="120" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Background="Transparent">
+                                <TextBlock Text="{Binding ProductCode}" 
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           VerticalAlignment="Center"
+                                           Padding="5,0"/>
+                                <StackPanel Orientation="Horizontal" 
+                                            HorizontalAlignment="Right"
+                                            Visibility="Collapsed"
+                                            x:Name="ActionButtons">
+                                    <Button x:Name="EditBtn"
+                                            Width="32" 
+                                            Height="32"
+                                            Margin="2"
+                                            Padding="0"
+                                            ToolTip="Editar"
+                                            Tag="{Binding ProductCode}"
+                                            Click="EditBtn_Click">
+                                        <TextBlock Text="✎" FontSize="14"/>
+                                    </Button>
+                                    <Button x:Name="DeleteBtn"
+                                            Width="32" 
+                                            Height="32"
+                                            Margin="2"
+                                            Padding="0"
+                                            ToolTip="Eliminar"
+                                            Tag="{Binding ProductCode}"
+                                            Click="DeleteBtn_Click">
+                                        <TextBlock Text="🗑" FontSize="14"/>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True">
+                                    <Setter TargetName="ActionButtons" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" SortMemberPath="Description" Width="*" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" SortMemberPath="Class" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                 <DataGridTextColumn Header="Estado" Binding="{Binding State}" SortMemberPath="State" Width="120" Foreground="{StaticResource ForegroundBrush}"/>

@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class ItemCategories : SingletonStorage<Category, ItemCategories>, ILoadSave
+    internal class ItemCategories : SingletonStorage<ItemMisc, ItemCategories>, ILoadSave<ItemMisc>
     {
         public ItemCategories()
         {
             Load();
         }
 
-        public void Add(Item item)
+        public void Add(ItemMisc item)
         {
             throw new NotImplementedException();
         }
@@ -20,7 +20,7 @@ namespace InventarioILS.Model.Storage
         {
             if (Connection == null) return;
             string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Category ORDER BY name ASC;";
-            var collection = Connection.Query<Category>(query);
+            var collection = Connection.Query<ItemMisc>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
@@ -28,7 +28,7 @@ namespace InventarioILS.Model.Storage
         {
             if (Connection == null) return;
             string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Category ORDER BY name ASC;";
-            var collection = await Connection.QueryAsync<Category>(query).ConfigureAwait(false);
+            var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 

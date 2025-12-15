@@ -81,7 +81,7 @@ namespace InventarioILS.View.UserControls
         {
             foreach (var item in filterList)
             {
-                var it = (T)item;
+                var it = item;
 
                 if (it.Id == predicate)
                     combo.SelectedItem = it;
@@ -101,7 +101,7 @@ namespace InventarioILS.View.UserControls
             if (ExtraValueInput.Text != null || ExtraValueInput.Text != "")
                 ExtraValueCheckbox.IsChecked = true;
 
-            SetComboBoxItem<Category>(CategoryComboBox, categories.Items, PresetData.CategoryId);
+            SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, PresetData.CategoryId);
             SetComboBoxItem<ItemMisc>(SubcategoryComboBox, subCategories.Items, PresetData.SubcategoryId);
             SetComboBoxItem<ItemMisc>(ClassComboBox, classes.Items, PresetData.ClassId);
             SetComboBoxItem<ItemMisc>(StateComboBox, states.Items, PresetData.StateId);
@@ -133,7 +133,7 @@ namespace InventarioILS.View.UserControls
         {
             var combo = (QueryableComboBox)sender;
 
-            var category = (Category)combo.SelectedItem;
+            var category = (ItemMisc)combo.SelectedItem;
 
             if (category == null) return;
 
