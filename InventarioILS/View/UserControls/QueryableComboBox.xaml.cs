@@ -22,7 +22,6 @@ namespace InventarioILS.View.UserControls
             SelectedItem = selectedItem;
         }
 
-        // Label Text Property
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(
                 nameof(Title),
@@ -43,7 +42,26 @@ namespace InventarioILS.View.UserControls
             control.TitleLabel.Text = e.NewValue.ToString();
         }
 
-        // ItemsSource Property
+        public static readonly DependencyProperty ComboTagProperty =
+            DependencyProperty.Register(
+                "ComboTag",
+                typeof(object),
+                typeof(QueryableComboBox),
+                new PropertyMetadata(null, OnTagChanged)
+            );
+        public object ComboTag
+        {
+            get => GetValue(ComboTagProperty);
+            set => SetValue(ComboTagProperty, value);
+        }
+
+        private static void OnTagChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (QueryableComboBox)d;
+            control.ComboBox.Tag = e.NewValue;
+        }
+
+
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 nameof(ItemsSource),

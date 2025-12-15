@@ -10,7 +10,8 @@
     <Grid>
         <StackPanel>
             <TextBlock x:Name="TitleLabel" Background="Transparent" Text="{Binding Title, ElementName=queryableComboBox, FallbackValue=title}" Foreground="{StaticResource AccentForegroundBrush}"/>
-            <ComboBox x:Name="ComboBox" 
+            <ComboBox x:Name="ComboBox"
+              Tag="N/A"
               Margin="0,4,0,8" 
               Height="28" 
               Style="{StaticResource BlackComboBox}" 

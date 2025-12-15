@@ -22,10 +22,10 @@
                     <TextBlock x:Name="ProductCode" Margin="5,0" Foreground="{StaticResource ForegroundBrush}"/>
                 </StackPanel>
                 <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,10,0,0">
-                    <local:QueryableComboBox x:Name="CategoryComboBox" Title="Categoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItemChanged="CategoryComboBox_SelectedItemChanged" />
-                    <local:QueryableComboBox x:Name="SubcategoryComboBox" Title="Subcategoría" MinWidth="170" Margin="10,0" ItemsSource="{Binding SubcategoryList, Mode=OneWay}" SelectedItemChanged="SubcategoryComboBox_SelectedItemChanged" />
-                    <local:QueryableComboBox x:Name="ClassComboBox" Title="Tipo" MinWidth="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged"/>
-                    <local:QueryableComboBox x:Name="StateComboBox" Title="Estado" MinWidth="170" Margin="10,0" ItemsSource="{Binding StateList, Mode=OneWay}" SelectedItemChanged="StateComboBox_SelectedItemChanged"/>
+                    <local:QueryableComboBox x:Name="CategoryComboBox" Title="Categoría" ComboTag="Category" MinWidth="170" Margin="10,0" ItemsSource="{Binding CategoryList, Mode=OneWay}" SelectedItemChanged="CategoryComboBox_SelectedItemChanged" />
+                    <local:QueryableComboBox x:Name="SubcategoryComboBox" Title="Subcategoría" ComboTag="Subcategory" MinWidth="170" Margin="10,0" ItemsSource="{Binding SubcategoryList, Mode=OneWay}" SelectedItemChanged="SubcategoryComboBox_SelectedItemChanged" />
+                    <local:QueryableComboBox x:Name="ClassComboBox" Title="Tipo" ComboTag="Class" MinWidth="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged"/>
+                    <local:QueryableComboBox x:Name="StateComboBox" Title="Estado" ComboTag="State" MinWidth="170" Margin="10,0" ItemsSource="{Binding StateList, Mode=OneWay}" SelectedItemChanged="StateComboBox_SelectedItemChanged"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -48,7 +48,7 @@
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="Ubicación" Foreground="{StaticResource AccentForegroundBrush}"/>
-                        <TextBox x:Name="LocationInput" Margin="0,4,0,8" MinHeight="28" MinWidth="170" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
+                        <TextBox x:Name="LocationInput" Margin="0,4,0,8" MinHeight="28" MinWidth="170" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}"/>
                     </StackPanel>
                 </StackPanel>
 

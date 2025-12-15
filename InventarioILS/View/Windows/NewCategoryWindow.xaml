@@ -1,0 +1,36 @@
+﻿<Window x:Class="InventarioILS.View.Windows.NewCategoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventarioILS.View.Windows"
+        xmlns:kit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Background="{StaticResource BackgroundBrush}"
+        Title="Nueva categoría" Height="450" Width="800">
+    <Grid>
+        <StackPanel Margin="10" Orientation="Horizontal">
+            <StackPanel Margin="10,0,20,0">
+                <TextBlock Text="Nombre de la categoría" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <TextBox x:Name="CategoryNameInput" Margin="0,4,0,8" MinWidth="200" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Abreviatura" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <TextBox x:Name="CategoryShorthandInput" Margin="0,4,0,8" MaxLength="4" MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!--TODO: stylize this somehow-->
+        <kit:CheckComboBox
+            x:Name="AssociatedSubcategoriesComboBox"
+            MaxWidth="200"
+            Height="28"
+            Foreground="{StaticResource ForegroundBrush}"
+            Background="{StaticResource BackgroundBrush}"
+            BorderThickness="1"
+            ItemsSource="{Binding SubcategoryList, Mode=OneWay}"
+            DisplayMemberPath="Name"
+            Watermark="Seleccionar tipos asociados"
+        />
+    </Grid>
+</Window>

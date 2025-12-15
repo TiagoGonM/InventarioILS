@@ -17,6 +17,10 @@
     <Compile Update="Model\DbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="View\Windows\NewSubcategoryWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
