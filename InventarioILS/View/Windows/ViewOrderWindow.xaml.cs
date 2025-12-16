@@ -1,4 +1,5 @@
 ﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using System.Windows;
 
 namespace InventarioILS.View.Windows
@@ -16,7 +17,7 @@ namespace InventarioILS.View.Windows
         public ViewOrderWindow(Order order) : this()
         {
             var orderItems = new OrderItems();
-            orderItems.LoadSingle((int)order.Id);
+            orderItems.LoadSingle(order.Id);
 
             DataContext = new
             {

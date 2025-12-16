@@ -143,7 +143,6 @@ namespace InventarioILS.View.UserControls
             selectedCategory = category.Name;
             selectedCategoryId = (int)category.Id;
 
-
             UpdateProductCode();
             UpdateDescription();
         }

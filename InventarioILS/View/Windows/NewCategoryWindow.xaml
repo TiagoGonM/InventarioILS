@@ -8,21 +8,23 @@
         mc:Ignorable="d"
         Background="{StaticResource BackgroundBrush}"
         Title="Nueva categoría" Height="450" Width="800">
-    <Grid>
-        <StackPanel Margin="10" Orientation="Horizontal">
+    <Grid Margin="10">
+        <StackPanel Orientation="Horizontal">
             <StackPanel Margin="10,0,20,0">
                 <TextBlock Text="Nombre de la categoría" Foreground="{StaticResource AccentForegroundBrush}"/>
-                <TextBox x:Name="CategoryNameInput" Margin="0,4,0,8" MinWidth="200" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+                <TextBox x:Name="CategoryNameInput" Margin="0,4,0,0" MinWidth="200" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="CategoryNameInput_TextChanged"/>
+                <TextBlock x:Name="CategoryNameErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El nombre de la categoría ya existe.</TextBlock>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Abreviatura" Foreground="{StaticResource AccentForegroundBrush}"/>
-                <TextBox x:Name="CategoryShorthandInput" Margin="0,4,0,8" MaxLength="4" MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+                <TextBox x:Name="CategoryShorthandInput" CharacterCasing="Upper" Margin="0,4,0,8" MaxLength="4" MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="CategoryShorthandInput_TextChanged"/>
+                <TextBlock x:Name="CategoryShorthandErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">La abreviatura ya existe.</TextBlock>
             </StackPanel>
         </StackPanel>
 
         <!--TODO: stylize this somehow-->
         <kit:CheckComboBox
-            x:Name="AssociatedSubcategoriesComboBox"
+            x:Name="LinkedSubcategoriesComboBox"
             MaxWidth="200"
             Height="28"
             Foreground="{StaticResource ForegroundBrush}"
@@ -30,7 +32,9 @@
             BorderThickness="1"
             ItemsSource="{Binding SubcategoryList, Mode=OneWay}"
             DisplayMemberPath="Name"
-            Watermark="Seleccionar tipos asociados"
+            Watermark="Seleccionar subcategorias"
         />
+
+        <Button x:Name="CreateCategoryBtn" Content="Crear" IsEnabled="False" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="CreateCategoryBtn_Click"/>
     </Grid>
 </Window>

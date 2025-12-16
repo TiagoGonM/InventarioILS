@@ -21,10 +21,10 @@ namespace InventarioILS
                         new NewSubcategoryWindow().ShowDialog();
                         break;
                     case "Class":
-                        MessageBox.Show("Good puppy");
+                        new NewClassWindow().ShowDialog();
                         break;
                     case "State":
-                        MessageBox.Show("Good kitty");
+                        new NewStateWindow().ShowDialog();
                         break;
                     default:
                         MessageBox.Show("Not handled");
