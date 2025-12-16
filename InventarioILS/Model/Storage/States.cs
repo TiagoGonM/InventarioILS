@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
@@ -16,6 +17,16 @@ namespace InventarioILS.Model.Storage
             throw new NotImplementedException();
         }
 
+        public async Task AddAsync(ItemMisc item, uint classId)
+        {
+            if (Connection == null) return;
+
+            string query = @"INSERT INTO State (name, classId) VALUES (@Name, @ClassId)";
+            await Connection.ExecuteAsync(query, new { item.Name, ClassId = classId }).ConfigureAwait(false);
+            
+            await LoadAsync();
+        }
+
         public void Load()
         {
             if (Connection == null) return;
@@ -28,7 +39,7 @@ namespace InventarioILS.Model.Storage
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
-        public async void LoadAsync()
+        public async Task LoadAsync()
         {
             if (Connection == null) return;
             string query = @$"SELECT 
@@ -38,11 +49,6 @@ namespace InventarioILS.Model.Storage
             var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
 
             UpdateItems(collection.ToList().ToObservableCollection());
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
         }
     }
 }

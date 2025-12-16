@@ -16,10 +16,6 @@ namespace InventarioILS.Model.Storage
 
         public FiltersImpl<Filters> QueryFilters = new();
 
-        public void Save()
-        {
-        }
-
         public void Load()
         {
             if (Connection == null) return;

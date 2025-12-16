@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,11 +60,6 @@ namespace InventarioILS.Model.Storage
             string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o;";
             var collection = await Connection.QueryAsync<Order>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
         }
     }
 }

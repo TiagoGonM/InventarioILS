@@ -18,10 +18,10 @@ namespace InventarioILS.Model.Storage
                 LOWER(SUBSTRING({col}, 2, LENGTH({col})))
             )";
     }
+
     public interface ILoadSave<T>
     {
         void Add(T item);
-        void Save();
         void Load();
     }
 
