@@ -1,18 +1,20 @@
 ﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
+using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
     public partial class AddItemPanel : UserControl
     {
-        static readonly StockItems ItemsStorage = StockItems.Instance;
-        public static ObservableCollection<StockItemExtra> itemList = [];
-        public StockItemExtra ItemToEdit { get; set; }
+        static readonly StockItems ItemStorage = StockItems.Instance;
+        public static ObservableCollection<StockItem> itemList = [];
+        public StockItem ItemToEdit { get; set; }
 
-        public AddItemForm itemForm = null;
+        public ItemForm itemForm = null;
 
         public AddItemPanel()
         {
@@ -23,15 +25,15 @@ namespace InventarioILS.View.UserControls
             DataContext = new
             {
                 ItemList = itemList,
-                ItemToEdit
+                ItemToEdit,
             };
         }
-
-        public static int Count => itemList.Count();
 
         private void ShowItemForm(bool show = true)
         {
             FormContainer.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+
+            ItemCounter.Visibility = !show ? Visibility.Visible : Visibility.Collapsed;
             ItemListView.Visibility = !show ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -39,18 +41,18 @@ namespace InventarioILS.View.UserControls
         {
             CleanForm();
 
-            itemForm = new AddItemForm();
+            itemForm = new ItemForm();
             itemForm.OnConfirm += ItemForm_OnConfirm;
 
             FormContainer.Content = itemForm;
             ShowItemForm();
         }
 
-        private void ShowEditForm(StockItemExtra item)
+        private void ShowEditForm(StockItem item)
         {
             CleanForm();
 
-            itemForm = new AddItemForm
+            itemForm = new ItemForm
             {
                 PresetData = item
             };
@@ -72,31 +74,41 @@ namespace InventarioILS.View.UserControls
             itemForm = null;
         }
 
-        private void ItemForm_OnConfirm(object sender, StockItemExtraEventArgs e)
+        private void ItemForm_OnConfirm(object sender, ItemEventArgs e)
         {
-            itemList.Add(e.Item);
-            SetIndexTag(e.Item);
+            if (e.Item is StockItem item)
+            {
+                itemList.Add(item);
+                ItemCounter.Text = itemList.Count.ToString();
+                SetIndexTag(item);
+            }
 
             ShowItemForm(false);
         }
 
-        private void ItemForm_OnEdit(object sender, StockItemExtraEventArgs e)
+        private void ItemForm_OnEdit(object sender, ItemEventArgs e)
         {
-            int ind = itemList.IndexOf(e.OldItem);
+            var item = (StockItem)e.Item;
+
+            int ind = itemList.IndexOf((StockItem)e.OldItem);
             var old = itemList[ind];
 
             itemList.RemoveAt(ind);
-            itemList.Insert(ind, e.Item);
+            itemList.Insert(ind, item);
+            ItemCounter.Text = itemList.Count.ToString();
 
-            SetIndexTag(e.Item);
+            SetIndexTag(item);
 
             ShowItemForm(false);
         }
 
-        private void SetIndexTag(StockItemExtra item)
+        private static void SetIndexTag(StockItem item)
         {
             int ind = itemList.IndexOf(item);
-            itemList.ElementAt(ind).Id = ind;
+
+            if (ind == -1) return;
+
+            itemList.ElementAt(ind).LocalIndexTag = ind;
         }
 
         private void ItemCard_OnEdit(object sender, int e)
@@ -109,23 +121,15 @@ namespace InventarioILS.View.UserControls
             itemList.RemoveAt(e);
         }
 
-        private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (itemList.Count == 0) return;
-
-            foreach (var item in itemList)
-            {
-                for (int i = 0; i < item.Quantity; i++)
-                {
-                    ItemsStorage.Add(item);
-                }
-            }
+            await ItemStorage.AddRangeAsync(itemList);
+            StatusManager.Instance.UpdateMessageStatus($"Items agregados: {itemList.Count}", Brushes.Green);
         }
 
         private void AddNewItem_Click(object sender, RoutedEventArgs e)
         {
             ShowEmptyForm();
         }
-
     }
 }

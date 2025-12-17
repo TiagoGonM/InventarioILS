@@ -5,6 +5,7 @@ using InventarioILS.Model;
 using System.Windows.Media;
 using System;
 using InventarioILS.View.UserControls;
+using InventarioILS.Model.Storage;
 
 namespace InventarioILS
 {
@@ -42,6 +43,8 @@ namespace InventarioILS
             items = StockItems.Instance;
             itemClasses = ItemClasses.Instance;
 
+            StatusManager.Instance.Initialize(StatusMessageLabel);
+
             DataContext = new
             {
                 BottomBarHeight,
@@ -57,12 +60,12 @@ namespace InventarioILS
             ShowBottomBar();
         }
 
-        public void SetItems()
+        public async Task SetItems()
         {
-            items.Load();
+            await items.LoadAsync().ConfigureAwait(false);
         }
 
-        private void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private async void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -76,38 +79,38 @@ namespace InventarioILS
 
             items.QueryFilters.AddFilter(StockItems.Filters.CLASS_NAME, content.ToString());
 
-            SetItems();
+            await SetItems();
         }
 
-        private void ProductCodeInput_TextChanged(object sender, TextChangedEventArgs e)
+        private async void ProductCodeInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(ProductCodeInput.Text))
             {
                 items.QueryFilters.RemoveFilter(StockItems.Filters.PRODUCT_CODE);
-                SetItems();
+                await SetItems();
                 return;
             }
 
             items.QueryFilters.AddFilter(StockItems.Filters.PRODUCT_CODE, ProductCodeInput.Text);
 
-            SetItems();
+            await SetItems();
         }
 
-        private void KeywordInput_TextChanged(object sender, TextChangedEventArgs e)
+        private async void KeywordInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(KeywordInput.Text))
             {
                 items.QueryFilters.RemoveFilter(StockItems.Filters.KEYWORD);
-                SetItems();
+                await SetItems();
                 return;
             }
 
             items.QueryFilters.AddFilter(StockItems.Filters.KEYWORD, KeywordInput.Text);
 
-            SetItems();
+            await SetItems();
         }
 
-        private void ClearFilters_Click(object sender, RoutedEventArgs e)
+        private async void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
             items.QueryFilters.ClearFilters();
 
@@ -115,30 +118,19 @@ namespace InventarioILS
             ProductCodeInput.Text = string.Empty;
             KeywordInput.Text = string.Empty;
 
-            SetItems();
+            await SetItems();
         }
 
-        private void ItemView_Loaded(object sender, RoutedEventArgs e)
+        private async void ItemView_Loaded(object sender, RoutedEventArgs e)
         {
-            SetItems();
+            await SetItems();
         }
 
-        private void ShowNonStockItems_Click(object sender, RoutedEventArgs e)
+        private async void ShowNonStockItems_Click(object sender, RoutedEventArgs e)
         {
             isStock = !ShowNonStockItems.IsChecked ?? true;
 
-            SetItems();
-        }
-
-        private async void UpdateMessageStatus(string message, Brush color)
-        {
-            StatusMessageLabel.Foreground = color;
-            StatusMessageLabel.Content = message;
-            StatusMessageLabel.Visibility = Visibility.Visible;
-
-            await Task.Delay(5000);
-            
-            StatusMessageLabel.Visibility = Visibility.Hidden;
+            await SetItems();
         }
 
         private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
@@ -297,5 +289,13 @@ namespace InventarioILS
             ItemView.Visibility = Visibility.Visible;
             SettingsSection.Visibility = Visibility.Collapsed;
         }
+
+        //private void NewComboBoxBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (sender is Button btn && btn.Name == "NewClassComboBoxBtn")
+        //    {
+        //        MessageBox.Show("Good girl");
+        //    }
+        //}
     }
 }

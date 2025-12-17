@@ -56,5 +56,16 @@ namespace InventarioILS.View.UserControls
                 view.ItemView.ItemsSource = (IEnumerable<ItemCard>)e.NewValue;
             }
         }
+
+        private void EditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            var row = sender as FrameworkElement;
+        }
+
+        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
-    public partial class AddItemForm : UserControl
+    public partial class ItemForm : UserControl
     {
         readonly ItemCategories categories = null;
         readonly ItemSubCategories subCategories = null;
@@ -18,28 +19,28 @@ namespace InventarioILS.View.UserControls
         string codeCategoryShorthand = "";
         string codeMain = "";
 
-        string selectedCategory = "";
-        int selectedCategoryId = -1;
+        string selectedCategory;
+        uint? selectedCategoryId;
 
-        string selectedSubcategory = "";
-        int selectedSubcategoryId = -1;
+        string selectedSubcategory;
+        uint? selectedSubcategoryId;
 
-        string selectedClass = "";
-        int selectedClassId = -1;
+        string selectedClass;
+        uint? selectedClassId;
 
-        string selectedState = "";
-        int selectedStateId = -1;
+        string selectedState;
+        uint? selectedStateId;
 
         string ResultingProductCode { get; set; }
 
         bool isEditing = false;
 
-        public event EventHandler<StockItemExtraEventArgs> OnConfirm;
-        public event EventHandler<StockItemExtraEventArgs> OnEdit;
+        public event EventHandler<ItemEventArgs> OnConfirm;
+        public event EventHandler<ItemEventArgs> OnEdit;
 
-        StockItemExtra resultingItem = null;
+        StockItem resultingItem = null;
 
-        public AddItemForm()
+        public ItemForm()
         {
             InitializeComponent();
 
@@ -61,25 +62,26 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty PresetDataProperty =
             DependencyProperty.Register(
                 nameof(PresetData),
-                typeof(StockItemExtra),
-                typeof(AddItemForm),
+                typeof(StockItem),
+                typeof(ItemForm),
                 new PropertyMetadata(null, OnPresetDataChanged)
             );
 
-        public StockItemExtra PresetData
+        public StockItem PresetData
         {
-            get => (StockItemExtra)GetValue(PresetDataProperty);
+            get => (StockItem)GetValue(PresetDataProperty);
             set { 
                 SetValue(PresetDataProperty, value);
                 FillData();
             }
         }
 
-        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, int predicate) where T : IIdentifiable
+        // Solo una manera *fancy* de poder setear el elemento que se seleccionó antes correctamente sin tener que repetir esto mismo varias veces
+        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, uint predicate) where T : IIdentifiable
         {
             foreach (var item in filterList)
             {
-                var it = (T)item;
+                var it = item;
 
                 if (it.Id == predicate)
                     combo.SelectedItem = it;
@@ -96,10 +98,10 @@ namespace InventarioILS.View.UserControls
             ProductCode.Text = PresetData.ProductCode;
             
             ExtraValueInput.Text = PresetData.ModelOrValue;
-            if (ExtraValueInput.Text != null || ExtraValueInput.Text != "")
+            if (ExtraValueInput.Text != null || string.IsNullOrEmpty(ExtraValueInput.Text))
                 ExtraValueCheckbox.IsChecked = true;
 
-            SetComboBoxItem<Category>(CategoryComboBox, categories.Items, PresetData.CategoryId);
+            SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, PresetData.CategoryId);
             SetComboBoxItem<ItemMisc>(SubcategoryComboBox, subCategories.Items, PresetData.SubcategoryId);
             SetComboBoxItem<ItemMisc>(ClassComboBox, classes.Items, PresetData.ClassId);
             SetComboBoxItem<ItemMisc>(StateComboBox, states.Items, PresetData.StateId);
@@ -113,8 +115,8 @@ namespace InventarioILS.View.UserControls
 
         private static void OnPresetDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (AddItemForm)d;
-            control.PresetData = (StockItemExtra)e.NewValue;
+            var control = (ItemForm)d;
+            control.PresetData = (StockItem)e.NewValue;
         }
 
         private void UpdateDescription()
@@ -131,7 +133,7 @@ namespace InventarioILS.View.UserControls
         {
             var combo = (QueryableComboBox)sender;
 
-            var category = (Category)combo.SelectedItem;
+            var category = (ItemMisc)combo.SelectedItem;
 
             if (category == null) return;
 
@@ -139,8 +141,7 @@ namespace InventarioILS.View.UserControls
 
             // No se puede asignar la instancia directamente 💔
             selectedCategory = category.Name;
-            selectedCategoryId = (int)category.Id;
-
+            selectedCategoryId = category.Id;
 
             UpdateProductCode();
             UpdateDescription();
@@ -158,7 +159,7 @@ namespace InventarioILS.View.UserControls
                 codeMain = subcat.Name.ToUpper();
 
             selectedSubcategory = subcat.Name;
-            selectedSubcategoryId = (int)subcat.Id;
+            selectedSubcategoryId = subcat.Id;
 
             UpdateProductCode();
             UpdateDescription();
@@ -175,7 +176,7 @@ namespace InventarioILS.View.UserControls
             //StateComboBox.IsEnabled = itemClass.Name != "Insumo";
 
             selectedClass = itemClass.Name;
-            selectedClassId = (int)itemClass.Id;
+            selectedClassId = itemClass.Id;
         }
 
         private void StateComboBox_SelectedItemChanged(object sender, EventArgs e)
@@ -187,25 +188,24 @@ namespace InventarioILS.View.UserControls
             if (itemState == null) return;
 
             selectedState = itemState.Name;
-            selectedStateId = (int)itemState.Id;
+            selectedStateId = itemState.Id;
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedCategoryId <= -1 || selectedSubcategoryId <= -1 || selectedClassId <= -1)
+            if (!selectedCategoryId.HasValue || !selectedSubcategoryId.HasValue || !selectedClassId.HasValue)
                 return;
 
-            // Crear la instancia de StockItemExtra con los datos del formulario
-            resultingItem = new StockItemExtra(
+            resultingItem = new StockItem(
                 productCode: ProductCode.Text,
                 modelOrVal: ExtraValueInput.Text,
-                categoryId: selectedCategoryId,
-                subcategoryId: selectedSubcategoryId,
+                categoryId: (uint)selectedCategoryId,
+                subcategoryId: (uint)selectedSubcategoryId,
                 description: DescriptionInput.Text,
-                classId: selectedClassId,
-                stateId: selectedStateId,
+                classId: (uint)selectedClassId,
+                stateId: (uint)selectedStateId,
                 location: LocationInput.Text,
-                quantity: int.Parse(QuantityInput.Text),
+                quantity: uint.Parse(QuantityInput.Text),
                 additionalNotes: NotesInput.Text
             );
 
@@ -214,10 +214,10 @@ namespace InventarioILS.View.UserControls
 
             if (!isEditing)
             {
-                OnConfirm?.Invoke(this, new StockItemExtraEventArgs(resultingItem));
+                OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
                 return;
             }
-            OnEdit?.Invoke(this, new StockItemExtraEventArgs(PresetData, resultingItem));
+            OnEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
             isEditing = false;
             ConfirmBtn.Content = "Agregar elemento";
         }
@@ -259,7 +259,7 @@ namespace InventarioILS.View.UserControls
 
         private void DummyBtn_Click(object sender, RoutedEventArgs e)
         {
-            resultingItem = new StockItemExtra(
+            resultingItem = new StockItem(
                 productCode: "R-230K",
                 modelOrVal: "230K",
                 categoryId: 2,
@@ -272,11 +272,11 @@ namespace InventarioILS.View.UserControls
                 additionalNotes: ""
             );
 
-            OnConfirm?.Invoke(this, new StockItemExtraEventArgs(resultingItem));
+            OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
         }
     }
 
-    public class StockItemExtraEventArgs : EventArgs
+    public class ItemEventArgs : EventArgs
     {
         public enum EventType
         {
@@ -285,11 +285,11 @@ namespace InventarioILS.View.UserControls
             DELETE
         }
 
-        public StockItemExtra OldItem { get; }
-        public StockItemExtra Item { get; }
+        public Item OldItem { get; }
+        public Item Item { get; }
         public EventType Type { get; set; }
 
-        public StockItemExtraEventArgs(StockItemExtra item, EventType eventType = EventType.CREATE)
+        public ItemEventArgs(Item item, EventType eventType = EventType.CREATE)
         {
             Item = item;
             Type = eventType;
@@ -301,7 +301,7 @@ namespace InventarioILS.View.UserControls
         /// <param name="oldItem">has to be filled when editing an item</param>
         /// <param name="item"></param>
         /// <param name="eventType"></param>
-        public StockItemExtraEventArgs(StockItemExtra oldItem, StockItemExtra item, EventType eventType = EventType.EDIT)
+        public ItemEventArgs(Item oldItem, Item item, EventType eventType = EventType.EDIT)
         {
             OldItem = oldItem;
             Item = item;

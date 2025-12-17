@@ -48,7 +48,7 @@
                 <TextBlock Text="Palabras Clave" Foreground="{StaticResource AccentForegroundBrush}" />
                 <TextBox x:Name="KeywordInput" Margin="0,4,0,8" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" Background="{StaticResource BackgroundBrush}" BorderThickness="1" TextChanged="KeywordInput_TextChanged" />
 
-                <userControls:QueryableComboBox Title="Tipo" x:Name="ClassComboBox" ItemsSource="{Binding ItemClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged" SelectedItem="{Binding SelectedClassItem, Mode=TwoWay}"/>
+                <userControls:QueryableComboBox Title="Tipo" x:Name="ClassComboBox" ComboTag="Class" ItemsSource="{Binding ItemClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged" SelectedItem="{Binding SelectedClassItem, Mode=TwoWay}"/>
 
                 <TextBlock Text="Cantidad mínima" Foreground="{StaticResource AccentForegroundBrush}"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

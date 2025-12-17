@@ -414,11 +414,12 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
-        <Style x:Key="BlackComboBox" TargetType="ComboBox">
+
+        <Style x:Key="BlackComboBox" TargetType="{x:Type ComboBox}">
             <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
             <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+            <EventSetter Event="Button.Click" Handler="NewComboBoxBtn_Click"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
@@ -428,13 +429,13 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <ToggleButton Name="ToggleButton"
-                                    Grid.ColumnSpan="2"
-                                    Background="{TemplateBinding Background}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="1"
-                                    IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ClickMode="Press"
+                                Grid.ColumnSpan="2"
+                                Background="{TemplateBinding Background}"
+                                Foreground="{TemplateBinding Foreground}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                ClickMode="Press"
                             >
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
@@ -501,9 +502,26 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="5"
                                     BorderThickness="1">
-                                    <ScrollViewer 
+                                    <ScrollViewer
                                         Foreground="{TemplateBinding Foreground}">
-                                        <StackPanel x:Name="ItemList" IsItemsHost="True"/>
+                                        <StackPanel>
+                                            <Button x:Name="AddNewItem"
+                                                Grid.ColumnSpan="2"
+                                                Background="{TemplateBinding Background}"
+                                                Foreground="{StaticResource ForegroundBrush}"
+                                                BorderThickness="5,0,0,0"
+                                                HorizontalAlignment="Left"
+                                                Content="+ Nuevo"
+                                                Style="{StaticResource RoundedButtonPrimary}"
+                                            >
+                                                <!--<Style>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                                                    </Trigger>
+                                                </Style>-->
+                                            </Button>
+                                            <StackPanel x:Name="ItemList" IsItemsHost="True"/>
+                                        </StackPanel>
                                     </ScrollViewer>
                                 </Border>
                             </Popup>
