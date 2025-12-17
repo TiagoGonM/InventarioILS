@@ -93,3 +93,67 @@ CREATE TABLE IF NOT EXISTS `ShipmentMove` (
   FOREIGN KEY (`fromState`) REFERENCES `ShipmentState` (`shipmentStateId`),
   FOREIGN KEY (`toState`) REFERENCES `ShipmentState` (`shipmentStateId`)
 );
+
+CREATE VIEW IF NOT EXISTS View_ItemStockSummary AS
+  SELECT 
+      sto.itemStockId AS id, 
+      it.productCode, 
+      c.name AS category, 
+      s.name AS subcategory,
+      CONCAT(
+        UPPER(SUBSTRING(class.name, 1, 1)),
+        LOWER(SUBSTRING(class.name, 2, LENGTH(class.name)))
+    ) class, 
+      it.description, 
+      CONCAT(
+        UPPER(SUBSTRING(st.name, 1, 1)),
+        LOWER(SUBSTRING(st.name, 2, LENGTH(st.name)))
+    ) state,
+    CONCAT(
+        UPPER(SUBSTRING(sto.location, 1, 1)),
+        LOWER(SUBSTRING(sto.location, 2, LENGTH(sto.location)))
+    ) location, 
+      sto.additionalNotes, 
+      COUNT(*) AS quantity
+  FROM ItemStock sto
+  JOIN Item it ON sto.itemId = it.itemId
+  JOIN Class class ON it.classId = class.classId
+  JOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId
+  JOIN Category c ON cs.categoryId = c.categoryId
+  JOIN Subcategory s ON cs.subcategoryId = s.subcategoryId
+  JOIN State st ON sto.stateId = st.stateId
+  GROUP BY 
+      it.productCode, 
+      c.name, 
+      s.name, 
+      class.name,
+      st.name,
+      sto.location;
+
+CREATE VIEW IF NOT EXISTS View_OrderItemsSummary AS
+  SELECT 
+      ord.orderId,                     
+      ord.name orderName, 
+      it.productCode, 
+      it.description,
+      CONCAT(
+        UPPER(SUBSTRING(c.name, 1, 1)),
+        LOWER(SUBSTRING(c.name, 2, LENGTH(c.name)))
+      ) class,  
+      CONCAT(
+        UPPER(SUBSTRING(ss.name, 1, 1)),
+        LOWER(SUBSTRING(ss.name, 2, LENGTH(ss.name)))
+      ) shipmentState,       
+      COUNT(*) quantity
+  FROM OrderDetail ordDet
+  JOIN 'Order' ord ON ordDet.orderId = ord.orderId
+  JOIN Item it ON ordDet.itemId = it.itemId
+  JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
+  JOIN Class c ON it.classId = c.classId
+  GROUP BY 
+      ord.orderId, 
+      ord.name, 
+      it.productCode, 
+      it.description, 
+      c.name, 
+      ss.name;
