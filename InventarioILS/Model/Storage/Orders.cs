@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,30 +35,35 @@ namespace InventarioILS.Model.Storage
             return rowId;
         }
 
-        public async Task<int> AddAsync(Order order)
+        public async Task<int> AddAsync(Order order, IDbTransaction transaction = null)
         {
             string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
                              SELECT last_insert_rowid();";
 
-            int rowId = await Connection.ExecuteScalarAsync<int>(query, new
+            var conn = transaction?.Connection ?? Connection;
+
+            var count = await Connection.QueryFirstAsync<int>(@"SELECT COUNT(*) total FROM 'Order'").ConfigureAwait(false);
+            order.Name = $"Pedido #{count + 1}";
+
+            int rowId = await conn.ExecuteScalarAsync<int>(query, new
             {
                 order.Name,
                 order.Description
-            });
+            }, transaction: transaction);
 
             return rowId;
         }
 
         public void Load()
         {
-            string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o;";
+            string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o";
             var collection = Connection.Query<Order>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
-        public async void LoadAsync()
+        public async Task LoadAsync()
         {
-            string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o;";
+            string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o";
             var collection = await Connection.QueryAsync<Order>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }

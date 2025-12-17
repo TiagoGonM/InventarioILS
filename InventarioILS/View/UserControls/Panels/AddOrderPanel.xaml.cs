@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
+using InventarioILS.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -8,9 +9,6 @@ using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
-    /// <summary>
-    /// Lógica de interacción para AddOrderSection.xaml
-    /// </summary>
     public partial class AddOrderPanel : UserControl
     {
         static readonly OrderItems itemStorage = OrderItems.Instance;
@@ -106,6 +104,7 @@ namespace InventarioILS.View.UserControls
             ShowItemForm(false);
         }
 
+        // Util para poder determinar que pedido presionó el botón de editar o eliminar seteando el Tag del ItemCard
         private static void SetIndexTag(OrderItem item)
         {
             int ind = itemList.IndexOf(item);
@@ -127,9 +126,12 @@ namespace InventarioILS.View.UserControls
 
         private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: implement adding
-            //await itemStorage.AddRangeAsync(itemList); 
             StatusManager.Instance.UpdateMessageStatus($"Items agregados: {itemList.Count}", Brushes.Green);
+
+            await OrderService.RegisterOrder(new Order
+            {
+                Description = OrderDescriptionInput.Text
+            }, itemList);
         }
 
         private void AddNewItem_Click(object sender, RoutedEventArgs e)

@@ -19,17 +19,17 @@ namespace InventarioILS.View.UserControls
         string codeCategoryShorthand = "";
         string codeMain = "";
 
-        string selectedCategory = "";
-        int selectedCategoryId = -1;
+        string selectedCategory;
+        uint? selectedCategoryId;
 
-        string selectedSubcategory = "";
-        int selectedSubcategoryId = -1;
+        string selectedSubcategory;
+        uint? selectedSubcategoryId;
 
-        string selectedClass = "";
-        int selectedClassId = -1;
+        string selectedClass;
+        uint? selectedClassId;
 
-        string selectedState = "";
-        int selectedStateId = -1;
+        string selectedState;
+        uint? selectedStateId;
 
         string ResultingProductCode { get; set; }
 
@@ -77,7 +77,7 @@ namespace InventarioILS.View.UserControls
         }
 
         // Solo una manera *fancy* de poder setear el elemento que se seleccionó antes correctamente sin tener que repetir esto mismo varias veces
-        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, int predicate) where T : IIdentifiable
+        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, uint predicate) where T : IIdentifiable
         {
             foreach (var item in filterList)
             {
@@ -98,7 +98,7 @@ namespace InventarioILS.View.UserControls
             ProductCode.Text = PresetData.ProductCode;
             
             ExtraValueInput.Text = PresetData.ModelOrValue;
-            if (ExtraValueInput.Text != null || ExtraValueInput.Text != "")
+            if (ExtraValueInput.Text != null || string.IsNullOrEmpty(ExtraValueInput.Text))
                 ExtraValueCheckbox.IsChecked = true;
 
             SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, PresetData.CategoryId);
@@ -141,7 +141,7 @@ namespace InventarioILS.View.UserControls
 
             // No se puede asignar la instancia directamente 💔
             selectedCategory = category.Name;
-            selectedCategoryId = (int)category.Id;
+            selectedCategoryId = category.Id;
 
             UpdateProductCode();
             UpdateDescription();
@@ -159,7 +159,7 @@ namespace InventarioILS.View.UserControls
                 codeMain = subcat.Name.ToUpper();
 
             selectedSubcategory = subcat.Name;
-            selectedSubcategoryId = (int)subcat.Id;
+            selectedSubcategoryId = subcat.Id;
 
             UpdateProductCode();
             UpdateDescription();
@@ -176,7 +176,7 @@ namespace InventarioILS.View.UserControls
             //StateComboBox.IsEnabled = itemClass.Name != "Insumo";
 
             selectedClass = itemClass.Name;
-            selectedClassId = (int)itemClass.Id;
+            selectedClassId = itemClass.Id;
         }
 
         private void StateComboBox_SelectedItemChanged(object sender, EventArgs e)
@@ -188,24 +188,24 @@ namespace InventarioILS.View.UserControls
             if (itemState == null) return;
 
             selectedState = itemState.Name;
-            selectedStateId = (int)itemState.Id;
+            selectedStateId = itemState.Id;
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedCategoryId <= -1 || selectedSubcategoryId <= -1 || selectedClassId <= -1)
+            if (!selectedCategoryId.HasValue || !selectedSubcategoryId.HasValue || !selectedClassId.HasValue)
                 return;
 
             resultingItem = new StockItem(
                 productCode: ProductCode.Text,
                 modelOrVal: ExtraValueInput.Text,
-                categoryId: selectedCategoryId,
-                subcategoryId: selectedSubcategoryId,
+                categoryId: (uint)selectedCategoryId,
+                subcategoryId: (uint)selectedSubcategoryId,
                 description: DescriptionInput.Text,
-                classId: selectedClassId,
-                stateId: selectedStateId,
+                classId: (uint)selectedClassId,
+                stateId: (uint)selectedStateId,
                 location: LocationInput.Text,
-                quantity: int.Parse(QuantityInput.Text),
+                quantity: uint.Parse(QuantityInput.Text),
                 additionalNotes: NotesInput.Text
             );
 

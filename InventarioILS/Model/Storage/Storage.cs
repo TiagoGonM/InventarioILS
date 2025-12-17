@@ -261,7 +261,7 @@ namespace InventarioILS.Model.Storage
         }
 
 
-        public async static Task<int> AddItemAsync(Item item, IDbTransaction transaction)
+        public async static Task<uint?> AddItemAsync(Item item, IDbTransaction transaction)
         {
             var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
             
@@ -301,13 +301,14 @@ namespace InventarioILS.Model.Storage
                 item.Description,
             };
 
-            int rowId = await conn.ExecuteScalarAsync<int>(
+            
+            uint? rowId = await conn.ExecuteScalarAsync<uint>(
                 insertSql,
                 parameters,
                 transaction: transaction
             ).ConfigureAwait(false);
 
-            return rowId >= 0 ? rowId : -1;
+            return rowId >= 0 ? rowId : null;
         }
     }
 }

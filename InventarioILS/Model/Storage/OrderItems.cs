@@ -1,26 +1,37 @@
 ﻿using Dapper;
+using System.Data;
 using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class OrderItems : SingletonStorage<OrderItem, OrderItems>, ILoadSave<Item>
+    internal class OrderItems : SingletonStorage<OrderItem, OrderItems>
     {
+        string insertQuery = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
+                               VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity);";
         // TODO: implement this
-        public void Add(Item item)
+        public void Add(OrderItem item, IDbTransaction transaction = null)
         {
-            string query = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
-                             VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity);";
+            Connection.Execute(insertQuery, new
+            {
+                item.OrderId,
+                item.ItemId,
+                item.ShipmentStateId,
+                item.Quantity
+            }, transaction: transaction);
+        }
 
-            // 1. Añadir un Order nuevo
-            // 2. Añadir tantas filas en Item por como la cantidad indicada
-            // 3. Añadir tantas filas en OrderDetail como la cantidad indicada con cantidad = 1 (campo redundante), shipmentState = pendiente y el id del item insertado previamente al crearlo
+        public async Task AddAsync(OrderItem item, IDbTransaction transaction = null)
+        {
+            var conn = transaction?.Connection ?? Connection;
 
-            //Connection.Execute(query, new
-            //{
-            //    OrderId = LastRowInserted,
-
-            //};
+            await conn.ExecuteAsync(insertQuery, new
+            {
+                item.OrderId,
+                item.ItemId,
+                item.ShipmentStateId,
+                item.Quantity
+            }, transaction: transaction).ConfigureAwait(false);
         }
 
         public void Load()
@@ -32,13 +43,13 @@ namespace InventarioILS.Model.Storage
                              JOIN 'Order' ord ON ordDet.orderId = ord.orderId
                              JOIN Item it ON ordDet.itemId = it.itemId
                              JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
-                             JOIN Class c ON it.classId = c.classId;";
+                             JOIN Class c ON it.classId = c.classId";
 
             var collection = Connection.Query<OrderItem>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
-        public async void LoadAsync()
+        public async Task LoadAsync()
         {
             if (Connection == null) return;
 
@@ -46,25 +57,19 @@ namespace InventarioILS.Model.Storage
                              FROM OrderDetail ordDet
                              JOIN 'Order' o ON ordDet.orderId = o.orderId
                              JOIN Item it ON ordDet.itemId = it.itemId
-                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId;";
+                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId";
 
             var collection = await Connection.QueryAsync<OrderItem>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
+        string selectSingleQuery = @"SELECT * FROM View_OrderItemsSummary WHERE orderId = @OrderId";
+
         public void LoadSingle(uint orderId)
         {
             if (Connection == null) return;
 
-            string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, c.name class, ss.name shipmentState, ordDet.quantity
-                             FROM OrderDetail ordDet
-                             JOIN 'Order' ord ON ordDet.orderId = ord.orderId
-                             JOIN Item it ON ordDet.itemId = it.itemId
-                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
-                             JOIN Class c ON it.classId = c.classId 
-                             WHERE ord.orderId = @OrderId;";
-
-            var collection = Connection.Query<OrderItem>(query, new { OrderId = orderId });
+            var collection = Connection.Query<OrderItem>(selectSingleQuery, new { OrderId = orderId });
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
@@ -72,15 +77,7 @@ namespace InventarioILS.Model.Storage
         {
             if (Connection == null) return;
 
-            string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, c.name class, ss.name shipmentState, ordDet.quantity
-                             FROM OrderDetail ordDet
-                             JOIN 'Order' ord ON ordDet.orderId = ord.orderId
-                             JOIN Item it ON ordDet.itemId = it.itemId
-                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
-                             JOIN Class c ON it.classId = c.classId 
-                             WHERE ord.orderId = @OrderId;";
-
-            var collection = await Connection.QueryAsync<OrderItem>(query, new { OrderId = orderId }).ConfigureAwait(false);
+            var collection = await Connection.QueryAsync<OrderItem>(selectSingleQuery, new { OrderId = orderId }).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
     }

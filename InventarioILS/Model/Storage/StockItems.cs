@@ -20,15 +20,7 @@ namespace InventarioILS.Model.Storage
         {
             if (Connection == null) return;
 
-            string query = @$"SELECT sto.itemStockId id, it.productCode, c.name category, s.name subcategory, {SQLUtils.StringCapitalize("class.name")} class, it.description, {SQLUtils.StringCapitalize("st.name")} state, {SQLUtils.StringCapitalize("sto.location")} location, sto.additionalNotes, COUNT(*) quantity
-                                 FROM ItemStock sto
-                                 JOIN Item it ON sto.itemId = it.itemId
-                                 JOIN Class class ON it.classId = class.classId
-                                 JOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId
-                                 JOIN Category c ON cs.categoryId = c.categoryId
-                                 JOIN Subcategory s ON cs.subcategoryId = s.subcategoryId
-                                 JOIN State st ON sto.stateId = st.stateId
-                                 WHERE 1=1";
+            string query = @$"SELECT * FROM View_ItemStockSummary WHERE 1=1";
 
             var parameters = new DynamicParameters();
 
@@ -66,42 +58,27 @@ namespace InventarioILS.Model.Storage
         {
             if (Connection == null) return;
 
-            string query = @$"SELECT sto.itemStockId id, it.productCode, c.name category, s.name subcategory, {SQLUtils.StringCapitalize("class.name")} class, it.description, {SQLUtils.StringCapitalize("st.name")} state, {SQLUtils.StringCapitalize("sto.location")} location, sto.additionalNotes, COUNT(*) quantity
-                                 FROM ItemStock sto
-                                 JOIN Item it ON sto.itemId = it.itemId
-                                 JOIN Class class ON it.classId = class.classId
-                                 JOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId
-                                 JOIN Category c ON cs.categoryId = c.categoryId
-                                 JOIN Subcategory s ON cs.subcategoryId = s.subcategoryId
-                                 JOIN State st ON sto.stateId = st.stateId
-                                 WHERE 1=1";
+            string query = @$"SELECT * FROM View_ItemStockSummary WHERE 1=1";
 
             var parameters = new DynamicParameters();
 
             if (QueryFilters.FilterList.TryGetValue(Filters.PRODUCT_CODE, out string productCode))
             {
-                query += " AND it.productCode LIKE @productCode COLLATE NOCASE";
+                query += " AND productCode LIKE @productCode COLLATE NOCASE";
                 parameters.Add("productCode", $"%{productCode}%");
             }
 
             if (QueryFilters.FilterList.TryGetValue(Filters.KEYWORD, out string keyword))
             {
-                query += " AND it.description LIKE @keyword COLLATE NOCASE";
+                query += " AND description LIKE @keyword COLLATE NOCASE";
                 parameters.Add("keyword", $"%{keyword}%");
             }
 
             if (QueryFilters.FilterList.TryGetValue(Filters.CLASS_NAME, out string className))
             {
-                query += " AND class.name LIKE @className COLLATE NOCASE";
+                query += " AND class LIKE @className COLLATE NOCASE";
                 parameters.Add("className", $"%{className}%");
             }
-
-            query += @" GROUP BY 
-                            it.productCode,
-                            c.name,
-                            s.name,
-                            class.name
-                        LIMIT 50;";
 
             var collection = await Connection.QueryAsync<StockItem>(query, parameters).ConfigureAwait(false);
 
@@ -192,7 +169,7 @@ namespace InventarioILS.Model.Storage
                         for (int i = 0; i < item.Quantity; i++)
                         {
                             // A. Insertar en Item y obtener el ID.
-                            int itemId = await Utils.AddItemAsync(item, transaction).ConfigureAwait(false);
+                            uint? itemId = await Utils.AddItemAsync(item, transaction).ConfigureAwait(false);
                             // B. Insertar en ItemStock usando el ID generado.
                             await Connection.ExecuteAsync(
                                 @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)

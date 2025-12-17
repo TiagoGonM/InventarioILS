@@ -18,14 +18,14 @@ namespace InventarioILS.View.UserControls
         string codeCategoryShorthand = "";
         string codeMain = "";
 
-        string selectedCategory = "";
-        int selectedCategoryId = -1;
+        string selectedCategory;
+        uint? selectedCategoryId;
 
-        string selectedSubcategory = "";
-        int selectedSubcategoryId = -1;
+        string selectedSubcategory;
+        uint? selectedSubcategoryId;
 
-        string selectedClass = "";
-        int selectedClassId = -1;
+        string selectedClass;
+        uint? selectedClassId;
 
         string ResultingProductCode { get; set; }
 
@@ -70,7 +70,7 @@ namespace InventarioILS.View.UserControls
             }
         }
 
-        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, int predicate) where T : IIdentifiable
+        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, uint predicate) where T : IIdentifiable
         {
             foreach (var item in filterList)
             {
@@ -91,7 +91,7 @@ namespace InventarioILS.View.UserControls
             ProductCode.Text = PresetData.ProductCode;
             
             ExtraValueInput.Text = PresetData.ModelOrValue;
-            if (ExtraValueInput.Text != null || ExtraValueInput.Text != "")
+            if (ExtraValueInput.Text != null || string.IsNullOrEmpty(ExtraValueInput.Text))
                 ExtraValueCheckbox.IsChecked = true;
 
             SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, PresetData.CategoryId);
@@ -131,7 +131,7 @@ namespace InventarioILS.View.UserControls
 
             // No se puede asignar la instancia directamente 💔
             selectedCategory = category.Name;
-            selectedCategoryId = (int)category.Id;
+            selectedCategoryId = category.Id;
 
 
             UpdateProductCode();
@@ -150,7 +150,7 @@ namespace InventarioILS.View.UserControls
                 codeMain = subcat.Name.ToUpper();
 
             selectedSubcategory = subcat.Name;
-            selectedSubcategoryId = (int)subcat.Id;
+            selectedSubcategoryId = subcat.Id;
 
             UpdateProductCode();
             UpdateDescription();
@@ -167,26 +167,24 @@ namespace InventarioILS.View.UserControls
             //StateComboBox.IsEnabled = itemClass.Name != "Insumo";
 
             selectedClass = itemClass.Name;
-            selectedClassId = (int)itemClass.Id;
+            selectedClassId = itemClass.Id;
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedCategoryId <= -1 || selectedSubcategoryId <= -1 || selectedClassId <= -1)
+            if (!selectedCategoryId.HasValue || !selectedSubcategoryId.HasValue || !selectedClassId.HasValue)
                 return;
 
             resultingItem = new OrderItem(
                 productCode: ProductCode.Text,
                 modelOrVal: ExtraValueInput.Text,
-                categoryId: selectedCategoryId,
-                subcategoryId: selectedSubcategoryId,
-                shipmentStateId: 1, // this isn't the best approach
-                classId: selectedClassId,
+                categoryId: (uint)selectedCategoryId,
+                subcategoryId: (uint)selectedSubcategoryId,
+                classId: (uint)selectedClassId,
                 description: DescriptionInput.Text,
-                quantity: int.Parse(QuantityInput.Text)
+                quantity: uint.Parse(QuantityInput.Text)
             );
 
-            //ProductCodeAfterConfirmLabel.Text = code;
             ResultingProductCode = ProductCode.Text;
 
             if (!isEditing)
@@ -195,6 +193,7 @@ namespace InventarioILS.View.UserControls
                 return;
             }
             OnEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
+            
             isEditing = false;
             ConfirmBtn.Content = "Agregar elemento";
         }
@@ -236,15 +235,15 @@ namespace InventarioILS.View.UserControls
 
         private void DummyBtn_Click(object sender, RoutedEventArgs e)
         {
-            //resultingItem = new OrderItem(
-            //    productCode: "R-230K",
-            //    modelOrVal: "230K",
-            //    categoryId: 2,
-            //    subcategoryId: 3,
-            //    description: "Resistencia Estándar 230K",
-            //    classId: 1,
-            //    quantity: 10
-            //);
+            resultingItem = new OrderItem(
+                productCode: "R-230K",
+                modelOrVal: "230K",
+                categoryId: 2,
+                subcategoryId: 3,
+                description: "Resistencia Estándar 230K",
+                classId: 1,
+                quantity: 10
+            );
 
             OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
         }
