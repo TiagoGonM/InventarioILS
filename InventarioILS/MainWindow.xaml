@@ -86,7 +86,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="CancelOrderFormBtn" Click="CancelOrderFormBtn_Click" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
+                <Button x:Name="CancelBtn" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
                         Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="-" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -122,14 +122,15 @@
             <GridSplitter Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" ResizeDirection="Rows" Panel.ZIndex="3" Width="2500" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
             <Grid x:Name="BottomBar" Grid.Row="1" Panel.ZIndex="2" Background="{StaticResource SecondaryBrush}">
                 <Grid x:Name="InnerGrid" Margin="10,10,10,10">
-                    <userControls:OrderPanel Grid.Row="1" x:Name="OrderListSection" />
+                    <ContentControl x:Name="BottomBarContent" Grid.Row="1"/>
+                    <!--<userControls:OrderPanel Grid.Row="1" x:Name="OrderListSection" />
                     <userControls:AddOrderPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddOrderSection" />
-                    <userControls:AddItemPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddItemSection" />
+                    <userControls:AddItemPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddItemSection" />-->
                 </Grid>
             </Grid>
 
             <!-- Tabla de datos -->
-            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" d:Visibility="Hidden" ItemsSource="{Binding Items}"/>
+            <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" OnEdit="ItemView_OnEdit" d:Visibility="Hidden" ItemsSource="{Binding Items}"/>
             <Grid x:Name="SettingsSection" Visibility="Collapsed" d:Visibility="Visible">
                 <Button x:Name="SettingsBackBtn" Click="SettingsBackBtn_Click" Content="← Volver" 
                         Width="100" Height="50" Margin="10"

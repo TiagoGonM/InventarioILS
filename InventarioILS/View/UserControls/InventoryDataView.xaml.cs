@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
@@ -10,6 +11,8 @@ namespace InventarioILS.View.UserControls
     /// </summary>
     public partial class InventoryDataView : UserControl
     {
+        public event EventHandler<ItemEventArgs> OnEdit;
+
         public static readonly DependencyProperty AutoGenerateColumnsProperty =
             DependencyProperty.Register(
                 nameof(AutoGenerateColumns),
@@ -60,7 +63,9 @@ namespace InventarioILS.View.UserControls
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            var row = sender as FrameworkElement;
+            var row = button.DataContext as StockItem;
+
+            OnEdit?.Invoke(this, new ItemEventArgs(row, ItemEventArgs.EventType.EDIT));
         }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
