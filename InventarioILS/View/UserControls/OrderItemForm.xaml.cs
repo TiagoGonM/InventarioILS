@@ -32,7 +32,7 @@ namespace InventarioILS.View.UserControls
         bool isEditing = false;
 
         public event EventHandler<ItemEventArgs> OnConfirm;
-        public event EventHandler<ItemEventArgs> OnEdit;
+        public event EventHandler<ItemEventArgs> OnConfirmEdit;
 
         OrderItem resultingItem = null;
 
@@ -192,7 +192,7 @@ namespace InventarioILS.View.UserControls
                 OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
                 return;
             }
-            OnEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
+            OnConfirmEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
             
             isEditing = false;
             ConfirmBtn.Content = "Agregar elemento";
