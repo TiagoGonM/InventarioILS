@@ -9,6 +9,25 @@ using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
+    public class ItemFormPresetData(
+        StockItem item, 
+        bool enableCategory = true, 
+        bool enableSubcategory = true, 
+        bool enableClass = true, 
+        bool enableState = true, 
+        bool enableLocation = true, 
+        bool enableAdditionalNotes = true)
+    {
+        public StockItem Data { get; set; } = item;
+
+        public bool enableCategory = enableCategory;
+        public bool enableSubcategory = enableSubcategory;
+        public bool enableClass = enableClass;
+        public bool enableState = enableState;
+        public bool enableLocation = enableLocation;
+        public bool enableAdditionalNotes = enableAdditionalNotes;
+    }
+
     public partial class ItemForm : UserControl
     {
         readonly ItemCategories categories = null;
@@ -36,7 +55,7 @@ namespace InventarioILS.View.UserControls
         bool isEditing = false;
 
         public event EventHandler<ItemEventArgs> OnConfirm;
-        public event EventHandler<ItemEventArgs> OnEdit;
+        public event EventHandler<ItemEventArgs> OnConfirmEdit;
 
         StockItem resultingItem = null;
 
@@ -62,14 +81,14 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty PresetDataProperty =
             DependencyProperty.Register(
                 nameof(PresetData),
-                typeof(StockItem),
+                typeof(ItemFormPresetData),
                 typeof(ItemForm),
                 new PropertyMetadata(null, OnPresetDataChanged)
             );
 
-        public StockItem PresetData
+        public ItemFormPresetData PresetData
         {
-            get => (StockItem)GetValue(PresetDataProperty);
+            get => (ItemFormPresetData)GetValue(PresetDataProperty);
             set { 
                 SetValue(PresetDataProperty, value);
                 FillData();
@@ -95,28 +114,37 @@ namespace InventarioILS.View.UserControls
             isEditing = true;
             ConfirmBtn.Content = "Guardar cambios";
 
-            ProductCode.Text = PresetData.ProductCode;
+            var item = PresetData.Data;
+
+            ProductCode.Text = item.ProductCode;
             
-            ExtraValueInput.Text = PresetData.ModelOrValue;
+            ExtraValueInput.Text = item.ModelOrValue;
             if (ExtraValueInput.Text != null || string.IsNullOrEmpty(ExtraValueInput.Text))
                 ExtraValueCheckbox.IsChecked = true;
 
-            SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, PresetData.CategoryId);
-            SetComboBoxItem<ItemMisc>(SubcategoryComboBox, subCategories.Items, PresetData.SubcategoryId);
-            SetComboBoxItem<ItemMisc>(ClassComboBox, classes.Items, PresetData.ClassId);
-            SetComboBoxItem<ItemMisc>(StateComboBox, states.Items, PresetData.StateId);
+            SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, item.CategoryId);
+            SetComboBoxItem<ItemMisc>(SubcategoryComboBox, subCategories.Items, item.SubcategoryId);
+            SetComboBoxItem<ItemMisc>(ClassComboBox, classes.Items, item.ClassId);
+            SetComboBoxItem<ItemMisc>(StateComboBox, states.Items, item.StateId);
 
-            QuantityInput.Text = PresetData.Quantity.ToString();
-            LocationInput.Text = PresetData.Location.ToString();
+            QuantityInput.Text = item.Quantity.ToString();
+            LocationInput.Text = item.Location.ToString();
 
-            DescriptionInput.Text = PresetData.Description;
-            NotesInput.Text = PresetData.AdditionalNotes;
+            DescriptionInput.Text = item.Description;
+            NotesInput.Text = item.AdditionalNotes;
+
+            CategoryComboBox.IsEnabled = PresetData.enableCategory;
+            SubcategoryComboBox.IsEnabled = PresetData.enableSubcategory;
+            ClassComboBox.IsEnabled = PresetData.enableClass;
+            StateComboBox.IsEnabled = PresetData.enableState;
+            LocationInput.IsEnabled = PresetData.enableLocation;
+            NotesInput.IsEnabled = PresetData.enableAdditionalNotes;
         }
 
         private static void OnPresetDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (ItemForm)d;
-            control.PresetData = (StockItem)e.NewValue;
+            control.PresetData = (ItemFormPresetData)e.NewValue;
         }
 
         private void UpdateDescription()
@@ -217,7 +245,7 @@ namespace InventarioILS.View.UserControls
                 OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
                 return;
             }
-            OnEdit?.Invoke(this, new ItemEventArgs(PresetData, resultingItem));
+            OnConfirmEdit?.Invoke(this, new ItemEventArgs(PresetData.Data, resultingItem));
             isEditing = false;
             ConfirmBtn.Content = "Agregar elemento";
         }
@@ -225,7 +253,7 @@ namespace InventarioILS.View.UserControls
         private void ExtraValueCheckbox_Checked(object sender, RoutedEventArgs e)
         {
             ExtraValueInput.IsEnabled = true;
-            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : selectedSubcategory.ToUpper();
+            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : selectedSubcategory?.ToUpper() ?? "";
             
             UpdateProductCode();
             UpdateDescription();
@@ -236,7 +264,7 @@ namespace InventarioILS.View.UserControls
         private void ExtraValueCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExtraValueInput.IsEnabled = false;
-            codeMain = selectedSubcategory.ToUpper();
+            codeMain = selectedSubcategory?.ToUpper() ?? "";
 
             UpdateProductCode();
             UpdateDescription();
@@ -246,7 +274,7 @@ namespace InventarioILS.View.UserControls
 
         private void ExtraValueInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : selectedSubcategory.ToUpper();
+            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : selectedSubcategory?.ToUpper() ?? "";
 
             UpdateProductCode();
             UpdateDescription();
