@@ -8,7 +8,7 @@ namespace InventarioILS.Model.Storage
     internal class OrderItems : SingletonStorage<OrderItem, OrderItems>
     {
         string insertQuery = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
-                               VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity);";
+                               VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity)";
         // TODO: implement this
         public void Add(OrderItem item, IDbTransaction transaction = null)
         {

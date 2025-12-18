@@ -37,7 +37,7 @@ namespace InventarioILS.Model.Storage
         public void Load()
         {
             if (Connection == null) return;
-            string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Subcategory ORDER BY name ASC;";
+            string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Subcategory ORDER BY name ASC";
 
             var collection = Connection.Query<ItemMisc>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
@@ -46,7 +46,7 @@ namespace InventarioILS.Model.Storage
         public async Task LoadAsync()
         {
             if (Connection == null) return;
-            string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Subcategory ORDER BY name ASC;";
+            string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Subcategory ORDER BY name ASC";
 
             var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());

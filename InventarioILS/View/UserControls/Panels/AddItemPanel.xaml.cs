@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -12,6 +13,8 @@ namespace InventarioILS.View.UserControls
     {
         static readonly StockItems ItemStorage = StockItems.Instance;
         public static ObservableCollection<StockItem> itemList = [];
+        public event Action OnSuccess;
+
         public StockItem ItemToEdit { get; set; }
 
         public ItemForm itemForm = null;
@@ -54,9 +57,10 @@ namespace InventarioILS.View.UserControls
 
             itemForm = new ItemForm
             {
-                PresetData = item
+                PresetData = new ItemFormPresetData(item)
             };
-            itemForm.OnEdit += ItemForm_OnEdit;
+
+            itemForm.OnConfirmEdit += ItemForm_OnEdit;
 
             FormContainer.Content = itemForm;
             ShowItemForm();
@@ -69,7 +73,7 @@ namespace InventarioILS.View.UserControls
             if (itemForm == null) return;
 
             itemForm.OnConfirm -= ItemForm_OnConfirm;
-            itemForm.OnEdit -= ItemForm_OnEdit;
+            itemForm.OnConfirmEdit -= ItemForm_OnEdit;
 
             itemForm = null;
         }
@@ -125,6 +129,7 @@ namespace InventarioILS.View.UserControls
         {
             await ItemStorage.AddRangeAsync(itemList);
             StatusManager.Instance.UpdateMessageStatus($"Items agregados: {itemList.Count}", Brushes.Green);
+            OnSuccess.Invoke();
         }
 
         private void AddNewItem_Click(object sender, RoutedEventArgs e)

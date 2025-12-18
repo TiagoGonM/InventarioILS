@@ -1,6 +1,7 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
 using InventarioILS.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -14,10 +15,12 @@ namespace InventarioILS.View.UserControls
         static readonly OrderItems itemStorage = OrderItems.Instance;
         static readonly ObservableCollection<OrderItem> itemList = [];
 
+        public Action OnSuccess;
+
         public OrderItem ItemToEdit { get; set; }
 
         public OrderItemForm itemForm = null;
-
+        
         public AddOrderPanel()
         {
             InitializeComponent();
@@ -58,7 +61,7 @@ namespace InventarioILS.View.UserControls
             {
                 PresetData = item
             };
-            itemForm.OnEdit += ItemForm_OnEdit;
+            itemForm.OnConfirmEdit += ItemForm_OnEdit;
 
             FormContainer.Content = itemForm;
             ShowItemForm();
@@ -71,7 +74,7 @@ namespace InventarioILS.View.UserControls
             if (itemForm == null) return;
 
             itemForm.OnConfirm -= ItemForm_OnConfirm;
-            itemForm.OnEdit -= ItemForm_OnEdit;
+            itemForm.OnConfirmEdit -= ItemForm_OnEdit;
 
             itemForm = null;
         }
@@ -126,12 +129,14 @@ namespace InventarioILS.View.UserControls
 
         private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            StatusManager.Instance.UpdateMessageStatus($"Items agregados: {itemList.Count}", Brushes.Green);
+            StatusManager.Instance.UpdateMessageStatus($"Pedido agregado: {OrderDescriptionInput.Text} | Items: {itemList.Count}", Brushes.Green);
 
             await OrderService.RegisterOrder(new Order
             {
                 Description = OrderDescriptionInput.Text
             }, itemList);
+
+            OnSuccess.Invoke();
         }
 
         private void AddNewItem_Click(object sender, RoutedEventArgs e)

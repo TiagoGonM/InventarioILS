@@ -34,7 +34,7 @@ namespace InventarioILS.Model.Storage
             string query = @$"SELECT 
                              classId id, 
                              {SQLUtils.StringCapitalize()} name
-                             FROM Class ORDER BY name ASC;";
+                             FROM Class ORDER BY name ASC";
             var collection = Connection.Query<ItemMisc>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
@@ -46,7 +46,7 @@ namespace InventarioILS.Model.Storage
             string query = @$"SELECT 
                              classId id, 
                              {SQLUtils.StringCapitalize()} name
-                             FROM Class ORDER BY name ASC;";
+                             FROM Class ORDER BY name ASC";
             var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
