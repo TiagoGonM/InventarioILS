@@ -7,12 +7,14 @@ namespace InventarioILS.Model.Storage
 {
     internal class OrderItems : SingletonStorage<OrderItem, OrderItems>
     {
-        string insertQuery = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
+        readonly string insertQuery = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
                                VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity)";
-        // TODO: implement this
+
         public void Add(OrderItem item, IDbTransaction transaction = null)
         {
-            Connection.Execute(insertQuery, new
+            using var conn = transaction?.Connection ?? CreateConnection();
+
+            conn.Execute(insertQuery, new
             {
                 item.OrderId,
                 item.ItemId,
@@ -23,7 +25,7 @@ namespace InventarioILS.Model.Storage
 
         public async Task AddAsync(OrderItem item, IDbTransaction transaction = null)
         {
-            var conn = transaction?.Connection ?? Connection;
+            using var conn = transaction?.Connection ?? CreateConnection();
 
             await conn.ExecuteAsync(insertQuery, new
             {
@@ -36,7 +38,7 @@ namespace InventarioILS.Model.Storage
 
         public void Load()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
             string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, c.name class, ss.name shipmentState, ordDet.quantity
                              FROM OrderDetail ordDet
@@ -45,13 +47,13 @@ namespace InventarioILS.Model.Storage
                              JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
                              JOIN Class c ON it.classId = c.classId";
 
-            var collection = Connection.Query<OrderItem>(query);
+            var collection = conn.Query<OrderItem>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async Task LoadAsync()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
             string query = @"SELECT ordDet.orderDetailId id, o.name, it.productCode, it.description, it.class, ss.name as shipmentState, ordDet.quantity
                              FROM OrderDetail ordDet
@@ -59,7 +61,7 @@ namespace InventarioILS.Model.Storage
                              JOIN Item it ON ordDet.itemId = it.itemId
                              JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId";
 
-            var collection = await Connection.QueryAsync<OrderItem>(query).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<OrderItem>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
@@ -67,17 +69,17 @@ namespace InventarioILS.Model.Storage
 
         public void LoadSingle(uint orderId)
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
-            var collection = Connection.Query<OrderItem>(selectSingleQuery, new { OrderId = orderId });
+            var collection = conn.Query<OrderItem>(selectSingleQuery, new { OrderId = orderId });
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async void LoadSingleAsync(uint orderId)
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
-            var collection = await Connection.QueryAsync<OrderItem>(selectSingleQuery, new { OrderId = orderId }).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<OrderItem>(selectSingleQuery, new { OrderId = orderId }).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InventarioILS.Model;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,24 +15,24 @@ namespace InventarioILS.View.UserControls
         public event EventHandler<int> OnEdit;
         public event EventHandler<int> OnDelete;
 
-        public static readonly DependencyProperty ProductCodeProperty =
+        public static readonly DependencyProperty ItemPresetProperty =
             DependencyProperty.Register(
-                nameof(ProductCode),
-                typeof(string),
+                nameof(ItemPreset),
+                typeof(Item),
                 typeof(ItemCard),
-                new PropertyMetadata(string.Empty, OnProductCodeChanged)
+                new PropertyMetadata(null, OnPresetItemChanged)
             );
 
-        public string ProductCode
+        public Item ItemPreset
         {
-            get => (string)GetValue(ProductCodeProperty);
-            set => SetValue(ProductCodeProperty, value);
+            get => (Item)GetValue(ItemPresetProperty);
+            set => SetValue(ItemPresetProperty, value);
         }
 
-        public static void OnProductCodeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public static void OnPresetItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (ItemCard)d;
-            control.ProductCode = e.NewValue.ToString();
+            control.ItemPreset = e.NewValue as Item;
         }
 
         private void EditItemBtn_Click(object sender, RoutedEventArgs e)

@@ -19,13 +19,13 @@ namespace InventarioILS.Model.Storage
 
         public async Task AddAsync(ItemMisc item)
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
             string query = @"INSERT INTO Subcategory (name, shorthand) VALUES (@Name, @Shorthand)";
 
             if (string.IsNullOrEmpty(item.Shorthand)) item.Shorthand = null;
             
-            await Connection.ExecuteAsync(query, new
+            await conn.ExecuteAsync(query, new
             {
                 item.Name,
                 item.Shorthand
@@ -36,19 +36,19 @@ namespace InventarioILS.Model.Storage
 
         public void Load()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
             string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Subcategory ORDER BY name ASC";
 
-            var collection = Connection.Query<ItemMisc>(query);
+            var collection = conn.Query<ItemMisc>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async Task LoadAsync()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
             string query = @$"SELECT subcategoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Subcategory ORDER BY name ASC";
 
-            var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
     }

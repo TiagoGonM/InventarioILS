@@ -55,7 +55,7 @@ namespace InventarioILS
             itemClasses = ItemClasses.Instance;
 
             StatusManager.Instance.Initialize(StatusMessageLabel);
-            bottomBarManager.Initialize(BottomBarContent, ShowBottomBar);
+            bottomBarManager.Initialize(BottomBarContent);
 
             DataContext = new
             {
@@ -71,9 +71,9 @@ namespace InventarioILS
             addItemPanel = new AddItemPanel();
             addItemPanel.OnSuccess += AddItemPanel_ItemsAdded;
 
-            bottomBarManager.ActiveControlContent = addItemPanel;
-            //ShowBottomBar();
-            
+            bottomBarManager.CurrentControlContent = addItemPanel;
+            ShowBottomBar();
+
             ShowCancelBtn();
             CancelBtn.Click += AddItemBtn_CancelAction;
         }
@@ -96,7 +96,7 @@ namespace InventarioILS
             addOrderPanel = new AddOrderPanel();
             addOrderPanel.OnSuccess += AddOrderPanel_OrderAdded;
             
-            bottomBarManager.ActiveControlContent = addOrderPanel;
+            bottomBarManager.CurrentControlContent = addOrderPanel;
             ShowBottomBar();
 
             CancelBtn.Click += AddOrderBtn_CancelAction;
@@ -119,14 +119,15 @@ namespace InventarioILS
 
         private void CancelAction()
         {
-            bottomBarManager.ActiveControlContent = null;
-            //ShowBottomBar(false);
+            bottomBarManager.CurrentControlContent = null;
+            ShowBottomBar(false);
             ShowCancelBtn(false);
         }
 
         public async Task SetItems()
         {
-            await items.LoadAsync().ConfigureAwait(false);
+            if (isStock) await items.LoadAsync().ConfigureAwait(false);
+            else await items.LoadNoStockAsync().ConfigureAwait(false);
         }
 
         private async void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
@@ -193,7 +194,6 @@ namespace InventarioILS
             await SetItems();
         }
 
-
         private static void ToggleVisibility(UIElement element, bool value)
         {
             element.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
@@ -253,7 +253,7 @@ namespace InventarioILS
             OrderTabBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
             OrderTabBtn.FontWeight = FontWeights.Bold;
 
-            bottomBarManager.ActiveControlContent = new OrderPanel();
+            bottomBarManager.CurrentControlContent = new OrderPanel();
             ShowBottomBar();
 
             AddOrderBtn.Visibility = Visibility.Visible;
@@ -360,18 +360,11 @@ namespace InventarioILS
             };
 
             itemForm.OnConfirmEdit += ItemForm_OnConfirmEdit;
-            bottomBarManager.ActiveControlContent = itemForm;
+            bottomBarManager.CurrentControlContent = itemForm;
 
             CancelBtn.Click += ItemView_CancelAction;
+            ShowBottomBar();
             ShowCancelBtn();
-        }
-
-        private async void ItemForm_OnConfirmEdit(object sender, ItemEventArgs e)
-        {
-            itemForm.OnConfirmEdit -= ItemForm_OnConfirmEdit;
-
-            await items.UpdateAsync((StockItem)e.Item);
-            CancelAction();
         }
 
         private void ItemView_CancelAction(object sender, EventArgs e)
@@ -379,5 +372,14 @@ namespace InventarioILS
             CancelAction();
             CancelBtn.Click -= ItemView_CancelAction;
         }
+
+        private async void ItemForm_OnConfirmEdit(object sender, ItemEventArgs e)
+        {
+            itemForm.OnConfirmEdit -= ItemForm_OnConfirmEdit;
+
+            await items.UpdateAsync((StockItem)e.OldItem, (StockItem)e.Item);
+            CancelAction();
+        }
+
     }
 }

@@ -25,7 +25,7 @@ namespace InventarioILS.Services
             await Task.Run(async () =>
             {
                 using var transaction = new DbConnection().BeginTransaction();
-                var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
+                using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
                     
                 try
                 {
@@ -43,7 +43,7 @@ namespace InventarioILS.Services
 
                         for (int i = 0; i < itemsToAdd; i++)
                         {
-                            uint? itemId = await Utils.AddItemAsync(orderItem, transaction);
+                            uint? itemId = await ItemService.AddItemAsync(orderItem, transaction);
 
                             if (!itemId.HasValue) throw new ArgumentNullException($"Item id not inserted: {itemId}");
 

@@ -8,35 +8,22 @@ namespace InventarioILS.Model
         private BottomBarManager() { }
 
         ContentControl _bottomBar;
-        Action<bool> _toggleBottomBarCallback;
-        
 
-        public object ActiveControlContent 
+        public object CurrentControlContent 
         {
             get => _bottomBar.Content;
-            set
-            {
-                if (value == null)
-                {
-                    _toggleBottomBarCallback.Invoke(false);
-                    return;
-                }
-
-                _bottomBar.Content = value;
-                _toggleBottomBarCallback?.Invoke(true);
-            }
+            set => _bottomBar.Content = value;
         }
 
         static BottomBarManager _instance = new();
 
         public static BottomBarManager Instance => _instance;
 
-        public void Initialize(ContentControl controlRef, Action<bool> toggleBottomBar)
+        public void Initialize(ContentControl controlRef)
         {
             if (_bottomBar != null) return;
 
             _bottomBar = controlRef;
-            _toggleBottomBarCallback = toggleBottomBar;
         }
     }
 }

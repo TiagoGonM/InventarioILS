@@ -12,9 +12,20 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        
+        <Button Grid.Column="1" x:Name="EditItemBtn" Click="EditItemBtn_Click" Width="30" Height="30" Style="{StaticResource RoundedButtonHighlightTextTransparent}">
+            <TextBlock Text="✎" FontSize="16"/>
+        </Button>
+        
+        <Button Grid.Column="2" x:Name="RemoveItemBtn" Click="RemoveItemBtn_Click" Width="30" Height="30" Style="{StaticResource RoundedButtonHighlightTextTransparent}">
+            <TextBlock Text="🗑" FontSize="14"/>
+        </Button>
 
-        <TextBlock Grid.Column="0" Text="{Binding ProductCode, ElementName=itemCard, FallbackValue=code}" FontSize="20" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Button Grid.Column="1" x:Name="EditItemBtn" Click="EditItemBtn_Click" Content="Editar" Style="{StaticResource RoundedButtonPrimary}"/>
-        <Button Grid.Column="2" x:Name="RemoveItemBtn" Click="RemoveItemBtn_Click" Content="Eliminar" Style="{StaticResource RoundedButtonSecondary}" Margin="10,0,0,0"/>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Height="30">
+            <TextBlock Text="{Binding ItemPreset.ProductCode, ElementName=itemCard, FallbackValue=code}" FontSize="20" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding ItemPreset.Description, ElementName=itemCard, FallbackValue=Description}" FontSize="16" Foreground="{StaticResource ForegroundBrush}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Cantidad: " FontSize="16" Foreground="Gray" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding ItemPreset.Quantity, ElementName=itemCard, FallbackValue=0}" FontSize="16" Foreground="Gray" VerticalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </UserControl>

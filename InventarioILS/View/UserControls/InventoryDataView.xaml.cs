@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using InventarioILS.Model;
@@ -23,7 +25,7 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 nameof(ItemsSource),
-                typeof(IEnumerable<ItemCard>),
+                typeof(IEnumerable<Item>),
                 typeof(InventoryDataView),
                 new PropertyMetadata(null, OnItemsSourceChanged));
 
@@ -38,9 +40,9 @@ namespace InventarioILS.View.UserControls
             set => SetValue(AutoGenerateColumnsProperty, value);
         }
 
-        public IEnumerable<ItemCard> ItemsSource
+        public IEnumerable<Item> ItemsSource
         {
-            get => (IEnumerable<ItemCard>)GetValue(ItemsSourceProperty);
+            get => (IEnumerable<Item>)GetValue(ItemsSourceProperty);
             set => SetValue(ItemsSourceProperty, value);
         }
 
@@ -56,7 +58,7 @@ namespace InventarioILS.View.UserControls
         {
             if (d is InventoryDataView view)
             {
-                view.ItemView.ItemsSource = (IEnumerable<ItemCard>)e.NewValue;
+                view.ItemView.ItemsSource = (IEnumerable<Item>)e.NewValue;
             }
         }
 
@@ -66,11 +68,6 @@ namespace InventarioILS.View.UserControls
             var row = button.DataContext as StockItem;
 
             OnEdit?.Invoke(this, new ItemEventArgs(row, ItemEventArgs.EventType.EDIT));
-        }
-
-        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

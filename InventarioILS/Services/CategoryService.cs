@@ -7,7 +7,7 @@ namespace InventarioILS.Services
 {
     internal class CategoryService
     {
-        static ItemCategories categories = ItemCategories.Instance;
+        readonly static ItemCategories categories = ItemCategories.Instance;
 
         public async static Task RegisterCategory(ItemMisc category, IEnumerable<uint> subcategoryIds)
         {
@@ -15,7 +15,7 @@ namespace InventarioILS.Services
 
             foreach (uint subcatId in subcategoryIds)
             {
-                await categories.LinkWithAsync(subcatId);
+                await categories.LinkWithAsync(subcatId, category.Id);
             }
 
             await categories.LoadAsync();

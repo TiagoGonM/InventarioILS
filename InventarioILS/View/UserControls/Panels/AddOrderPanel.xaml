@@ -6,35 +6,8 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
-    <UserControl.Resources>
-        <!-- Reutilizo/defino estilos para encabezados y celdas -->
-        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#232323"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-
-        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-            <Setter Property="Foreground" Value="#E6E6E6"/>
-            <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
-            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Height" Value="56"/>
-        </Style>
-    </UserControl.Resources>
-    
     <Grid>
         <StackPanel>
-            <!-- Encabezado de la sección: Nuevo Pedido | Pedido #N | Confirmar -->
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -49,58 +22,22 @@
 
             <!-- Descripción grande con borde turquesa -->
             <TextBox x:Name="OrderDescriptionInput" Margin="0,0,0,10" MinHeight="28" MaxHeight="130" Style="{StaticResource RoundedInput}" AcceptsReturn="True" TextWrapping="Wrap"
-             BorderBrush="{StaticResource AccentBrush}" Background="#222" Foreground="#E6E6E6" />
+             BorderBrush="{StaticResource AccentBrush}" Background="#222" Foreground="#E6E6E6"/>
 
             <ContentControl Grid.Row="1" x:Name="FormContainer"/>
 
             <ScrollViewer Margin="0,5" x:Name="ItemListView" Visibility="Collapsed" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
-                    <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList, Mode=OneWay}">
+                    <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <local:ItemCard Tag="{Binding LocalIndexTag}" ProductCode="{Binding ProductCode}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
+                                <local:ItemCard Tag="{Binding LocalIndexTag}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Button x:Name="AddNewItem" Click="AddNewItem_Click" Content="Agregar nuevo" Style="{StaticResource RoundedButtonPrimary}" Height="40" Width="200" FontWeight="Bold" Margin="0,5"/>
                 </StackPanel>
             </ScrollViewer>
-
-            <!--<Border BorderBrush="{StaticResource AccentBrush}" BorderThickness="3" CornerRadius="4" Padding="12" Background="{StaticResource SecondaryBrush}">
-                <DataGrid x:Name="OrderItemsGrid"
-                          ItemsSource="{Binding OrderItems}" AutoGenerateColumns="False"
-                          CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False"
-                          GridLinesVisibility="None"
-                          ColumnHeaderHeight="44" RowHeight="48" FontSize="14"
-                          Background="Transparent" 
-                          ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
-                          CellStyle="{StaticResource DataGridCellStyle}"
-                          RowStyle="{StaticResource DataGridRowStyle}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Código" Binding="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="120" />
-                        <DataGridTextColumn Header="Categoría" Binding="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="160" />
-                        <DataGridTextColumn Header="Subcategoría" Binding="{Binding Subcategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="160" />
-                        <DataGridTextColumn Header="Descripción" Binding="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*" />
-                        <DataGridTextColumn Header="Tipo" Binding="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100" />
-                        <DataGridTextColumn Header="Cant." Binding="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" />
-
-                        <DataGridTemplateColumn Header="">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="+" Width="28" Height="28" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellStyle>
-                                <Style TargetType="DataGridCell">
-                                    <Setter Property="Padding" Value="6"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                </Style>
-                            </DataGridTemplateColumn.CellStyle>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>-->
         </StackPanel>
     </Grid>
 </UserControl>

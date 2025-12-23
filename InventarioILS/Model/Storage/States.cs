@@ -19,34 +19,34 @@ namespace InventarioILS.Model.Storage
 
         public async Task AddAsync(ItemMisc item, uint classId)
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
             string query = @"INSERT INTO State (name, classId) VALUES (@Name, @ClassId)";
-            await Connection.ExecuteAsync(query, new { item.Name, ClassId = classId }).ConfigureAwait(false);
+            await conn.ExecuteAsync(query, new { item.Name, ClassId = classId }).ConfigureAwait(false);
             
             await LoadAsync();
         }
 
         public void Load()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
             string query = @$"SELECT 
                              stateId id, 
                              {SQLUtils.StringCapitalize()} name
                              FROM State ORDER BY name ASC;";
-            var collection = Connection.Query<ItemMisc>(query);
+            var collection = conn.Query<ItemMisc>(query);
 
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async Task LoadAsync()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
             string query = @$"SELECT 
                              stateId id, 
                              {SQLUtils.StringCapitalize()} name
                              FROM State ORDER BY name ASC;";
-            var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
 
             UpdateItems(collection.ToList().ToObservableCollection());
         }

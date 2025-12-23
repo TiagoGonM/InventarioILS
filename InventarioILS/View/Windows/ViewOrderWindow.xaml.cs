@@ -9,6 +9,8 @@ namespace InventarioILS.View.Windows
     /// </summary>
     public partial class ViewOrderWindow : Window
     {
+        ShipmentStates shipmentStates = ShipmentStates.Instance;
+
         public ViewOrderWindow()
         {
             InitializeComponent();
@@ -17,6 +19,7 @@ namespace InventarioILS.View.Windows
         public ViewOrderWindow(Order order) : this()
         {
             var orderItems = new OrderItems();
+            shipmentStates.Load();
             orderItems.LoadSingle(order.Id);
 
             DataContext = new
@@ -24,6 +27,7 @@ namespace InventarioILS.View.Windows
                 OrderName = order.Name,
                 OrderDescription = order.Description,
                 OrderCreationDate = order.CreatedAt.ToString("dd/MM/yyyy"),
+                ShipmentStates = shipmentStates.Items,
                 orderItems.Items
             };
         }

@@ -14,17 +14,21 @@ namespace InventarioILS.Model.Storage
 
         public void Load()
         {
+            using var conn = CreateConnection();
+
             string query = @$"SELECT shipmentStateId id, {SQLUtils.StringCapitalize()} name FROM ShipmentState";
 
-            var collection = Connection.Query<ItemMisc>(query);
+            var collection = conn.Query<ItemMisc>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async Task LoadAsync()
         {
+            using var conn = CreateConnection();
+
             string query = @$"SELECT shipmentStateId id, {SQLUtils.StringCapitalize()} name FROM ShipmentState";
 
-            var collection = await Connection.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
     }

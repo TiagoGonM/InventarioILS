@@ -16,7 +16,7 @@
 
         <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Grid.Column="1" Grid.Row="0" Text="Agregar elementos" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock x:Name="ItemCounter" Margin="5,0" FontSize="15" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ItemCounter" Margin="5,0" FontSize="15" Text="{Binding ItemList.Count}" Foreground="{StaticResource ForegroundBrush}" VerticalAlignment="Center"/>
         </WrapPanel>
         <Button x:Name="ConfirmBtn" Click="ConfirmBtn_Click" Content="Confirmar" Height="28" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}"/>
 
@@ -24,10 +24,10 @@
 
         <ScrollViewer Margin="0,5" x:Name="ItemListView" Visibility="Collapsed" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
-                <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList, Mode=OneWay}">
+                <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <local:ItemCard Tag="{Binding LocalIndexTag}" ProductCode="{Binding ProductCode}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
+                            <local:ItemCard Tag="{Binding LocalIndexTag}" ItemPreset="{Binding}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

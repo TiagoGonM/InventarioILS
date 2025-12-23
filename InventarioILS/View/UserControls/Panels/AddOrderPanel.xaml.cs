@@ -59,7 +59,7 @@ namespace InventarioILS.View.UserControls
 
             itemForm = new OrderItemForm
             {
-                PresetData = item
+                 PresetData = item
             };
             itemForm.OnConfirmEdit += ItemForm_OnEdit;
 

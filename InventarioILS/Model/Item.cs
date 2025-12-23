@@ -2,7 +2,7 @@
 
 namespace InventarioILS.Model
 {
-    public abstract class Item : IIdentifiable
+    public class Item : IIdentifiable
     {
         public uint Id { get; set; }
         public string ProductCode { get; set; }

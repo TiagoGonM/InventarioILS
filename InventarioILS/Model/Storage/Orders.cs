@@ -23,10 +23,12 @@ namespace InventarioILS.Model.Storage
 
         public int Add(Order order)
         {
+            using var conn = CreateConnection();
+
             string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
                              SELECT last_insert_rowid();";
 
-            int rowId = Connection.ExecuteScalar<int>(query, new
+            int rowId = conn.ExecuteScalar<int>(query, new
             {
                 order.Name,
                 order.Description
@@ -40,9 +42,9 @@ namespace InventarioILS.Model.Storage
             string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
                              SELECT last_insert_rowid();";
 
-            var conn = transaction?.Connection ?? Connection;
+            using var conn = transaction?.Connection ?? CreateConnection();
 
-            var count = await Connection.QueryFirstAsync<int>(@"SELECT COUNT(*) total FROM 'Order'").ConfigureAwait(false);
+            var count = await conn.QueryFirstAsync<int>(@"SELECT COUNT(*) total FROM 'Order'").ConfigureAwait(false);
             order.Name = $"Pedido #{count + 1}";
 
             int rowId = await conn.ExecuteScalarAsync<int>(query, new
@@ -56,15 +58,19 @@ namespace InventarioILS.Model.Storage
 
         public void Load()
         {
+            using var conn = CreateConnection();
+
             string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o";
-            var collection = Connection.Query<Order>(query);
+            var collection = conn.Query<Order>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async Task LoadAsync()
         {
+            using var conn = CreateConnection();
+
             string query = @"SELECT o.orderId id, o.name, o.description, o.createdAt FROM 'Order' o";
-            var collection = await Connection.QueryAsync<Order>(query).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<Order>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
     }

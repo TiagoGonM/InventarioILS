@@ -9,19 +9,19 @@
              d:DesignHeight="64.561" d:DesignWidth="800">
     <Grid>
         <StackPanel>
-            <TextBlock x:Name="TitleLabel" Background="Transparent" Text="{Binding Title, ElementName=queryableComboBox, FallbackValue=title}" Foreground="{StaticResource AccentForegroundBrush}"/>
+            <TextBlock x:Name="TitleLabel" Visibility="Collapsed" d:Visibility="Visible" Background="Transparent" Text="{Binding Title, ElementName=queryableComboBox}" Foreground="{StaticResource AccentForegroundBrush}"/>
             <ComboBox x:Name="ComboBox"
-              Tag="N/A"
-              Margin="0,4,0,8" 
-              Height="28" 
-              Style="{StaticResource BlackComboBox}" 
-              Foreground="{StaticResource ForegroundBrush}"
-              Background="{StaticResource BackgroundBrush}"
-              BorderThickness="1" 
-              IsReadOnly="True"
-              IsEnabledChanged="ComboBox_IsEnabledChanged"
-              ItemsSource="{Binding ItemsSource, Mode=OneWay}"
-              SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}">
+                      Tag="N/A"
+                      Margin="0,4,0,8" 
+                      Height="28" 
+                      Style="{StaticResource BlackComboBox}" 
+                      Foreground="{StaticResource ForegroundBrush}"
+                      Background="{StaticResource BackgroundBrush}"
+                      BorderThickness="1" 
+                      IsReadOnly="True"
+                      IsEnabledChanged="ComboBox_IsEnabledChanged"
+                      ItemsSource="{Binding ItemsSource, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" Tag="{Binding Id}"/>

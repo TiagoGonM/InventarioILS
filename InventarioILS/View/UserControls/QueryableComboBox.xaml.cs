@@ -40,6 +40,7 @@ namespace InventarioILS.View.UserControls
         {
             var control = (QueryableComboBox)d;
             control.TitleLabel.Text = e.NewValue.ToString();
+            control.TitleLabel.Visibility = Visibility.Visible;
         }
 
         public static readonly DependencyProperty ComboTagProperty =

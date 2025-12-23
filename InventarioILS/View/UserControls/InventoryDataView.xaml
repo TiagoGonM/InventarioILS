@@ -6,9 +6,22 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="1000">
-   
     <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1" Background="{StaticResource SecondaryBrush}">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Foreground="{StaticResource ForegroundBrush}" FontSize="14" Margin="5,0" Text="Mostrando"/>
+                <TextBlock Foreground="{StaticResource ForegroundBrush}" FontSize="14" Text="{Binding Items.Count, FallbackValue=N/A}"/>
+                <TextBlock Foreground="{StaticResource ForegroundBrush}" FontSize="14" Margin="5,0" Text="elementos"/>
+            </StackPanel>
+        </Grid>
+        
         <DataGrid x:Name="ItemView"
+                  Grid.Row="0"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   CanUserSortColumns="True"
@@ -50,18 +63,9 @@
                                             Padding="0"
                                             ToolTip="Editar"
                                             Tag="{Binding ProductCode}"
+                                            Style="{StaticResource RoundedButtonHighlightTextSecondary}"
                                             Click="EditBtn_Click">
                                         <TextBlock Text="✎" FontSize="14"/>
-                                    </Button>
-                                    <Button x:Name="DeleteBtn"
-                                            Width="32" 
-                                            Height="32"
-                                            Margin="2"
-                                            Padding="0"
-                                            ToolTip="Eliminar"
-                                            Tag="{Binding ProductCode}"
-                                            Click="DeleteBtn_Click">
-                                        <TextBlock Text="🗑" FontSize="14"/>
                                     </Button>
                                 </StackPanel>
                             </Grid>

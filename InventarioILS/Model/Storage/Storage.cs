@@ -17,17 +17,15 @@ namespace InventarioILS.Model.Storage
                 UPPER(SUBSTRING({col}, 1, 1)),
                 LOWER(SUBSTRING({col}, 2, LENGTH({col})))
             )";
+
+        public static string IncludeLastRowIdInserted(string sql) =>
+            sql + "; SELECT last_insert_rowid();";
     }
 
     public interface ILoadSave<T>
     {
         void Add(T item);
         void Load();
-    }
-
-    public interface IAsyncFactory
-    {
-        Task CreateAsync();
     }
 
     public class Map<TKey, TValue> : Dictionary<TKey, TValue>
@@ -57,20 +55,15 @@ namespace InventarioILS.Model.Storage
     internal class Storage<T> where T: IIdentifiable
     {
         public ObservableCollection<T> Items { get; set; }
-        public static DbConnection Connection { get; set; }
-
-        public static int LastRowInserted => (int)Connection?.QuerySingle<int>("SELECT last_insert_rowid()");
+        public static DbConnection CreateConnection() => new();
 
         public Storage()
         {
             Items = [];
-            Connection = new DbConnection();
         }
 
         protected void UpdateItems(ObservableCollection<T> collection)
         {
-            if (Connection == null) return;
-
             var existingItemsMap = Items.ToDictionary(item => item.Id, item => item);
 
             var newIds = new HashSet<uint>(collection.Select(item => (uint)item.Id));
@@ -162,153 +155,6 @@ namespace InventarioILS.Model.Storage
         public void ClearFilters()
         {
             FilterList.Clear();
-        }
-    }
-
-    public class Utils
-    {
-        public static int AddItem(Item item)
-        {
-            var conn = new DbConnection();
-
-            if (conn == null) return -1;
-
-            int catSubcatId = -1;
-
-            try
-            {
-                catSubcatId = conn.QuerySingleOrDefault<int>(
-                    @"SELECT catSubcatId FROM CatSubcat 
-                      WHERE categoryId = @CategoryId 
-                      AND subcategoryId = @SubcategoryId COLLATE NOCASE",
-                    new { item.CategoryId, item.SubcategoryId });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to retrieve CatSubcatId. " + ex);
-                return -1;
-            }
-
-            //MessageBox.Show($"CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}, CatSubcatId: {catSubcatId}");
-
-            var n = conn.Execute(
-                @"INSERT INTO Item (productCode, catSubcatId, classId, description)
-                  VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
-                new
-                {
-                    item.ProductCode,
-                    CatSubcatId = catSubcatId,
-                    item.ClassId,
-                    item.Description,
-                }
-            );
-
-            if (n <= 0)
-            {
-                MessageBox.Show("Failed to insert Item record.");
-                return -1;
-            }
-
-            int rowid = conn.QuerySingle<int>("SELECT last_insert_rowid()");
-            return rowid;
-        }
-
-        /// <returns>number of the row that got inserted, -1 if something goes wrong</returns>
-        public async static Task<int> AddItemAsync(Item item)
-        {
-            var conn = new DbConnection();
-
-            if (conn == null) return -1;
-
-            int catSubcatId = -1;
-
-            try
-            {
-                catSubcatId = await conn.QuerySingleOrDefaultAsync<int>(
-                    @"SELECT catSubcatId FROM CatSubcat 
-                      WHERE categoryId = @CategoryId 
-                      AND subcategoryId = @SubcategoryId COLLATE NOCASE",
-                    new { item.CategoryId, item.SubcategoryId }).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to retrieve CatSubcatId. " + ex);
-                return -1;
-            }
-
-            //MessageBox.Show($"CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}, CatSubcatId: {catSubcatId}");
-
-            var n = await conn.ExecuteAsync(
-                @"INSERT INTO Item (productCode, catSubcatId, classId, description)
-                  VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description)",
-                new
-                {
-                    item.ProductCode,
-                    CatSubcatId = catSubcatId,
-                    item.ClassId,
-                    item.Description,
-                }
-            ).ConfigureAwait(false);
-
-            if (n <= 0)
-            {
-                MessageBox.Show("Failed to insert Item record.");
-                return -1;
-            }
-
-            int rowid = await conn.QuerySingleAsync<int>("SELECT last_insert_rowid()").ConfigureAwait(false);
-            return rowid;
-        }
-
-
-        public async static Task<uint?> AddItemAsync(Item item, IDbTransaction transaction)
-        {
-            var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
-            
-            int catSubcatId;
-
-            try
-            {
-                catSubcatId = await conn.QuerySingleOrDefaultAsync<int>(
-                    @"SELECT catSubcatId FROM CatSubcat
-                      WHERE categoryId = @CategoryId 
-                      AND subcategoryId = @SubcategoryId COLLATE NOCASE",
-                    new { item.CategoryId, item.SubcategoryId },
-                    transaction: transaction
-                ).ConfigureAwait(false);
-
-                if (catSubcatId == default) // Si no se encontró el ID
-                {
-                    throw new InvalidOperationException(
-                        $"No se encontró CatSubcatId para CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("Error al buscar CatSubcatId.", ex);
-            }
-
-            string insertSql =
-                @"INSERT INTO Item (productCode, catSubcatId, classId, description)
-                  VALUES (@ProductCode, @CatSubcatId, @ClassId, @Description);
-                  SELECT last_insert_rowid();";
-
-            var parameters = new
-            {
-                item.ProductCode,
-                CatSubcatId = catSubcatId,
-                item.ClassId,
-                item.Description,
-            };
-
-            
-            uint? rowId = await conn.ExecuteScalarAsync<uint>(
-                insertSql,
-                parameters,
-                transaction: transaction
-            ).ConfigureAwait(false);
-
-            return rowId >= 0 ? rowId : null;
         }
     }
 }

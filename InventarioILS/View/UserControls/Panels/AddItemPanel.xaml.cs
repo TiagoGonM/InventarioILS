@@ -12,7 +12,7 @@ namespace InventarioILS.View.UserControls
     public partial class AddItemPanel : UserControl
     {
         static readonly StockItems ItemStorage = StockItems.Instance;
-        public static ObservableCollection<StockItem> itemList = [];
+        readonly ObservableCollection<StockItem> itemList = [];
         public event Action OnSuccess;
 
         public StockItem ItemToEdit { get; set; }
@@ -99,19 +99,18 @@ namespace InventarioILS.View.UserControls
 
             itemList.RemoveAt(ind);
             itemList.Insert(ind, item);
-            ItemCounter.Text = itemList.Count.ToString();
 
             SetIndexTag(item);
 
             ShowItemForm(false);
         }
 
-        private static void SetIndexTag(StockItem item)
+        private void SetIndexTag(StockItem item)
         {
             int ind = itemList.IndexOf(item);
 
             if (ind == -1) return;
-
+            
             itemList.ElementAt(ind).LocalIndexTag = ind;
         }
 

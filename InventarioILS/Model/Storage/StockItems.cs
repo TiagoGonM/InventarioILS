@@ -1,5 +1,8 @@
 ﻿using Dapper;
+using InventarioILS.Services;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +22,7 @@ namespace InventarioILS.Model.Storage
 
         public void Load()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
             string query = @$"SELECT * FROM View_ItemStockSummary WHERE 1=1";
 
@@ -43,21 +46,14 @@ namespace InventarioILS.Model.Storage
                 parameters.Add("className", $"%{className}%");
             }
 
-            query += @" GROUP BY 
-                            it.productCode,
-                            c.name,
-                            s.name,
-                            class.name
-                        LIMIT 50";
-
-            var collection = Connection.Query<StockItem>(query, parameters);
+            var collection = conn.Query<StockItem>(query, parameters);
 
             UpdateItems(collection.ToList().ToObservableCollection());
         }
 
         public async Task LoadAsync()
         {
-            if (Connection == null) return;
+            using var conn = CreateConnection();
 
             string query = @$"SELECT * FROM View_ItemStockSummary WHERE 1=1";
 
@@ -81,53 +77,35 @@ namespace InventarioILS.Model.Storage
                 parameters.Add("className", $"%{className}%");
             }
 
-            var collection = await Connection.QueryAsync<StockItem>(query, parameters).ConfigureAwait(false);
+            var collection = await conn.QueryAsync<StockItem>(query, parameters).ConfigureAwait(false);
 
             await UpdateItemsAsync(collection.ToList().ToObservableCollection()).ConfigureAwait(false);
         }
 
-        public (int, int) Add(Item item)
+        public async Task LoadNoStockAsync()
         {
-            int itemRowId = Utils.AddItem(item);
-            int stockItemRowId = -1;
+            using var conn = CreateConnection();
 
-            if (item is StockItem stockItem)
-            {
-                for (int i = 0; i < stockItem.Quantity; i++)
-                {
-                    stockItemRowId = Connection.ExecuteScalar<int>(
-                        @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                            VALUES (@ItemId, @StateId, @Location, @AdditionalNotes);
-                            SELECT last_insert_rowid();",
-                        new
-                        {
-                            ItemId = itemRowId,
-                            stockItem.StateId,
-                            stockItem.Location,
-                            stockItem.AdditionalNotes
-                        }
-                    );
-                }
-            }
-
-            Load();
-
-            return (itemRowId, stockItemRowId);
+            var collection = await conn.QueryAsync<StockItem>(@"SELECT * FROM View_NoStockItems").ConfigureAwait(false);
+            await UpdateItemsAsync(collection.ToList().ToObservableCollection()).ConfigureAwait(false);
         }
 
-        public async Task<(int, int)> AddAsync(Item item)
+        public async Task<(uint, uint)> AddAsync(Item item)
         {
-            int itemRowId = Utils.AddItem(item);
-            int stockItemRowId = -1;
+            using var conn = CreateConnection();
+
+            uint itemRowId = await ItemService.AddItemAsync(item);
+            uint stockItemRowId = 0;
 
             if (item is StockItem stockItem)
             {
                 for (int i = 0; i < stockItem.Quantity; i++)
                 {
-                    stockItemRowId = await Connection.ExecuteScalarAsync<int>(
-                        @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                          VALUES (@ItemId, @StateId, @Location, @AdditionalNotes);
-                          SELECT last_insert_rowid();",
+                    stockItemRowId = await conn.ExecuteScalarAsync<uint>(
+                        SQLUtils.IncludeLastRowIdInserted(
+                            @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                              VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)"
+                        ),
                         new
                         {
                             ItemId = itemRowId,
@@ -144,25 +122,12 @@ namespace InventarioILS.Model.Storage
             return (itemRowId, stockItemRowId);
         }
 
-
-        public void AddRange(ObservableCollection<StockItem> items)
-        {
-            if (items.Count == 0) return;
-
-            foreach (var item in items)
-            {
-                for (int i = 0; i < item.Quantity; i++)
-                {
-                    Add(item);
-                }
-            }
-        }
-
         public async Task AddRangeAsync(ObservableCollection<StockItem> items)
         {
             await Task.Run(async () =>
             {
-                using var transaction = Connection.BeginTransaction();
+                using var transaction = CreateConnection().BeginTransaction();
+                using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
                 try
                 {
                     foreach (var item in items)
@@ -170,9 +135,9 @@ namespace InventarioILS.Model.Storage
                         for (int i = 0; i < item.Quantity; i++)
                         {
                             // A. Insertar en Item y obtener el ID.
-                            uint? itemId = await Utils.AddItemAsync(item, transaction).ConfigureAwait(false);
+                            uint? itemId = await ItemService.AddItemAsync(item, transaction).ConfigureAwait(false);
                             // B. Insertar en ItemStock usando el ID generado.
-                            await Connection.ExecuteAsync(
+                            await conn.ExecuteAsync(
                                 @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
                               VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
                                 new
@@ -182,7 +147,7 @@ namespace InventarioILS.Model.Storage
                                     item.Location,
                                     item.AdditionalNotes
                                 },
-                                transaction: transaction
+                                transaction
                             ).ConfigureAwait(false);
                         }
                     }
@@ -200,8 +165,10 @@ namespace InventarioILS.Model.Storage
             });
         }
 
-        public async Task UpdateAsync(StockItem item)
+        public async Task UpdateAsync(StockItem itemToUpdate, StockItem item)
         {
+            using var conn = CreateConnection();
+
             var oldQuantity = Items.First(it => string.Equals(it.ProductCode, item.ProductCode)).Quantity;
 
             string query = @"UPDATE ItemStock
@@ -210,41 +177,60 @@ namespace InventarioILS.Model.Storage
                                 stateId = @StateId,
                                 additionalNotes = @AdditionalNotes,
                                 updatedAt = CURRENT_TIMESTAMP
-                             WHERE itemId = (SELECT itemId FROM Item WHERE productCode = @ProductCode)";
+                             WHERE location = @OldLocation
+                             AND stateId = @OldStateId
+                             AND itemId IN (SELECT itemId FROM Item WHERE productCode = @ProductCode)";
 
-            await Connection.ExecuteAsync(query, new 
+            await conn.ExecuteAsync(query, new 
             { 
                 item.Location, 
                 item.StateId, 
-                item.AdditionalNotes, 
+                item.AdditionalNotes,
+                OldLocation = itemToUpdate.Location,
+                OldStateId = itemToUpdate.StateId,
                 item.ProductCode
             }).ConfigureAwait(false);
 
             if (item.Quantity < oldQuantity)
             {
-                await DeleteAsync(item.ProductCode, oldQuantity - item.Quantity);
+                await DeleteAsync(item, oldQuantity - item.Quantity);
             }
 
             await LoadAsync();
         }
 
-        // TODO: implement bulk deleting
-        public async Task DeleteAsync(string productCode, uint quantityToDelete)
+        public async Task<int> DeleteAsync(StockItem item, uint quantityToDelete)
         {
-            //string sql = @"DELETE FROM ItemStock 
-            //               WHERE itemStockId IN (
-            //                   SELECT itemStockId 
-            //                   FROM ItemStock 
-            //                   WHERE itemId = (SELECT itemId FROM Item WHERE productCode = @ProductCode)
-            //                   ORDER BY createdAt ASC
-            //                   LIMIT @Quantity
-            //               );";
+            using var transaction = CreateConnection().BeginTransaction();
+            using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
 
-            //await Connection.ExecuteAsync(sql, new
-            //{ 
-            //    ProductCode = productCode, 
-            //    Quantity = quantityToDelete 
-            //}).ConfigureAwait(false);
+            try
+            {
+                // Seleccionamos los IDs que coinciden con el código Y la ubicación
+                var idsToDelete = (await conn.QueryAsync<int>(@"SELECT i.itemId 
+                                                              FROM Item i
+                                                              JOIN ItemStock s ON i.itemId = s.itemId
+                                                              WHERE i.productCode = @ProductCode 
+                                                              AND s.location = @Location
+                                                              AND S.stateId = @StateId
+                                                              AND i.isDeleted = 0
+                                                              LIMIT @Quantity",
+                new { item.ProductCode, item.Location, item.StateId, Quantity = quantityToDelete }, transaction)).ToList();
+
+                if (idsToDelete.Count == 0) return 0;
+
+                // Procedemos con el borrado lógico (isDeleted = 1) para no romper OrderDetail
+                await conn.ExecuteAsync("UPDATE Item SET isDeleted = 1 WHERE itemId IN @Ids", new { Ids = idsToDelete }, transaction);
+                await conn.ExecuteAsync("UPDATE ItemStock SET isDeleted = 1 WHERE itemId IN @Ids", new { Ids = idsToDelete }, transaction);
+
+                transaction.Commit();
+                return idsToDelete.Count;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
     }
 }
