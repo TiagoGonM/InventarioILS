@@ -55,7 +55,9 @@ namespace InventarioILS.Model.Storage
     internal class Storage<T> where T: IIdentifiable
     {
         public ObservableCollection<T> Items { get; set; }
-        public static DbConnection CreateConnection() => new();
+
+        public static DbConnection CreateConnection() => DbConnection.CreateAndOpen();
+        public static async Task<DbConnection> CreateConnectionAsync() => await DbConnection.CreateAndOpenAsync();
 
         public Storage()
         {

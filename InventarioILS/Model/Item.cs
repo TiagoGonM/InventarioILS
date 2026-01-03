@@ -63,6 +63,25 @@ namespace InventarioILS.Model
             AdditionalNotes = additionalNotes;
         }
 
+        public StockItem(
+            Item baseItem,
+            uint stateId,
+            string location,
+            string additionalNotes) 
+            : this(
+                baseItem.ProductCode,
+                baseItem.CategoryId,
+                baseItem.SubcategoryId,
+                baseItem.ClassId,
+                stateId,
+                baseItem.Description,
+                location,
+                baseItem.Quantity,
+                additionalNotes,
+                baseItem.ModelOrValue
+            )
+        { }
+
         public StockItem() { }
     }
 

@@ -30,12 +30,12 @@ namespace InventarioILS.View.UserControls
         public bool enableAdditionalNotes = enableAdditionalNotes;
     }
 
-    public partial class ItemForm : UserControl
+    public partial class ItemForm : UserControl, IDisposable
     {
-        readonly ItemCategories categories = null;
-        readonly ItemSubCategories subCategories = null;
-        readonly ItemClasses classes = null;
-        readonly ItemStates states = null;
+        readonly ItemCategories categories = ItemCategories.Instance;
+        readonly ItemSubCategories subCategories = ItemSubCategories.Instance;
+        readonly ItemClasses classes = ItemClasses.Instance;
+        readonly ItemStates states = ItemStates.Instance;
 
         string codeCategoryShorthand = "";
         string codeMain = "";
@@ -54,7 +54,6 @@ namespace InventarioILS.View.UserControls
         bool isDevice = false;
         uint deviceCounter = 0;
 
-
         string ResultingProductCode { get; set; }
 
         bool isEditing = false;
@@ -64,14 +63,11 @@ namespace InventarioILS.View.UserControls
 
         StockItem resultingItem = null;
 
-        public ItemForm()
+        public ItemForm(ItemFormPresetData presetData = null)
         {
             InitializeComponent();
 
-            categories = ItemCategories.Instance;
-            subCategories = ItemSubCategories.Instance;
-            classes = ItemClasses.Instance;
-            states = ItemStates.Instance;
+            if (presetData != null) PresetData = presetData;
 
             DataContext = new
             {
@@ -312,8 +308,8 @@ namespace InventarioILS.View.UserControls
             resultingItem = new StockItem(
                 productCode: "R-230K",
                 modelOrVal: "230K",
-                categoryId: 2,
-                subcategoryId: 3,
+                categoryId: 1,
+                subcategoryId: 1,
                 description: "Resistencia Estándar 230K",
                 classId: 1,
                 stateId: 2,
@@ -323,6 +319,12 @@ namespace InventarioILS.View.UserControls
             );
 
             OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
+        }
+
+        public void Dispose()
+        {
+            OnConfirm = null;
+            OnConfirmEdit = null;
         }
     }
 

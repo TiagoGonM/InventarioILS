@@ -1,11 +1,8 @@
-﻿using Dapper;
-using InventarioILS.Model;
+﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace InventarioILS.Services
@@ -24,8 +21,8 @@ namespace InventarioILS.Services
 
             await Task.Run(async () =>
             {
-                using var transaction = new DbConnection().BeginTransaction();
-                using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
+                using var client = await DbConnection.CreateAndOpenAsync();
+                using var transaction = client.BeginTransaction();
                     
                 try
                 {
@@ -43,9 +40,9 @@ namespace InventarioILS.Services
 
                         for (int i = 0; i < itemsToAdd; i++)
                         {
-                            uint? itemId = await ItemService.AddItemAsync(orderItem, transaction);
+                            uint itemId = await ItemService.AddItemAsync(orderItem, transaction);
 
-                            if (!itemId.HasValue) throw new ArgumentNullException($"Item id not inserted: {itemId}");
+                            if (itemId == 0) throw new ArgumentNullException($"Item id not inserted: {itemId}");
 
                             orderItem.OrderId = (uint)orderId;
                             orderItem.ItemId = itemId;
@@ -56,7 +53,10 @@ namespace InventarioILS.Services
                     }
                 } catch
                 {
-                    transaction.Rollback();
+                    if (transaction.Connection != null)
+                    {
+                        transaction.Rollback();
+                    }
                     throw;
                 }
 

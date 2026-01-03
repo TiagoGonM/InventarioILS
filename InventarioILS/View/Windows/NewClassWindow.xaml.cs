@@ -37,6 +37,8 @@ namespace InventarioILS.View.Windows
             bool exists = classes.Items.Any(c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             ErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
+            if (exists) ClassNameInput.Focus();
+
             SubmitBtn.IsEnabled = !exists;
         }
     }

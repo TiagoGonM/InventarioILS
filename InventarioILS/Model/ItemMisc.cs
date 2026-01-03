@@ -2,7 +2,7 @@
 
 namespace InventarioILS.Model
 {
-    internal class ItemMisc : IIdentifiable
+    public class ItemMisc : IIdentifiable
     {
         public uint Id { get; set; }
         public string Name { get; set; }

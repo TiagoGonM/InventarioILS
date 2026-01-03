@@ -31,7 +31,7 @@
                     <ItemsControl Background="{StaticResource BackgroundBrush}" ItemsSource="{Binding ItemList}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <local:ItemCard Tag="{Binding LocalIndexTag}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
+                                <local:ItemCard ItemPreset="{Binding}" Tag="{Binding LocalIndexTag}" OnEdit="ItemCard_OnEdit" OnDelete="ItemCard_OnDelete" Margin="15,0"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

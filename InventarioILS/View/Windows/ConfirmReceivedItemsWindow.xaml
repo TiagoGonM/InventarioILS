@@ -1,0 +1,92 @@
+﻿<Window x:Class="InventarioILS.View.Windows.ConfirmReceivedItemsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventarioILS.View.Windows"
+        xmlns:userControls="clr-namespace:InventarioILS.View.UserControls" 
+        mc:Ignorable="d"
+        Background="{StaticResource BackgroundBrush}"
+        Title="Confirmar elementos recibidos" Height="450" Width="800">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Código (izq) y paginador (derecha) -->
+        <Grid Grid.Row="0" Margin="8,0,8,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="ProductCodeLbl" Foreground="{StaticResource ForegroundBrush}" FontSize="16" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <TextBlock Name="CurrentPageIndex" Text="1" Foreground="{StaticResource ForegroundBrush}" FontSize="18" VerticalAlignment="Center"/>
+                <TextBlock Text="/" Foreground="{StaticResource ForegroundBrush}" FontSize="18" Margin="3,0" VerticalAlignment="Center"/>
+                <TextBlock Name="TotalItems" Grid.Column="1" Text="{Binding Items, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Foreground="Gray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Contenido principal: dos columnas -->
+        <Grid Grid.Row="1" Margin="16,0,16,0" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="0.05*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Columna izquierda: inputs -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Cantidad"/>
+                <TextBox x:Name="QuantityInput"
+                         Height="28"
+                         BorderBrush="{StaticResource AccentBrush}"
+                         Background="{StaticResource SecondaryBrush}"
+                         Foreground="{StaticResource ForegroundBrush}"
+                         Style="{StaticResource RoundedInput}"
+                         VerticalContentAlignment="Center"/>
+
+                <userControls:QueryableComboBox x:Name="StateComboBox" Title="Estado" ItemsSource="{Binding StateList, Mode=OneWay}" ComboBoxBackground="{StaticResource SecondaryBrush}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
+                                                BorderBrush="{StaticResource AccentBrush}" Margin="0,8,0,0" SelectedItemChanged="StateComboBox_SelectedItemChanged"/>
+
+                <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Ubicación"/>
+                <TextBox x:Name="LocationInput" Height="28" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" 
+                         Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+            </StackPanel>
+
+            <!-- espacio central -->
+            <Grid Grid.Column="1"/>
+
+            <!-- Columna derecha: descripción grande -->
+            <StackPanel Grid.Column="2">
+                <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Descripción" HorizontalAlignment="Left"/>
+                <TextBox x:Name="DescriptionInput" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"
+                         MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" 
+                         Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+
+                <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Notas" Margin="0,12,0,0"/>
+                <TextBox x:Name="AdditionalNotesInput" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48"
+                         Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}"
+                         Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="PreviousPageBtn" Grid.Row="1" Style="{StaticResource RoundedButtonSecondary}" Width="50" Height="50" HorizontalAlignment="Left"
+                    Click="PreviousPageBtn_Click" IsEnabled="False">
+                    <TextBlock Text="←" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,5"/>
+            </Button>
+            
+            <Button x:Name="SubmitBtn" IsEnabled="False" Style="{StaticResource RoundedButtonPrimary}" Width="150" Height="50" Margin="5" Background="{StaticResource AccentBrush}"
+                    Foreground="{StaticResource SecondaryBrush}" FontWeight="Bold" Click="SubmitBtn_Click">Confirmar Recibidos</Button>
+
+            <Button x:Name="NextPageBtn" Grid.Row="3" Style="{StaticResource RoundedButtonSecondary}" Width="50" Height="50" HorizontalAlignment="Right"
+                    Click="NextPageBtn_Click">
+                <TextBlock Text="→" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,5"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

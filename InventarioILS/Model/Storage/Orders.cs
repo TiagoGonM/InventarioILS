@@ -37,12 +37,13 @@ namespace InventarioILS.Model.Storage
             return rowId;
         }
 
-        public async Task<int> AddAsync(Order order, IDbTransaction transaction = null)
+        public async Task<int> AddAsync(Order order, IDbTransaction transaction)
         {
+            var conn = transaction.Connection;
+            
             string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
                              SELECT last_insert_rowid();";
 
-            using var conn = transaction?.Connection ?? CreateConnection();
 
             var count = await conn.QueryFirstAsync<int>(@"SELECT COUNT(*) total FROM 'Order'").ConfigureAwait(false);
             order.Name = $"Pedido #{count + 1}";

@@ -23,9 +23,9 @@ namespace InventarioILS.Model.Storage
             }, transaction: transaction);
         }
 
-        public async Task AddAsync(OrderItem item, IDbTransaction transaction = null)
+        public async Task AddAsync(OrderItem item, IDbTransaction transaction)
         {
-            using var conn = transaction?.Connection ?? CreateConnection();
+            var conn = transaction.Connection;
 
             await conn.ExecuteAsync(insertQuery, new
             {

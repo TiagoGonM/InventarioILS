@@ -94,7 +94,7 @@ namespace InventarioILS.Model.Storage
         {
             using var conn = CreateConnection();
 
-            uint itemRowId = await ItemService.AddItemAsync(item);
+            uint itemRowId = await ItemService.AddItemAsync(item, null);
             uint stockItemRowId = 0;
 
             if (item is StockItem stockItem)
@@ -221,7 +221,6 @@ namespace InventarioILS.Model.Storage
 
                 // Procedemos con el borrado lógico (isDeleted = 1) para no romper OrderDetail
                 await conn.ExecuteAsync("UPDATE Item SET isDeleted = 1 WHERE itemId IN @Ids", new { Ids = idsToDelete }, transaction);
-                await conn.ExecuteAsync("UPDATE ItemStock SET isDeleted = 1 WHERE itemId IN @Ids", new { Ids = idsToDelete }, transaction);
 
                 transaction.Commit();
                 return idsToDelete.Count;

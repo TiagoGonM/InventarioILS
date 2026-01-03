@@ -10,9 +10,9 @@ namespace InventarioILS.Services
 {
     internal class ItemService
     {
-        public async static Task<uint> AddItemAsync(Item item, IDbTransaction transaction = null)
+        public async static Task<uint> AddItemAsync(Item item, IDbTransaction transaction)
         {
-            var conn = transaction?.Connection ?? new DbConnection();
+            var conn = transaction.Connection;
             int catSubcatId;
 
             try
@@ -33,7 +33,7 @@ namespace InventarioILS.Services
             }
             catch (Exception ex)
             {
-                throw new ApplicationException("Error al buscar CatSubcatId.", ex);
+                throw new ApplicationException("Error al buscar CatSubcatId: " + ex.Message);
             }
 
             string insertSql =
@@ -61,7 +61,7 @@ namespace InventarioILS.Services
 
         public static async Task<uint> CountByProductCodeAsync(string productCode)
         {
-            using var conn = new DbConnection();
+            using var conn = await DbConnection.CreateAndOpenAsync();
             var classStorage = ItemClasses.Instance;
 
             var deviceId = classStorage.Items.First((itemClass) => 

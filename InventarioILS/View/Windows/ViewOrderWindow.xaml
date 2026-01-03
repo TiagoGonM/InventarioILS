@@ -46,20 +46,29 @@
                     <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" MinWidth="30" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" MinWidth="30" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                     <DataGridTextColumn Header="Envio" Binding="{Binding ShipmentState}" MinWidth="30" Width="160" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                    <!--<DataGridTemplateColumn Header="Envio" IsReadOnly="False">
-                        <DataGridTemplateColumn.CellEditingTemplate>
+                    <DataGridTemplateColumn Header="Envio" IsReadOnly="False">
+                        <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <userControls:QueryableComboBox ItemsSource="{Binding DataContext.ShipmentStates}"/>
+                                <userControls:QueryableComboBox x:Name="ShipmentStateComboBox" ItemsSource="{Binding DataContext.ShipmentStateList, RelativeSource={RelativeSource AncestorType={x:Type local:ViewOrderWindow}}}"/>
                             </DataTemplate>
-                        </DataGridTemplateColumn.CellEditingTemplate>
-                    </DataGridTemplateColumn>-->
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Total" Binding="{Binding Quantity}" MinWidth="30" Width="80" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                    <DataGridCheckBoxColumn Header="Recibido" Binding="{Binding IsReceived, Mode=TwoWay}" MinWidth="20" Width="110" IsReadOnly="True" CanUserResize="False"/>
+                    <DataGridTemplateColumn Header="Recibido" Width="110" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Checked="Received_Checked" 
+                                          Unchecked="Received_Unchecked"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
 
-        <Button x:Name="ConfirmBtn" Grid.Row="3" Style="{StaticResource RoundedButtonPrimary}" IsEnabled="False" FontWeight="Bold" Foreground="{StaticResource BackgroundBrush}" Margin="0,10,0,10" MaxWidth="150" MinHeight="40">
+        <Button x:Name="ConfirmBtn" Grid.Row="3" Style="{StaticResource RoundedButtonPrimary}" IsEnabled="False" FontWeight="Bold" Foreground="{StaticResource BackgroundBrush}" Margin="0,10,0,10" MaxWidth="150" MinHeight="40" Click="ConfirmBtn_Click">
             Confirmar recibidos
         </Button>
     </Grid>

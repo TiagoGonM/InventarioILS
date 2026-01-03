@@ -47,6 +47,8 @@ namespace InventarioILS.View.Windows
             bool exists = categories.Items.Any(c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             CategoryNameErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
+            if (exists) CategoryNameInput.Focus();
+
             CreateCategoryBtn.IsEnabled = !exists;
         }
 

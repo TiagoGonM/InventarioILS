@@ -94,13 +94,6 @@
                     </StackPanel>
                 </Button>
 
-                <!--<Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" BorderBrush="Transparent" RenderTransformOrigin="0.5,0.5"
-                            Background="#FF9BE8D6" Foreground="{StaticResource SecondaryBrush}" Click="CollapseSidebarBtn_Click">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="←" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Colapsar" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>-->
                 <Button x:Name="CollapseSidebarBtn" Height="48" Style="{StaticResource RoundedButtonSecondary}" FontWeight="Bold" FontSize="18"
                     Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource AccentBrush}" Click="CollapseSidebarBtn_Click">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -115,11 +108,11 @@
         <Grid x:Name="RightGrid" Grid.Column="1" Background="{StaticResource BackgroundBrush}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="{Binding bottomBarHeight, Mode=TwoWay, FallbackValue=0}" MaxHeight="500"/>
+                <RowDefinition x:Name="BottomRow" Height="0" MaxHeight="500"/>
             </Grid.RowDefinitions>
 
 
-            <GridSplitter Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" ResizeDirection="Rows" Panel.ZIndex="3" Width="2500" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" ResizeDirection="Rows" Panel.ZIndex="3" Height="3" Background="{StaticResource AccentBrush}" ShowsPreview="True" />
             <Grid x:Name="BottomBar" Grid.Row="1" Panel.ZIndex="2" Background="{StaticResource SecondaryBrush}">
                 <Grid x:Name="InnerGrid" Margin="10,10,10,10">
                     <ContentControl x:Name="BottomBarContent" Grid.Row="1"/>

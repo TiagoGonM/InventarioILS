@@ -46,6 +46,8 @@ namespace InventarioILS.View.Windows
             bool exists = states.Items.Any(c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
             
             ErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
+            if (exists) StateNameInput.Focus();
+
             SubmitBtn.IsEnabled = !exists;
         }
 

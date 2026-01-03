@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,26 +13,26 @@ namespace InventarioILS.Model.Storage
             Load();
         }
 
-        public async Task AddAsync(ItemMisc item)
+        public async Task AddAsync(ItemMisc item, IDbTransaction transaction)
         {
-            using var conn = CreateConnection();
+            var conn = transaction.Connection;
 
             string query = @"INSERT INTO Category (name, shorthand) VALUES (@Name, @Shorthand)";
 
             var collection = await conn.ExecuteAsync(query, new
             {
                 item.Name,
-                item.Shorthand
-            }).ConfigureAwait(false);
+                item.Shorthand,
+            }, transaction).ConfigureAwait(false);
         }
 
-        public async Task LinkWithAsync(uint subcategoryId, uint categoryId)
+        public async Task LinkWithAsync(uint subcategoryId, uint categoryId, IDbTransaction transaction)
         {
-            using var conn = CreateConnection();
+            var conn = transaction.Connection;
 
             string query = @"INSERT INTO CatSubcat (categoryId, subcategoryId) VALUES (@CatId, @SubcatId)";
 
-            await conn.ExecuteAsync(query, new {CatId = categoryId, SubcatId = subcategoryId}).ConfigureAwait(false);
+            await conn.ExecuteAsync(query, new {CatId = categoryId, SubcatId = subcategoryId}, transaction).ConfigureAwait(false);
         }
 
         public void Load()

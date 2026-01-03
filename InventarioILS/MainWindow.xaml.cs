@@ -23,9 +23,9 @@ namespace InventarioILS
 
         bool bottomBarCollapsed = true;
 
-        int _bottomBarHeight = 0;
+        double _bottomBarHeight = 0;
 
-        int defaultBottomBarHeight = 400;
+        double defaultBottomBarHeight = 400;
 
         enum AppPages
         {
@@ -35,11 +35,6 @@ namespace InventarioILS
         }
 
         AppPages currentWindow = AppPages.INVENTORY;
-
-        int BottomBarHeight { 
-            get => _bottomBarHeight; 
-            set => _bottomBarHeight = value; 
-        }
 
         bool isStock = true;
 
@@ -54,12 +49,11 @@ namespace InventarioILS
             items = StockItems.Instance;
             itemClasses = ItemClasses.Instance;
 
-            StatusManager.Instance.Initialize(StatusMessageLabel);
-            bottomBarManager.Initialize(BottomBarContent);
+            StatusManager.Instance.Initialize(StatusMessageLabel); // Initialize app status messages on the bottom
+            bottomBarManager.Initialize(BottomBarContent, BottomRow);
 
             DataContext = new
             {
-                BottomBarHeight,
                 items.Items,
                 ItemClassList = itemClasses.Items,
             };
@@ -69,19 +63,10 @@ namespace InventarioILS
         private void AddItemBtn_Click(object sender, RoutedEventArgs e)
         {
             addItemPanel = new AddItemPanel();
-            addItemPanel.OnSuccess += AddItemPanel_ItemsAdded;
+            addItemPanel.OnSuccess += CancelAction;
+            StartActionWith(addItemPanel);
 
-            bottomBarManager.CurrentControlContent = addItemPanel;
-            ShowBottomBar();
-
-            ShowCancelBtn();
             CancelBtn.Click += AddItemBtn_CancelAction;
-        }
-
-        private void AddItemPanel_ItemsAdded()
-        {
-            CancelAction();
-            addItemPanel.OnSuccess -= AddItemPanel_ItemsAdded;
         }
         
         private void AddItemBtn_CancelAction(object sender, RoutedEventArgs e)
@@ -94,19 +79,11 @@ namespace InventarioILS
         private void AddOrderBtn_Click(object sender, RoutedEventArgs e)
         {
             addOrderPanel = new AddOrderPanel();
-            addOrderPanel.OnSuccess += AddOrderPanel_OrderAdded;
+            addOrderPanel.OnSuccess += CancelAction;
             
-            bottomBarManager.CurrentControlContent = addOrderPanel;
-            ShowBottomBar();
+            StartActionWith(addOrderPanel);
 
             CancelBtn.Click += AddOrderBtn_CancelAction;
-            ShowCancelBtn();
-        }
-
-        private void AddOrderPanel_OrderAdded()
-        {
-            CancelAction();
-            addOrderPanel.OnSuccess -= AddOrderPanel_OrderAdded;
         }
 
         private void AddOrderBtn_CancelAction(object sender, RoutedEventArgs e)
@@ -117,9 +94,16 @@ namespace InventarioILS
             OrderTabBtn_Click(sender, e);
         }
 
+        private void StartActionWith(UserControl control)
+        {
+            bottomBarManager.CurrentControlContent = control;
+            ShowBottomBar();
+            ShowCancelBtn();
+        }
+
         private void CancelAction()
         {
-            bottomBarManager.CurrentControlContent = null;
+            bottomBarManager.CleanControlContent();
             ShowBottomBar(false);
             ShowCancelBtn(false);
         }
@@ -201,8 +185,8 @@ namespace InventarioILS
 
         private void ShowBottomBar(bool show = true)
         {
-            var row = Grid.GetRow(BottomBarContent);
-            RightGrid.RowDefinitions[row].Height = new GridLength(show ? defaultBottomBarHeight : 0);
+            bottomBarManager.BottomBarHeight = new GridLength(show ? BottomBarManager.DEFAULT_HEIGHT.Value : 0);
+            //BottomRow.Height = new GridLength(show ? defaultBottomBarHeight : 0);
 
             Grid.SetRow(CollapsedButtonBar, show ? 1 : 0);
 
@@ -349,22 +333,19 @@ namespace InventarioILS
         ItemForm itemForm;
         private void ItemView_OnEdit(object sender, ItemEventArgs e)
         {
-            itemForm = new ItemForm
-            {
-                PresetData = new ItemFormPresetData(
+            itemForm = new ItemForm(
+                new ItemFormPresetData(
                     (StockItem)e.Item,
                     enableCategory: false,
                     enableSubcategory: false,
                     enableClass: false
                 )
-            };
+            );
 
             itemForm.OnConfirmEdit += ItemForm_OnConfirmEdit;
-            bottomBarManager.CurrentControlContent = itemForm;
+            StartActionWith(itemForm);
 
             CancelBtn.Click += ItemView_CancelAction;
-            ShowBottomBar();
-            ShowCancelBtn();
         }
 
         private void ItemView_CancelAction(object sender, EventArgs e)
@@ -375,8 +356,6 @@ namespace InventarioILS
 
         private async void ItemForm_OnConfirmEdit(object sender, ItemEventArgs e)
         {
-            itemForm.OnConfirmEdit -= ItemForm_OnConfirmEdit;
-
             await items.UpdateAsync((StockItem)e.OldItem, (StockItem)e.Item);
             CancelAction();
         }

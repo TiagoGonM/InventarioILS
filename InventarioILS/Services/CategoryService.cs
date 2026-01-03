@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
+using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,13 +12,23 @@ namespace InventarioILS.Services
 
         public async static Task RegisterCategory(ItemMisc category, IEnumerable<uint> subcategoryIds)
         {
-            await categories.AddAsync(category);
+            using var client = await DbConnection.CreateAndOpenAsync();
+            using var transaction = client.BeginTransaction();
 
-            foreach (uint subcatId in subcategoryIds)
+            await categories.AddAsync(category, transaction);
+
+            try
             {
-                await categories.LinkWithAsync(subcatId, category.Id);
+                foreach (uint subcatId in subcategoryIds)
+                    await categories.LinkWithAsync(subcatId, client.LastRowIdInserted, transaction);
+            }
+            catch (SqliteException)
+            {
+                transaction.Rollback();
+                throw;
             }
 
+            transaction.Commit();
             await categories.LoadAsync();
         }
     }

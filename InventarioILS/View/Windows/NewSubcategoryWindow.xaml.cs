@@ -39,6 +39,8 @@ namespace InventarioILS.View.Windows
             bool exists = subCategories.Items.Any(c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             SubcategoryNameErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
+            if (exists) SubcategoryNameInput.Focus();
+
             SubmitBtn.IsEnabled = !exists;
         }
 
@@ -55,6 +57,8 @@ namespace InventarioILS.View.Windows
             bool exists = subCategories.Items.Any(subcat => !string.IsNullOrEmpty(subcat.Shorthand) && subcat.Shorthand.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             SubcategoryShorthandErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
+            if (exists) SubcategoryShorthandInput.Focus();
+
             SubmitBtn.IsEnabled = !exists;
         }
     }

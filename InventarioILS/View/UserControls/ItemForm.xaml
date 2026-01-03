@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
-             mc:Ignorable="d" d:DesignWidth="1500" Height="277">
+             mc:Ignorable="d" d:DesignWidth="1500" d:Height="277">
 
     <Border BorderBrush="White" Grid.ColumnSpan="2" BorderThickness="1" Padding="0,10">
         <Grid>
@@ -16,6 +16,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <TextBlock Text="Código" VerticalAlignment="Center" Foreground="{StaticResource AccentForegroundBrush}"/>
@@ -39,6 +40,11 @@
                         </StackPanel>
                     </Grid>
                 </WrapPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2">
+                    <Button x:Name="ConfirmBtn" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
+                    <Button x:Name="DummyBtn" Content="Agregar dummy" Margin="10,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="DummyBtn_Click"/>
+                </StackPanel>
             </Grid>
             <StackPanel Grid.Row="1" Grid.Column="1" Margin="16,0,16,0" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
@@ -56,14 +62,8 @@
                 <TextBox x:Name="DescriptionInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" IsReadOnly="True" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
 
                 <TextBlock Text="Notas" Margin="0,8,0,0" Foreground="{StaticResource AccentForegroundBrush}"/>
-                <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="ConfirmBtn" Content="Agregar elemento" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
-                    <Button x:Name="DummyBtn" Content="Agregar dummy" Margin="10,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="DummyBtn_Click"/>
-                </StackPanel>
+                <TextBox x:Name="NotesInput" Margin="0,4,0,8" MinHeight="28" MinWidth="600" MaxHeight="300" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>
         </Grid>
     </Border>
-
 </UserControl>

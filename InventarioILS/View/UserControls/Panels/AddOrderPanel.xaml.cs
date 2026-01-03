@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
-    public partial class AddOrderPanel : UserControl
+    public partial class AddOrderPanel : UserControl, IDisposable
     {
         static readonly OrderItems itemStorage = OrderItems.Instance;
         static readonly ObservableCollection<OrderItem> itemList = [];
@@ -26,7 +26,6 @@ namespace InventarioILS.View.UserControls
             InitializeComponent();
 
             ShowEmptyForm();
-
             DataContext = new
             {
                 ItemList = itemList,
@@ -57,10 +56,8 @@ namespace InventarioILS.View.UserControls
         {
             CleanForm();
 
-            itemForm = new OrderItemForm
-            {
-                 PresetData = item
-            };
+            itemForm = new OrderItemForm(item);
+
             itemForm.OnConfirmEdit += ItemForm_OnEdit;
 
             FormContainer.Content = itemForm;
@@ -142,6 +139,12 @@ namespace InventarioILS.View.UserControls
         private void AddNewItem_Click(object sender, RoutedEventArgs e)
         {
             ShowEmptyForm();
+        }
+
+        public void Dispose()
+        {
+            itemList.Clear();
+            OnSuccess = null;
         }
     }
 }

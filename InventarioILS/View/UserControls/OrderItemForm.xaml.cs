@@ -9,11 +9,11 @@ using System.Windows.Media;
 
 namespace InventarioILS.View.UserControls
 {
-    public partial class OrderItemForm : UserControl
+    public partial class OrderItemForm : UserControl, IDisposable
     {
-        readonly ItemCategories categories = null;
-        readonly ItemSubCategories subCategories = null;
-        readonly ItemClasses classes = null;
+        readonly ItemCategories categories = ItemCategories.Instance;
+        readonly ItemSubCategories subCategories = ItemSubCategories.Instance;
+        readonly ItemClasses classes = ItemClasses.Instance;
 
         string codeCategoryShorthand = "";
         string codeMain = "";
@@ -36,13 +36,11 @@ namespace InventarioILS.View.UserControls
 
         OrderItem resultingItem = null;
 
-        public OrderItemForm()
+        public OrderItemForm(OrderItem presetData = null)
         {
             InitializeComponent();
 
-            categories = ItemCategories.Instance;
-            subCategories = ItemSubCategories.Instance;
-            classes = ItemClasses.Instance;
+            if (presetData != null) PresetData = presetData;
 
             DataContext = new
             {
@@ -238,14 +236,20 @@ namespace InventarioILS.View.UserControls
             resultingItem = new OrderItem(
                 productCode: "R-230K",
                 modelOrVal: "230K",
-                categoryId: 2,
-                subcategoryId: 3,
+                categoryId: 1,
+                subcategoryId: 1,
                 description: "Resistencia Estándar 230K",
                 classId: 1,
                 quantity: 10
             );
 
             OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));
+        }
+
+        public void Dispose()
+        {
+            OnConfirm = null;
+            OnConfirmEdit = null;
         }
     }
 }

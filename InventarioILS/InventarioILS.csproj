@@ -13,6 +13,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\DatabaseSchema.sql" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="Model\DbConnection.cs">
       <SubType>Component</SubType>
@@ -46,5 +55,8 @@
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.10" />
     <PackageReference Include="System.Text.Json" Version="9.0.10" />
     <PackageReference Include="System.Threading.Channels" Version="9.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DatabaseSchema.sql" />
   </ItemGroup>
 </Project>
