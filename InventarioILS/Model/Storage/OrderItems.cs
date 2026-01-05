@@ -72,15 +72,20 @@ namespace InventarioILS.Model.Storage
             using var conn = CreateConnection();
 
             var collection = conn.Query<OrderItem>(selectSingleQuery, new { OrderId = orderId });
-            UpdateItems(collection.ToList().ToObservableCollection());
+            Items = collection.ToList().ToObservableCollection();
         }
 
-        public async void LoadSingleAsync(uint orderId)
+        public async Task LoadSingleAsync(uint orderId)
         {
             using var conn = CreateConnection();
 
             var collection = await conn.QueryAsync<OrderItem>(selectSingleQuery, new { OrderId = orderId }).ConfigureAwait(false);
-            UpdateItems(collection.ToList().ToObservableCollection());
+            Items = collection.ToList().ToObservableCollection();
+        }
+
+        public async Task UpdateAsync(OrderItem item)
+        {
+            // TODO
         }
     }
 }

@@ -48,7 +48,7 @@ namespace InventarioILS
 
             items = StockItems.Instance;
             itemClasses = ItemClasses.Instance;
-
+            
             StatusManager.Instance.Initialize(StatusMessageLabel); // Initialize app status messages on the bottom
             bottomBarManager.Initialize(BottomBarContent, BottomRow);
 
@@ -186,7 +186,6 @@ namespace InventarioILS
         private void ShowBottomBar(bool show = true)
         {
             bottomBarManager.BottomBarHeight = new GridLength(show ? BottomBarManager.DEFAULT_HEIGHT.Value : 0);
-            //BottomRow.Height = new GridLength(show ? defaultBottomBarHeight : 0);
 
             Grid.SetRow(CollapsedButtonBar, show ? 1 : 0);
 

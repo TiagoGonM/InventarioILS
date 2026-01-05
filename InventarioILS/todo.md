@@ -1,4 +1,5 @@
-* \[ ] (!) Implementar confirmar recibidos y poder cambiar el estado del envío
+* \[X] (!) Implementar confirmar recibidos
+* \[ ] (!) Actualizar un order item (como para cambiar el estado del envío)
 * \[ ] Añadir filtros de pedido
 * \[ ] (?) Mejorar exception handling
 * \[ ] Darle mas uso al status message
