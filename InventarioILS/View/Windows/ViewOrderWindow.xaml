@@ -49,7 +49,7 @@
                     <DataGridTemplateColumn Header="Envio" IsReadOnly="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <userControls:QueryableComboBox x:Name="ShipmentStateComboBox" ItemsSource="{Binding DataContext.ShipmentStateList, RelativeSource={RelativeSource AncestorType={x:Type local:ViewOrderWindow}}}"/>
+                                <userControls:QueryableComboBox x:Name="ShipmentStateComboBox" SelectedItemId="{Binding ShipmentStateId}" SelectedItemChanged="ShipmentStateComboBox_SelectedItemChanged" ItemsSource="{Binding DataContext.ShipmentStateList, RelativeSource={RelativeSource AncestorType={x:Type local:ViewOrderWindow}}}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

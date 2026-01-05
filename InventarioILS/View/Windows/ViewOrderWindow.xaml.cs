@@ -1,13 +1,16 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
+using InventarioILS.View.UserControls;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace InventarioILS.View.Windows
 {
-    public partial class ViewOrderWindow : Window
+    public partial class ViewOrderWindow : Window, IDisposable
     {
         readonly ShipmentStates shipmentStates = ShipmentStates.Instance;
         readonly OrderItems orderItems = OrderItems.Instance;
@@ -21,19 +24,24 @@ namespace InventarioILS.View.Windows
 
         public ObservableCollection<ItemMisc> ShipmentStateList => shipmentStates.Items;
 
-        public ViewOrderWindow(Order order) : this()
+        public static async Task<ViewOrderWindow> CreateAsync(Order order)
         {
-            orderItems.LoadSingle(order.Id);
-            shipmentStates.Load();
+            ViewOrderWindow window = new();
+            await window.orderItems.LoadSingleAsync(order.Id);
 
-            DataContext = new
+            
+            await window.shipmentStates.LoadAsync();
+
+            window.DataContext = new
             {
                 OrderName = order.Name,
                 OrderDescription = order.Description,
                 OrderCreationDate = order.CreatedAt.ToString("dd/MM/yyyy"),
-                ShipmentStateList,
-                orderItems.Items
+                window.ShipmentStateList,
+                window.orderItems.Items
             };
+
+            return window;
         }
 
         private void Received_Checked(object sender, RoutedEventArgs e)
@@ -59,7 +67,22 @@ namespace InventarioILS.View.Windows
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
             Close();
+            Dispose();
             new ConfirmReceivedItemsWindow(receivedItems).Show();
+        }
+
+        public void Dispose()
+        {
+            orderItems.Items.Clear();
+            GC.SuppressFinalize(this);
+        }
+
+        private async Task ShipmentStateComboBox_SelectedItemChanged(object sender, EventArgs e)
+        {
+            var combo = (QueryableComboBox)sender;
+            var itemCtx = combo.DataContext as OrderItem;
+
+            await orderItems.UpdateAsync(itemCtx); // TODO
         }
     }
 }

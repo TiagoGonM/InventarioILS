@@ -25,13 +25,14 @@ namespace InventarioILS.View.UserControls
             };
         }
 
-        private void OrderCard_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void OrderCard_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (sender is OrderCard card)
             {
                 var order = new Order((uint)card.Tag, card.Title, card.Description, card.CreationDate);
 
-                new ViewOrderWindow(order).Show();
+                var window = await ViewOrderWindow.CreateAsync(order).ConfigureAwait(false);
+                window.Show();
             }
         }
     }
