@@ -3,12 +3,16 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Collections;
 using System;
+using InventarioILS.Model.Storage;
+using System.Linq;
 
 namespace InventarioILS.View.UserControls
 {
     public partial class QueryableComboBox : UserControl
     {
         public event EventHandler SelectedItemChanged;
+
+        static bool isSelectingById = false;
 
         public QueryableComboBox()
         {
@@ -105,8 +109,8 @@ namespace InventarioILS.View.UserControls
             if (control.ComboBox == null)
                 return;
 
-            control.ComboBox.SelectedItem = (object)e.NewValue;
-            control.SelectedItemChanged?.Invoke(control, EventArgs.Empty);
+            control.ComboBox.SelectedItem = e.NewValue;
+            if (!isSelectingById) control.SelectedItemChanged?.Invoke(control, EventArgs.Empty);
         }
 
         // Background Property
@@ -134,6 +138,42 @@ namespace InventarioILS.View.UserControls
         private void ComboBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             TitleLabel.Foreground = ComboBox.IsEnabled ? (Brush)FindResource("AccentForegroundBrush") : Brushes.Gray;
+        }
+
+        public static readonly DependencyProperty SelectedItemIdProperty =
+            DependencyProperty.Register(
+                nameof(SelectedItemId),
+                typeof(uint),
+                typeof(QueryableComboBox),
+                new PropertyMetadata(0u, OnSelectedItemIdChanged));
+
+        public uint SelectedItemId
+        {
+            get => (uint)GetValue(SelectedItemIdProperty);
+            set => SetValue(SelectedItemIdProperty, value);
+        }
+
+        private static void OnSelectedItemIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (QueryableComboBox)d;
+            uint value = (uint)e.NewValue;
+
+            // Espera un poco a que ItemsSource se haya asignado
+            control.Dispatcher.InvokeAsync(() =>
+            {
+                if (control.ItemsSource?.OfType<IIdentifiable>().Any() == true)
+                {
+                    var item = control.ItemsSource.OfType<IIdentifiable>().FirstOrDefault(it => it.Id == value);
+                    if (item != null)
+                    {
+                        isSelectingById = true;
+                        control.SelectedItem = item;
+                    }
+                }
+            }, System.Windows.Threading.DispatcherPriority.Loaded
+               // debido a que ItemsSource tiene que haberse populado, entonces especificamos que se ejecute luego de que todo haya cargado
+               // incluyendo ItemsSource
+            );
         }
     }
 }

@@ -2,7 +2,6 @@
 using InventarioILS.Model.Storage;
 using InventarioILS.Services;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -37,19 +36,7 @@ namespace InventarioILS.View.UserControls
         readonly ItemClasses classes = ItemClasses.Instance;
         readonly ItemStates states = ItemStates.Instance;
 
-        string codeCategoryShorthand = "";
         string codeMain = "";
-
-        string selectedCategory;
-        uint? selectedCategoryId;
-
-        string selectedSubcategory;
-        uint? selectedSubcategoryId;
-
-        string selectedClass;
-        uint? selectedClassId;
-
-        uint? selectedStateId;
 
         bool isDevice = false;
         uint deviceCounter = 0;
@@ -96,17 +83,12 @@ namespace InventarioILS.View.UserControls
             }
         }
 
-        // Solo una manera "fancy" de poder setear el elemento que se seleccionó antes correctamente sin tener que repetir esto mismo varias veces
-        private static void SetComboBoxItem<T>(QueryableComboBox combo, ObservableCollection<T> filterList, uint predicate) where T : IIdentifiable
-        {
-            foreach (var item in filterList)
-            {
-                var it = item;
+        
+        public ItemMisc SelectedCategory => (ItemMisc)CategoryComboBox.SelectedItem;
+        public ItemMisc SelectedSubcategory => (ItemMisc)SubcategoryComboBox.SelectedItem;
+        public ItemMisc SelectedClass => (ItemMisc)ClassComboBox.SelectedItem;
+        public ItemMisc SelectedState => (ItemMisc)StateComboBox.SelectedItem;
 
-                if (it.Id == predicate)
-                    combo.SelectedItem = it;
-            }
-        }
 
         private void FillData()
         {
@@ -118,15 +100,16 @@ namespace InventarioILS.View.UserControls
             var item = PresetData.Data;
 
             ProductCode.Text = item.ProductCode;
+
+            CategoryComboBox.SelectedItemId = item.CategoryId;
+            SubcategoryComboBox.SelectedItemId = item.SubcategoryId;
+            ClassComboBox.SelectedItemId = item.ClassId;
+            StateComboBox.SelectedItemId = item.StateId;
             
             ExtraValueInput.Text = item.ModelOrValue;
-            if (ExtraValueInput.Text != null || string.IsNullOrEmpty(ExtraValueInput.Text))
+            if (!string.IsNullOrEmpty(ExtraValueInput.Text))
                 ExtraValueCheckbox.IsChecked = true;
 
-            SetComboBoxItem<ItemMisc>(CategoryComboBox, categories.Items, item.CategoryId);
-            SetComboBoxItem<ItemMisc>(SubcategoryComboBox, subCategories.Items, item.SubcategoryId);
-            SetComboBoxItem<ItemMisc>(ClassComboBox, classes.Items, item.ClassId);
-            SetComboBoxItem<ItemMisc>(StateComboBox, states.Items, item.StateId);
 
             QuantityInput.Text = item.Quantity.ToString();
             LocationInput.Text = item.Location ?? "";
@@ -150,7 +133,7 @@ namespace InventarioILS.View.UserControls
 
         private void UpdateDescription()
         {
-            DescriptionInput.Text = $"{selectedCategory} {selectedSubcategory} {(ExtraValueCheckbox.IsChecked.Value ? ExtraValueInput.Text.ToUpper() : "")}";
+            DescriptionInput.Text = $"{SelectedCategory?.Name} {SelectedSubcategory?.Name} {(ExtraValueCheckbox.IsChecked.Value ? ExtraValueInput.Text.ToUpper() : "")}";
         }
 
         private void UpdateProductCode()
@@ -158,14 +141,14 @@ namespace InventarioILS.View.UserControls
             bool shouldShowUnitCount = isDevice && ExtraValueCheckbox.IsChecked.Value;
 
             ProductCode.Text = 
-                $"{codeCategoryShorthand}-{codeMain}{(shouldShowUnitCount ? $"-{deviceCounter + 1}" : "")}";
+                $"{SelectedCategory?.Shorthand}-{codeMain}{(shouldShowUnitCount ? $"-{deviceCounter + 1}" : "")}";
         }
 
         private async Task CheckForDevice()
         {
             if (!isDevice) return;
 
-            string baseCode = $"{codeCategoryShorthand}-{codeMain}";
+            string baseCode = $"{SelectedCategory?.Shorthand}-{codeMain}";
             deviceCounter = await ItemService.CountByProductCodeAsync(baseCode);
         }
 
@@ -176,12 +159,6 @@ namespace InventarioILS.View.UserControls
             var category = (ItemMisc)combo.SelectedItem;
 
             if (category == null) return;
-
-            codeCategoryShorthand = category.Shorthand;
-
-            // No se puede asignar la instancia directamente 💔
-            selectedCategory = category.Name;
-            selectedCategoryId = category.Id;
 
             UpdateProductCode();
             UpdateDescription();
@@ -198,9 +175,6 @@ namespace InventarioILS.View.UserControls
             if (!ExtraValueCheckbox.IsChecked.Value)
                 codeMain = subcat.Name.ToUpper();
 
-            selectedSubcategory = subcat.Name;
-            selectedSubcategoryId = subcat.Id;
-
             UpdateProductCode();
             UpdateDescription();
         }
@@ -215,10 +189,7 @@ namespace InventarioILS.View.UserControls
 
             isDevice = itemClass.Name.Equals("dispositivo", StringComparison.OrdinalIgnoreCase);
             QuantityInput.IsEnabled = !isDevice;
-            QuantityInput.Text = isDevice ? "1" : "";
-
-            selectedClass = itemClass.Name;
-            selectedClassId = itemClass.Id;
+            QuantityInput.Text = isDevice ? "1" : QuantityInput.Text;
 
             await CheckForDevice();
             UpdateProductCode();
@@ -231,30 +202,27 @@ namespace InventarioILS.View.UserControls
             var itemState = (ItemMisc)combo.SelectedItem;
 
             if (itemState == null) return;
-
-            selectedStateId = itemState.Id;
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (!selectedCategoryId.HasValue || !selectedSubcategoryId.HasValue || !selectedClassId.HasValue)
+            if (SelectedCategory.Id == 0 || SelectedSubcategory.Id == 0 || SelectedClass.Id == 0)
                 return;
 
             resultingItem = new StockItem {
                 ProductCode = ProductCode.Text,
                 ModelOrValue = ExtraValueInput.Text,
-                CategoryId = (uint)selectedCategoryId,
-                SubcategoryId = (uint)selectedSubcategoryId,
+                CategoryId = (uint)SelectedCategory.Id,
+                SubcategoryId = (uint)SelectedSubcategory.Id,
                 Description = DescriptionInput.Text,
-                Class = selectedClass,
-                ClassId = (uint)selectedClassId,
-                StateId = (uint)selectedStateId,
+                Class = SelectedClass.Name,
+                ClassId = (uint)SelectedClass.Id,
+                StateId = (uint)SelectedState.Id,
                 Location = LocationInput.Text,
                 Quantity = uint.Parse(QuantityInput.Text),
                 AdditionalNotes = NotesInput.Text
             };
 
-            //ProductCodeAfterConfirmLabel.Text = code;
             ResultingProductCode = ProductCode.Text;
 
             if (!isEditing)
@@ -270,7 +238,7 @@ namespace InventarioILS.View.UserControls
         private void ExtraValueCheckbox_Checked(object sender, RoutedEventArgs e)
         {
             ExtraValueInput.IsEnabled = true;
-            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : selectedSubcategory?.ToUpper() ?? "";
+            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : SelectedSubcategory.Name.ToUpper() ?? "";
             
             UpdateProductCode();
             UpdateDescription();
@@ -281,7 +249,7 @@ namespace InventarioILS.View.UserControls
         private void ExtraValueCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExtraValueInput.IsEnabled = false;
-            codeMain = selectedSubcategory?.ToUpper() ?? "";
+            codeMain = SelectedSubcategory.Name.ToUpper() ?? "";
 
             UpdateProductCode();
             UpdateDescription();
@@ -291,7 +259,7 @@ namespace InventarioILS.View.UserControls
 
         private async void ExtraValueInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : selectedSubcategory?.ToUpper() ?? "";
+            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : SelectedSubcategory.Name.ToUpper() ?? "";
 
             await CheckForDevice();
             UpdateProductCode();
@@ -314,8 +282,7 @@ namespace InventarioILS.View.UserControls
                 classId: 1,
                 stateId: 2,
                 location: "Cajón 3",
-                quantity: 10,
-                additionalNotes: ""
+                quantity: 10
             );
 
             OnConfirm?.Invoke(this, new ItemEventArgs(resultingItem));

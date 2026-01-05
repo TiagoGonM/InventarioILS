@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventarioILS.View.UserControls"
+             xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" d:DesignWidth="1500" d:Height="277">
 
     <Border BorderBrush="White" Grid.ColumnSpan="2" BorderThickness="1" Padding="0,10">
@@ -50,6 +51,7 @@
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="0,0,20,0">
                         <TextBlock Text="Cantidad" Foreground="{StaticResource AccentForegroundBrush}"/>
+                        <!--<toolkit:UIntegerUpDown DefaultValue="1"/>-->
                         <TextBox x:Name="QuantityInput" Style="{StaticResource RoundedInput}" Foreground="{StaticResource ForegroundBrush}" Margin="0,4,0,8" MinHeight="28" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" PreviewTextInput="QuantityInput_PreviewTextInput"/>
                     </StackPanel>
                     <StackPanel>
