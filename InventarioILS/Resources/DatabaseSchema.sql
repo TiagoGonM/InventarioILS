@@ -152,11 +152,15 @@ CREATE VIEW IF NOT EXISTS View_OrderItemsSummary AS
       ord.orderId,
       ord.name orderName,
       it.productCode,
+      c.categoryId,
+      s.subcategoryId,
       it.description,
+      it.classId,
       CONCAT(
-        UPPER(SUBSTRING(c.name, 1, 1)),
-        LOWER(SUBSTRING(c.name, 2, LENGTH(c.name)))
+        UPPER(SUBSTRING(class.name, 1, 1)),
+        LOWER(SUBSTRING(class.name, 2, LENGTH(class.name)))
       ) class,
+      ordDet.shipmentStateId,
       CONCAT(
         UPPER(SUBSTRING(ss.name, 1, 1)),
         LOWER(SUBSTRING(ss.name, 2, LENGTH(ss.name)))
@@ -166,13 +170,16 @@ CREATE VIEW IF NOT EXISTS View_OrderItemsSummary AS
   JOIN 'Order' ord ON ordDet.orderId = ord.orderId
   JOIN Item it ON ordDet.itemId = it.itemId
   JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
-  JOIN Class c ON it.classId = c.classId
+  JOIN Class class ON it.classId = class.classId
+  JOIN CatSubcat cs ON it.catSubcatId = cs.catSubcatId
+  JOIN Category c ON cs.categoryId = c.categoryId
+  JOIN Subcategory s ON cs.subcategoryId = s.subcategoryId
   GROUP BY 
       ord.orderId,
       ord.name,
       it.productCode,
       it.description,
-      c.name,
+      class.name,
       ss.name;
 
 CREATE VIEW IF NOT EXISTS View_NoStockItems AS
