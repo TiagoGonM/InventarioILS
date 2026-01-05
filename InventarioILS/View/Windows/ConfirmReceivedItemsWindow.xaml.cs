@@ -56,6 +56,7 @@ namespace InventarioILS.View.Windows
             TotalItems.Text = TotalPages.ToString();
 
             NextPageBtn.IsEnabled = TotalPages > 1;
+            SubmitBtn.IsEnabled = TotalPages <= 1;
 
             stateStorage.Load();
 
@@ -132,6 +133,7 @@ namespace InventarioILS.View.Windows
             } catch (Exception ex)
             {
                 StatusManager.Instance.UpdateMessageStatus("Error al intentar confirmar los elementos: " + ex.Message, System.Windows.Media.Brushes.PaleVioletRed);
+                throw;
             }
 
             Close();
