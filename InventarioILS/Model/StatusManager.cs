@@ -8,6 +8,13 @@ namespace InventarioILS.Model
 {
     public sealed class StatusManager
     {
+        public enum MessageType
+        {
+            DEFAULT,
+            SUCCESS,
+            ERROR
+        }
+
         private StatusManager() { }
 
         private Label _statusMessageLabel;
@@ -22,10 +29,34 @@ namespace InventarioILS.Model
             _statusMessageLabel = labelReference;
         }
 
-        public async void UpdateMessageStatus(string message, Brush color)
+        public Brush GetColor(MessageType type)
+        {
+            switch (type)
+            {
+                case MessageType.DEFAULT:
+                    return Brushes.White;
+                case MessageType.SUCCESS:
+                    return Brushes.Green;
+                case MessageType.ERROR:
+                    return Brushes.PaleVioletRed;
+                default:
+                    break;
+            }
+
+            return Brushes.White;
+        }
+
+        public async Task UpdateMessageStatusAsync(string message, MessageType colorType = MessageType.DEFAULT)
+        {
+            await UpdateMessageStatusAsync(message, GetColor(colorType)).ConfigureAwait(false);
+        }
+
+        public async Task UpdateMessageStatusAsync(string message, Brush color = null)
         {
             if (_statusMessageLabel == null)
                 return;
+
+            color ??= Brushes.White;
 
             await _statusMessageLabel.Dispatcher.InvokeAsync(() =>
             {
