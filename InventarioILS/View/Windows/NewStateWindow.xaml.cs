@@ -51,7 +51,7 @@ namespace InventarioILS.View.Windows
             SubmitBtn.IsEnabled = !exists;
         }
 
-        private void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 

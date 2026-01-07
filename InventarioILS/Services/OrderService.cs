@@ -29,8 +29,8 @@ namespace InventarioILS.Services
                     int orderId = await orderStorage.AddAsync(order, transaction);
 
                     await stateStorage.LoadAsync();
-                    var defaultStateId = stateStorage.Items.FirstOrDefault(
-                        state => state.Name.Equals("pendiente", StringComparison.OrdinalIgnoreCase))?.Id;
+
+                    var defaultStateId = stateStorage.GetStateId("pendiente");
 
                     foreach (var orderItem in items)
                     {

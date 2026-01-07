@@ -126,7 +126,7 @@ namespace InventarioILS.View.UserControls
 
         private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            StatusManager.Instance.UpdateMessageStatus($"Pedido agregado: {OrderDescriptionInput.Text} | Items: {itemList.Count}", Brushes.Green);
+            StatusManager.Instance.UpdateMessageStatusAsync($"Pedido agregado: {OrderDescriptionInput.Text} | Items: {itemList.Count}", Brushes.Green);
 
             await OrderService.RegisterOrder(new Order
             {

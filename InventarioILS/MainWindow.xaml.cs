@@ -114,7 +114,7 @@ namespace InventarioILS
             else await items.LoadNoStockAsync().ConfigureAwait(false);
         }
 
-        private async void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private async void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
             var selectedItem = (ItemMisc)combo.SelectedItem;

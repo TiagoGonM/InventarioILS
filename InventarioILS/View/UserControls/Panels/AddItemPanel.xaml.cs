@@ -124,7 +124,7 @@ namespace InventarioILS.View.UserControls
         private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
             await ItemStorage.AddRangeAsync(itemList);
-            StatusManager.Instance.UpdateMessageStatus($"Items agregados: {itemList.Count}", Brushes.Green);
+            StatusManager.Instance.UpdateMessageStatusAsync($"Items agregados: {itemList.Count}", Brushes.Green);
             OnSuccess.Invoke();
         }
 

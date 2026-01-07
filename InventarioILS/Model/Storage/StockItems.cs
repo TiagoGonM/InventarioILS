@@ -179,6 +179,7 @@ namespace InventarioILS.Model.Storage
                                 updatedAt = CURRENT_TIMESTAMP
                              WHERE location = @OldLocation
                              AND stateId = @OldStateId
+
                              AND itemId IN (SELECT itemId FROM Item WHERE productCode = @ProductCode)";
 
             await conn.ExecuteAsync(query, new 
@@ -206,7 +207,7 @@ namespace InventarioILS.Model.Storage
 
             try
             {
-                // Seleccionamos los IDs que coinciden con el código Y la ubicación
+                // Seleccionamos los IDs que coinciden con el código y la ubicación
                 var idsToDelete = (await conn.QueryAsync<int>(@"SELECT i.itemId 
                                                               FROM Item i
                                                               JOIN ItemStock s ON i.itemId = s.itemId

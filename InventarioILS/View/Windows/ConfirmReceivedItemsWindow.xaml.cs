@@ -34,7 +34,7 @@ namespace InventarioILS.View.Windows
 
         readonly IEnumerable<OrderItem> items;
 
-        private void StateComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void StateComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -126,17 +126,22 @@ namespace InventarioILS.View.Windows
         private async void SubmitBtn_Click(object sender, RoutedEventArgs e)
         {
             StockItems stockItemStorage = StockItems.Instance;
+            OrderItems orderItemStorage = OrderItems.Instance;
 
             try
             {
-                await stockItemStorage.AddRangeAsync(confirmedItems);
+                await orderItemStorage.UpdateAsync(items).ConfigureAwait(false);
+                await stockItemStorage.AddRangeAsync(confirmedItems).ConfigureAwait(false);
             } catch (Exception ex)
             {
-                StatusManager.Instance.UpdateMessageStatus("Error al intentar confirmar los elementos: " + ex.Message, System.Windows.Media.Brushes.PaleVioletRed);
+                await StatusManager.Instance.UpdateMessageStatusAsync("Error al intentar confirmar los elementos: " + ex.Message, System.Windows.Media.Brushes.PaleVioletRed);
                 throw;
             }
 
-            Close();
+            await Dispatcher.InvokeAsync(() =>
+            {
+                Close();
+            });
         }
     }
 }

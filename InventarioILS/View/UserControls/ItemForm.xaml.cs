@@ -152,7 +152,7 @@ namespace InventarioILS.View.UserControls
             deviceCounter = await ItemService.CountByProductCodeAsync(baseCode);
         }
 
-        private void CategoryComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void CategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -164,7 +164,7 @@ namespace InventarioILS.View.UserControls
             UpdateDescription();
         }
 
-        private void SubcategoryComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void SubcategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -179,7 +179,7 @@ namespace InventarioILS.View.UserControls
             UpdateDescription();
         }
 
-        private async void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private async void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -195,7 +195,7 @@ namespace InventarioILS.View.UserControls
             UpdateProductCode();
         }
 
-        private void StateComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void StateComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 

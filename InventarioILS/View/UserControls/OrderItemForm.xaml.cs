@@ -101,7 +101,7 @@ namespace InventarioILS.View.UserControls
             ProductCode.Text = $"{SelectedCategory?.Shorthand}-{codeMain}";
         }
 
-        private void CategoryComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void CategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -113,7 +113,7 @@ namespace InventarioILS.View.UserControls
             UpdateDescription();
         }
 
-        private void SubcategoryComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void SubcategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -128,7 +128,7 @@ namespace InventarioILS.View.UserControls
             UpdateDescription();
         }
 
-        private void ClassComboBox_SelectedItemChanged(object sender, EventArgs e)
+        private void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
