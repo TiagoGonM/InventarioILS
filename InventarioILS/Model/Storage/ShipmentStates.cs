@@ -31,5 +31,15 @@ namespace InventarioILS.Model.Storage
             var collection = await conn.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
         }
+
+        public uint GetStateId(string name)
+        {
+            var defaultStateId = Items.FirstOrDefault(
+                        state => state.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Id;
+
+            if (!defaultStateId.HasValue) return 0;
+            
+            return (uint)defaultStateId;
+        }
     }
 }
