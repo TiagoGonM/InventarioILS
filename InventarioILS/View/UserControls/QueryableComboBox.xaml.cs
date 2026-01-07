@@ -10,13 +10,20 @@ namespace InventarioILS.View.UserControls
 {
     public partial class QueryableComboBox : UserControl
     {
-        public event EventHandler SelectedItemChanged;
+        bool _silent = false;
 
-        static bool isSelectingById = false;
+        // Evita que se emita un evento SelectedItemChanged cuando no lo realiza el usuario
+        private class SilentScope : IDisposable
+        {
+            private readonly QueryableComboBox _parent;
+            public SilentScope(QueryableComboBox parent) { _parent = parent; _parent._silent = true; }
+            public void Dispose() => _parent._silent = false;
+        }
 
         public QueryableComboBox()
         {
             InitializeComponent();
+            ComboBox.SelectionChanged += OnInternalSelectionChanged;
         }
 
         public QueryableComboBox(string title, IEnumerable itemsSource, object selectedItem) : this()
@@ -87,6 +94,19 @@ namespace InventarioILS.View.UserControls
             set => SetValue(ItemsSourceProperty, value);
         }
 
+        public static readonly RoutedEvent SelectedItemChangedEvent =
+            EventManager.RegisterRoutedEvent(
+                "SelectedItemChanged",
+                RoutingStrategy.Bubble,
+                typeof(RoutedEventHandler),
+                typeof(QueryableComboBox));
+
+        public event RoutedEventHandler SelectedItemChanged
+        {
+            add { AddHandler(SelectedItemChangedEvent, value); }
+            remove { RemoveHandler(SelectedItemChangedEvent, value); }
+        }
+
         // SelectedItem Property
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register(
@@ -102,15 +122,24 @@ namespace InventarioILS.View.UserControls
             set => SetValue(SelectedItemProperty, value);
         }
 
+        // El evento del ComboBox interno
+        private void OnInternalSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.SelectedItem = ComboBox.SelectedItem;
+
+            if (_silent) return;
+
+            RaiseEvent(new RoutedEventArgs(SelectedItemChangedEvent, this));
+        }
+
         private static void OnSelectedItem(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (QueryableComboBox)d;
-
+            
             if (control.ComboBox == null)
                 return;
-
+            
             control.ComboBox.SelectedItem = e.NewValue;
-            if (!isSelectingById) control.SelectedItemChanged?.Invoke(control, EventArgs.Empty);
         }
 
         // Background Property
@@ -158,17 +187,17 @@ namespace InventarioILS.View.UserControls
             var control = (QueryableComboBox)d;
             uint value = (uint)e.NewValue;
 
-            // Espera un poco a que ItemsSource se haya asignado
+            // Espera a que ItemsSource se haya populado
             control.Dispatcher.InvokeAsync(() =>
             {
-                if (control.ItemsSource?.OfType<IIdentifiable>().Any() == true)
+                var items = control.ItemsSource?.OfType<IIdentifiable>();
+                var item = items?.FirstOrDefault(it => it.Id == value);
+
+                if (item == null) return;
+
+                using (new SilentScope(control))
                 {
-                    var item = control.ItemsSource.OfType<IIdentifiable>().FirstOrDefault(it => it.Id == value);
-                    if (item != null)
-                    {
-                        isSelectingById = true;
-                        control.SelectedItem = item;
-                    }
+                    control.SelectedItem = item;
                 }
             }, System.Windows.Threading.DispatcherPriority.Loaded
                // debido a que ItemsSource tiene que haberse populado, entonces especificamos que se ejecute luego de que todo haya cargado
