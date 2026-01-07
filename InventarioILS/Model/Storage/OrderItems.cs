@@ -1,4 +1,7 @@
 ﻿using Dapper;
+using Microsoft.Data.Sqlite;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,7 +56,7 @@ namespace InventarioILS.Model.Storage
 
         public async Task LoadAsync()
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
             string query = @"SELECT ordDet.orderDetailId id, o.name, it.productCode, it.description, it.class, ss.name as shipmentState, ordDet.quantity
                              FROM OrderDetail ordDet
@@ -77,15 +80,78 @@ namespace InventarioILS.Model.Storage
 
         public async Task LoadSingleAsync(uint orderId)
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
             var collection = await conn.QueryAsync<OrderItem>(selectSingleQuery, new { OrderId = orderId }).ConfigureAwait(false);
             Items = collection.ToList().ToObservableCollection();
         }
 
-        public async Task UpdateAsync(OrderItem item)
+        string updateQuery = @"UPDATE OrderDetail
+                                SET shipmentStateId = @ShipmentStateId
+                            FROM Item
+                            WHERE OrderDetail.itemId = Item.itemId
+                              AND OrderDetail.orderId = @OrderId
+                              AND Item.productCode = @ProductCode COLLATE NOCASE";
+
+        public async Task UpdateAsync(string productCode, uint newShipmentStateId, uint orderId)
         {
-            // TODO
+            using var conn = await CreateConnectionAsync();
+
+            try
+            {
+                await conn.ExecuteAsync(updateQuery, new
+                {
+                    ShipmentStateId = newShipmentStateId,
+                    OrderId = orderId,
+                    ProductCode = productCode
+                });
+            } catch (SqliteException ex)
+            {
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al tratar de actualizar el estado del envio: {ex}", StatusManager.MessageType.ERROR);
+                throw;
+            }
+
+            await LoadSingleAsync(orderId);
+        }
+
+        public async Task UpdateAsync(IEnumerable<OrderItem> items)
+        {
+
+            var orderId = items.First().OrderId;
+            await Task.Run(async () =>
+            {
+                using var initialConn = await CreateConnectionAsync();
+                using var transaction = await initialConn.BeginTransactionAsync();
+                var conn = transaction.Connection;
+                
+                foreach (var item in items)
+                {
+                    try
+                    {
+                        for (var i = 0; i < item.Quantity; i++)
+                        {
+                            await conn.ExecuteAsync(updateQuery, new
+                            {
+                                ShipmentStateId = ShipmentStates.Instance.GetStateId("recibido"),
+                                OrderId = (uint)orderId,
+                                item.ProductCode
+                            }, transaction).ConfigureAwait(false);
+                        }
+                    }
+                    catch (SqliteException ex)
+                    {
+                        await StatusManager.Instance.UpdateMessageStatusAsync(
+                            $"Error al tratar de actualizar el estado del envío del item {item.ProductCode}: {ex}", StatusManager.MessageType.ERROR);
+                        
+                        transaction.Rollback();
+                        throw;
+                    }
+                    
+                }
+                transaction.Commit();
+                await LoadSingleAsync((uint)orderId);
+            });
+
         }
     }
 }
