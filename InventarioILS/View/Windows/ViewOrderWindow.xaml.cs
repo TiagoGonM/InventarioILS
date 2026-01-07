@@ -14,23 +14,28 @@ namespace InventarioILS.View.Windows
     {
         readonly ShipmentStates shipmentStates = ShipmentStates.Instance;
         readonly OrderItems orderItems = OrderItems.Instance;
+        Order currentOrder;
         
         readonly ObservableCollection<OrderItem> receivedItems = [];
+
+        bool submitted = false;
 
         public ViewOrderWindow()
         {
             InitializeComponent();
+            Closed += ViewOrderWindow_Closed;
         }
 
-        public ObservableCollection<ItemMisc> ShipmentStateList => shipmentStates.Items;
+        public ObservableCollection<ItemMisc> ShipmentStateList => 
+            shipmentStates.Items.Where(it => !string.Equals("recibido", it.Name, StringComparison.OrdinalIgnoreCase)).ToObservableCollection();
 
         public static async Task<ViewOrderWindow> CreateAsync(Order order)
         {
             ViewOrderWindow window = new();
             await window.orderItems.LoadSingleAsync(order.Id);
-
-            
             await window.shipmentStates.LoadAsync();
+
+            window.currentOrder = order;
 
             window.DataContext = new
             {
@@ -66,23 +71,47 @@ namespace InventarioILS.View.Windows
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
+            submitted = true;
             Close();
-            Dispose();
             new ConfirmReceivedItemsWindow(receivedItems).Show();
+        }
+
+        private void ViewOrderWindow_Closed(object sender, EventArgs e)
+        {
+            Dispose();
+        }
+
+        private async void ShipmentStateComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
+        {
+            var combo = (QueryableComboBox)sender;
+            
+            var item = (ItemMisc)combo.SelectedItem;
+            var newId = item.Id;
+
+            var itemCtx = combo.DataContext as OrderItem;
+
+            await orderItems.UpdateAsync(itemCtx.ProductCode, newId, currentOrder.Id);
         }
 
         public void Dispose()
         {
-            orderItems.Items.Clear();
+            // Limpiar event handlers
+            Closed -= ViewOrderWindow_Closed;
+
+            // Limpiar referencias del DataContext
+            DataContext = null;
+
+            // Limpiar colecciones
+            if (!submitted)
+            {
+                orderItems.Items.Clear();
+                receivedItems.Clear();
+            }
+
+            // Limpiar referencias
+            currentOrder = null;
+
             GC.SuppressFinalize(this);
-        }
-
-        private async Task ShipmentStateComboBox_SelectedItemChanged(object sender, EventArgs e)
-        {
-            var combo = (QueryableComboBox)sender;
-            var itemCtx = combo.DataContext as OrderItem;
-
-            await orderItems.UpdateAsync(itemCtx); // TODO
         }
     }
 }
