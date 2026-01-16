@@ -49,7 +49,7 @@
                          Style="{StaticResource RoundedInput}"
                          VerticalContentAlignment="Center"/>
 
-                <userControls:QueryableComboBox x:Name="StateComboBox" Title="Estado" ItemsSource="{Binding StateList, Mode=OneWay}" ComboBoxBackground="{StaticResource SecondaryBrush}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
+                <userControls:QueryableComboBox x:Name="StateComboBox" Title="Estado" ComboTag="State" ItemsSource="{Binding StateList, Mode=OneWay}" ComboBoxBackground="{StaticResource SecondaryBrush}" SelectedItem="{Binding SelectedState, Mode=TwoWay}"
                                                 BorderBrush="{StaticResource AccentBrush}" Margin="0,8,0,0" SelectedItemChanged="StateComboBox_SelectedItemChanged"/>
 
                 <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Ubicación"/>
@@ -64,11 +64,11 @@
             <StackPanel Grid.Column="2">
                 <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Descripción" HorizontalAlignment="Left"/>
                 <TextBox x:Name="DescriptionInput" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"
-                         MinHeight="48" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" 
+                         MinHeight="28" MaxHeight="100" Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}" 
                          Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
 
                 <TextBlock Foreground="{StaticResource AccentForegroundBrush}" Text="Notas" Margin="0,12,0,0"/>
-                <TextBox x:Name="AdditionalNotesInput" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48"
+                <TextBox x:Name="AdditionalNotesInput" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="28" MaxHeight="200"
                          Style="{StaticResource RoundedInput}" BorderBrush="{StaticResource AccentBrush}"
                          Background="{StaticResource SecondaryBrush}" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>

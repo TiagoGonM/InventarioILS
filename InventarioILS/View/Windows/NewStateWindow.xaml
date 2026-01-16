@@ -17,7 +17,7 @@
                 <TextBlock x:Name="ErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El tipo de item ya existe.</TextBlock>
             </StackPanel>
             
-            <userControls:QueryableComboBox x:Name="ClassComboBox" Title="Tipo de item relacionado" HorizontalAlignment="Left" Width="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged"/>
+            <userControls:QueryableComboBox x:Name="ClassComboBox" ComboTag="Class" Title="Tipo de item relacionado" HorizontalAlignment="Left" Width="170" Margin="10,0" ItemsSource="{Binding ClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged"/>
         </StackPanel>
 
 

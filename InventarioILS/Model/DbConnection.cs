@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using InventarioILS.Model.Storage;
 using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Reflection;
@@ -13,7 +12,7 @@ namespace InventarioILS.Model
         readonly static string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "inventory.db");
         readonly static string resourcePath = "InventarioILS.Resources.DatabaseSchema.sql";
 
-        private void SetupDatabase(DbConnection conn)
+        private static void SetupDatabase(DbConnection conn)
         {
             using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath)
                 ?? throw new FileNotFoundException("Database schema resource not found.");
@@ -22,18 +21,21 @@ namespace InventarioILS.Model
 
             string sqlScript = reader.ReadToEnd();
 
+            conn.Execute("PRAGMA foreign_keys = ON"); // Force foreign_keys policy
             conn.Execute(sqlScript);
         }
 
-        private async Task SetupDatabaseAsync(DbConnection conn)
+        private static async Task SetupDatabaseAsync(DbConnection conn)
         {
-            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath) 
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath)
                 ?? throw new FileNotFoundException("Database schema resource not found.");
 
             using var reader = new StreamReader(stream);
-            
+
             string sqlScript = await reader.ReadToEndAsync().ConfigureAwait(false);
-            
+
+
+            await conn.ExecuteAsync("PRAGMA foreign_keys = ON").ConfigureAwait(false); // Force foreign_keys policy
             await conn.ExecuteAsync(sqlScript).ConfigureAwait(false);
         }
 
@@ -49,8 +51,9 @@ namespace InventarioILS.Model
                     connection.Open();
                     try
                     {
-                        connection.SetupDatabase(connection);
-                    } catch (SqliteException)
+                        SetupDatabase(connection);
+                    }
+                    catch (SqliteException)
                     {
                         File.Delete(dbPath);
                         throw;
@@ -60,7 +63,7 @@ namespace InventarioILS.Model
                 {
                     connection.Open();
                 }
-                
+
                 return connection;
             }
             catch (SqliteException ex)
@@ -82,7 +85,7 @@ namespace InventarioILS.Model
                     await connection.OpenAsync().ConfigureAwait(false);
                     try
                     {
-                        await connection.SetupDatabaseAsync(connection);
+                        await SetupDatabaseAsync(connection);
 
                     }
                     catch (SqliteException)
@@ -90,7 +93,8 @@ namespace InventarioILS.Model
                         File.Delete(dbPath);
                         throw;
                     }
-                } else
+                }
+                else
                 {
                     await connection.OpenAsync().ConfigureAwait(false);
                 }
@@ -107,7 +111,7 @@ namespace InventarioILS.Model
 
         public uint LastRowIdInserted => this.ExecuteScalar<uint>("SELECT last_insert_rowid()");
 
-        private DbConnection() : base($"Data Source={dbPath}") {}
+        private DbConnection() : base($"Data Source={dbPath}") { }
 
         ~DbConnection()
         {
@@ -116,6 +120,6 @@ namespace InventarioILS.Model
                 Close();
             }
             Dispose();
-        }      
+        }
     }
 }

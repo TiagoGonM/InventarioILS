@@ -43,12 +43,7 @@ namespace InventarioILS.Model.Storage
         {
             using var conn = CreateConnection();
 
-            string query = @"SELECT ordDet.orderDetailId id, ord.name, it.productCode, it.description, c.name class, ss.name shipmentState, ordDet.quantity
-                             FROM OrderDetail ordDet
-                             JOIN 'Order' ord ON ordDet.orderId = ord.orderId
-                             JOIN Item it ON ordDet.itemId = it.itemId
-                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId
-                             JOIN Class c ON it.classId = c.classId";
+            string query = @"SELECT * from View_OrderItemsSummary";
 
             var collection = conn.Query<OrderItem>(query);
             UpdateItems(collection.ToList().ToObservableCollection());
@@ -58,11 +53,7 @@ namespace InventarioILS.Model.Storage
         {
             using var conn = await CreateConnectionAsync();
 
-            string query = @"SELECT ordDet.orderDetailId id, o.name, it.productCode, it.description, it.class, ss.name as shipmentState, ordDet.quantity
-                             FROM OrderDetail ordDet
-                             JOIN 'Order' o ON ordDet.orderId = o.orderId
-                             JOIN Item it ON ordDet.itemId = it.itemId
-                             JOIN ShipmentState ss ON ordDet.shipmentStateId = ss.shipmentStateId";
+            string query = @"SELECT * from View_OrderItemsSummary";
 
             var collection = await conn.QueryAsync<OrderItem>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
@@ -114,7 +105,7 @@ namespace InventarioILS.Model.Storage
             await LoadSingleAsync(orderId);
         }
 
-        public async Task UpdateAsync(IEnumerable<OrderItem> items)
+        public async Task MarkAsReceived(IEnumerable<OrderItem> items)
         {
 
             var orderId = items.First().OrderId;
@@ -123,6 +114,13 @@ namespace InventarioILS.Model.Storage
                 using var initialConn = await CreateConnectionAsync();
                 using var transaction = await initialConn.BeginTransactionAsync();
                 var conn = transaction.Connection;
+
+                string query = @"UPDATE OrderDetail
+                                    SET received = @Received
+                                 FROM Item
+                                 WHERE OrderDetail.itemId = Item.itemId
+                                    AND OrderDetail.orderId = @OrderId
+                                    AND Item.productCode = @ProductCode COLLATE NOCASE";
                 
                 foreach (var item in items)
                 {
@@ -130,9 +128,9 @@ namespace InventarioILS.Model.Storage
                     {
                         for (var i = 0; i < item.Quantity; i++)
                         {
-                            await conn.ExecuteAsync(updateQuery, new
+                            await conn.ExecuteAsync(query, new
                             {
-                                ShipmentStateId = ShipmentStates.Instance.GetStateId("recibido"),
+                                Received = true,
                                 OrderId = (uint)orderId,
                                 item.ProductCode
                             }, transaction).ConfigureAwait(false);

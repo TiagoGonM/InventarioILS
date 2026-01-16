@@ -5,12 +5,24 @@ using System.Collections;
 using System;
 using InventarioILS.Model.Storage;
 using System.Linq;
+using InventarioILS.Services;
+using InventarioILS.Model;
 
 namespace InventarioILS.View.UserControls
 {
     public partial class QueryableComboBox : UserControl
     {
         bool _silent = false;
+
+        public enum ComboTags
+        {
+            Category,
+            Subcategory,
+            Class,
+            State,
+            ShipmentState,
+            Default
+        }
 
         // Evita que se emita un evento SelectedItemChanged cuando no lo realiza el usuario
         private class SilentScope : IDisposable
@@ -57,13 +69,14 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty ComboTagProperty =
             DependencyProperty.Register(
                 "ComboTag",
-                typeof(object),
+                typeof(ComboTags),
                 typeof(QueryableComboBox),
-                new PropertyMetadata(null, OnTagChanged)
+                new PropertyMetadata(ComboTags.Default, OnTagChanged)
             );
-        public object ComboTag
+
+        public ComboTags ComboTag
         {
-            get => GetValue(ComboTagProperty);
+            get => (ComboTags)GetValue(ComboTagProperty);
             set => SetValue(ComboTagProperty, value);
         }
 
@@ -72,7 +85,6 @@ namespace InventarioILS.View.UserControls
             var control = (QueryableComboBox)d;
             control.ComboBox.Tag = e.NewValue;
         }
-
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
@@ -127,7 +139,7 @@ namespace InventarioILS.View.UserControls
         {
             this.SelectedItem = ComboBox.SelectedItem;
 
-            if (_silent) return;
+            if (_silent || SelectedItem is null) return;
 
             RaiseEvent(new RoutedEventArgs(SelectedItemChangedEvent, this));
         }
@@ -203,6 +215,14 @@ namespace InventarioILS.View.UserControls
                // debido a que ItemsSource tiene que haberse populado, entonces especificamos que se ejecute luego de que todo haya cargado
                // incluyendo ItemsSource
             );
+        }
+
+        private void RemoveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var combo = e.OriginalSource as Button;
+            var ctx = combo.DataContext as ItemMisc;
+
+            ComboItemsService.HandleDeletion(ComboTag, ctx.Id);
         }
     }
 }

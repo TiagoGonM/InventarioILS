@@ -92,7 +92,7 @@ namespace InventarioILS.Model
         public int LocalIndexTag { get; set; }
         public string ShipmentState { get; set; }
         public uint? ShipmentStateId { get; set; }
-        //public bool Received => ShipmentState?.Equals("recibido", System.StringComparison.OrdinalIgnoreCase) ?? false;
+        public bool Received { get; set; }
 
         public OrderItem(string productCode, uint categoryId, uint subcategoryId, uint classId, string description, uint quantity, string modelOrVal = null, uint? shipmentStateId = null) 
             : base(productCode, categoryId, subcategoryId, classId, description, quantity, modelOrVal)

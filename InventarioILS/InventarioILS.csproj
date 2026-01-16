@@ -23,9 +23,6 @@
     <None Remove="Resources\DatabaseSchema.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Model\DbConnection.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="View\Windows\NewSubcategoryWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

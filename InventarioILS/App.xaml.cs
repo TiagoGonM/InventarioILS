@@ -1,34 +1,26 @@
-﻿using InventarioILS.View.Windows;
+﻿using InventarioILS.Model;
+using InventarioILS.Services;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using static InventarioILS.View.UserControls.QueryableComboBox;
 
 namespace InventarioILS
 {
     public partial class App : Application
     {
-        private void NewComboBoxBtn_Click(object sender, RoutedEventArgs e)
+        private async void NewComboBoxBtn_Click(object sender, RoutedEventArgs e)
         {
             var combo = sender as ComboBox;
 
             if (e.OriginalSource is Button btn && btn.Name == "AddNewItem")
             {
-                switch (combo.Tag)
+                try
                 {
-                    case "Category":
-                        new NewCategoryWindow().ShowDialog();
-                        break;
-                    case "Subcategory":
-                        new NewSubcategoryWindow().ShowDialog();
-                        break;
-                    case "Class":
-                        new NewClassWindow().ShowDialog();
-                        break;
-                    case "State":
-                        new NewStateWindow().ShowDialog();
-                        break;
-                    default:
-                        MessageBox.Show("Not handled");
-                        break;
+                    ComboItemsService.HandleCreation((ComboTags)combo.Tag);
+                } catch (ArgumentNullException ex)
+                {
+                    await StatusManager.Instance.UpdateMessageStatusAsync(ex.Message, StatusManager.MessageType.ERROR);
                 }
 
                 e.Handled = true;

@@ -1,10 +1,12 @@
-﻿<Window x:Class="InventarioILS.MainWindow"
+﻿
+    <Window x:Class="InventarioILS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventarioILS"
         xmlns:userControls="clr-namespace:InventarioILS.View.UserControls"
+        xmlns:panels="clr-namespace:InventarioILS.View.UserControls.Panels"
         xmlns:windows="clr-namespace:InventarioILS.View.Windows"
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
@@ -116,15 +118,12 @@
             <Grid x:Name="BottomBar" Grid.Row="1" Panel.ZIndex="2" Background="{StaticResource SecondaryBrush}">
                 <Grid x:Name="InnerGrid" Margin="10,10,10,10">
                     <ContentControl x:Name="BottomBarContent" Grid.Row="1"/>
-                    <!--<userControls:OrderPanel Grid.Row="1" x:Name="OrderListSection" />
-                    <userControls:AddOrderPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddOrderSection" />
-                    <userControls:AddItemPanel Grid.Row="1" Visibility="Collapsed" x:Name="AddItemSection" />-->
                 </Grid>
             </Grid>
 
             <!-- Tabla de datos -->
             <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" OnEdit="ItemView_OnEdit" d:Visibility="Hidden" ItemsSource="{Binding Items}"/>
-            <Grid x:Name="SettingsSection" Visibility="Collapsed" d:Visibility="Visible">
+            <StackPanel x:Name="SettingsSection" Visibility="Collapsed" d:Visibility="Visible">
                 <Button x:Name="SettingsBackBtn" Click="SettingsBackBtn_Click" Content="← Volver" 
                         Width="100" Height="50" Margin="10"
                         FontSize="20"
@@ -135,8 +134,8 @@
                         VerticalAlignment="Top"
                         Background="Transparent"
                         Foreground="{StaticResource AccentBrush}"/>
-                <TextBlock Text="Ajustes de la app" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50"/>
-            </Grid>
+                <panels:SettingsPanel />
+            </StackPanel>
 
             <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>

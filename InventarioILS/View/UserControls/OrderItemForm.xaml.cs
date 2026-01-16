@@ -2,6 +2,7 @@
 using InventarioILS.Model.Storage;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,9 +11,9 @@ namespace InventarioILS.View.UserControls
 {
     public partial class OrderItemForm : UserControl, IDisposable
     {
-        readonly ItemCategories categories = ItemCategories.Instance;
-        readonly ItemSubCategories subCategories = ItemSubCategories.Instance;
-        readonly ItemClasses classes = ItemClasses.Instance;
+        readonly ItemCategories categoryStorage = ItemCategories.Instance;
+        readonly ItemSubCategories subcategoryStorage = ItemSubCategories.Instance;
+        readonly ItemClasses classStorage = ItemClasses.Instance;
 
         string codeMain = "";
 
@@ -33,9 +34,9 @@ namespace InventarioILS.View.UserControls
 
             DataContext = new
             {
-                CategoryList = categories.Items,
-                SubcategoryList = subCategories.Items,
-                ClassList = classes.Items,
+                CategoryList = categoryStorage.Items,
+                SubcategoryList = subcategoryStorage.Items,
+                ClassList = classStorage.Items,
                 ResultingProductCode,
             };
         }
@@ -81,6 +82,10 @@ namespace InventarioILS.View.UserControls
             QuantityInput.Text = PresetData.Quantity.ToString();
 
             DescriptionInput.Text = PresetData.Description;
+
+            if (PresetData.CategoryId > 0) subcategoryStorage.Load(PresetData.CategoryId);
+
+            ConfirmBtn.IsEnabled = true;
         }
 
         private static void OnPresetDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -101,7 +106,15 @@ namespace InventarioILS.View.UserControls
             ProductCode.Text = $"{SelectedCategory?.Shorthand}-{codeMain}";
         }
 
-        private void CategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
+        private void TryEnableSubmitBtn()
+        {
+            ConfirmBtn.IsEnabled =
+                SelectedCategory?.Id > 0
+                && SelectedSubcategory?.Id > 0
+                && SelectedClass?.Id > 0;
+        }
+
+        private async void CategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -109,8 +122,12 @@ namespace InventarioILS.View.UserControls
 
             if (category == null) return;
 
+            await subcategoryStorage.LoadAsync(category.Id);
+            SubcategoryComboBox.IsEnabled = true;
+
             UpdateProductCode();
             UpdateDescription();
+            TryEnableSubmitBtn();
         }
 
         private void SubcategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
@@ -126,6 +143,7 @@ namespace InventarioILS.View.UserControls
 
             UpdateProductCode();
             UpdateDescription();
+            TryEnableSubmitBtn();
         }
 
         private void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
@@ -136,7 +154,7 @@ namespace InventarioILS.View.UserControls
 
             if (itemClass == null) return;
 
-            //StateComboBox.IsEnabled = itemClass.Name != "Insumo";
+            TryEnableSubmitBtn();
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)

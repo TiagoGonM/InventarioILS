@@ -45,11 +45,44 @@
                     <DataGridTextColumn Header="Código" Binding="{Binding ProductCode}" FontWeight="Bold" MinWidth="30" Width="100" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                     <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="*" MinWidth="30" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Class}" MinWidth="30" Width="120" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
-                    <DataGridTextColumn Header="Envio" Binding="{Binding ShipmentState}" MinWidth="30" Width="160" IsReadOnly="True" Foreground="{StaticResource ForegroundBrush}"/>
                     <DataGridTemplateColumn Header="Envio" IsReadOnly="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <userControls:QueryableComboBox x:Name="ShipmentStateComboBox" SelectedItemId="{Binding ShipmentStateId}" SelectedItemChanged="ShipmentStateComboBox_SelectedItemChanged" ItemsSource="{Binding DataContext.ShipmentStateList, RelativeSource={RelativeSource AncestorType={x:Type local:ViewOrderWindow}}}"/>
+                                <Grid>
+                                    <userControls:QueryableComboBox x:Name="ShipmentStateComboBox" 
+                                                                    ComboTag="ShipmentState" 
+                                                                    Padding="10,0"
+                                                                    SelectedItemId="{Binding ShipmentStateId}" 
+                                                                    SelectedItemChanged="ShipmentStateComboBox_SelectedItemChanged" 
+                                                                    ItemsSource="{Binding DataContext.ShipmentStateList, RelativeSource={RelativeSource AncestorType={x:Type local:ViewOrderWindow}}}">
+                                        <userControls:QueryableComboBox.Style>
+                                            <Style TargetType="userControls:QueryableComboBox">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Received}" Value="True">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </userControls:QueryableComboBox.Style>
+                                    </userControls:QueryableComboBox>
+
+                                    <TextBlock
+                                        Text="Recibido"
+                                        Foreground="{StaticResource AccentBrush}"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Received}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -60,18 +93,17 @@
                                 <CheckBox HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           Checked="Received_Checked" 
-                                          Unchecked="Received_Unchecked">
-                                          <!--IsChecked="{Binding Received}"-->
-                                    <!--<CheckBox.Style>
+                                          Unchecked="Received_Unchecked"
+                                          IsChecked="{Binding Received}">
+                                    <CheckBox.Style>
                                         <Style TargetType="CheckBox">
-                                            <Setter Property="IsEnabled" Value="True" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Received}" Value="True">
                                                     <Setter Property="IsEnabled" Value="False" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </CheckBox.Style>-->
+                                    </CheckBox.Style>
                                 </CheckBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

@@ -58,8 +58,6 @@ namespace InventarioILS.View.Windows
             NextPageBtn.IsEnabled = TotalPages > 1;
             SubmitBtn.IsEnabled = TotalPages <= 1;
 
-            stateStorage.Load();
-
             DataContext = new
             {
                 StateList = stateStorage.Items,
@@ -107,6 +105,8 @@ namespace InventarioILS.View.Windows
             ProductCodeLbl.Text = CurrentItem.ProductCode;
             DescriptionInput.Text = CurrentItem.Description;
             QuantityInput.Text = CurrentItem.Quantity.ToString();
+
+            stateStorage.Load(CurrentItem.ClassId);
         }
 
         private void PreviousPageBtn_Click(object sender, RoutedEventArgs e)
@@ -130,7 +130,7 @@ namespace InventarioILS.View.Windows
 
             try
             {
-                await orderItemStorage.UpdateAsync(items).ConfigureAwait(false);
+                await orderItemStorage.MarkAsReceived(items).ConfigureAwait(false);
                 await stockItemStorage.AddRangeAsync(confirmedItems).ConfigureAwait(false);
             } catch (Exception ex)
             {

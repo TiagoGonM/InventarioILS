@@ -1,0 +1,22 @@
+﻿<Window x:Class="InventarioILS.View.Windows.NewShipmentStateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventarioILS.View.Windows"
+        mc:Ignorable="d"
+        Title="Nuevo estado de envío" Background="{StaticResource BackgroundBrush}" Height="450" Width="800">
+    <Grid>
+        <Grid Margin="10">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="10,0,20,0">
+                    <TextBlock Text="Nombre del estado de envío" Foreground="{StaticResource AccentForegroundBrush}"/>
+                    <TextBox x:Name="Input" Margin="0,4,0,8" MinWidth="200" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="Input_TextChanged"/>
+                    <TextBlock x:Name="ErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El estado de envío ya existe.</TextBlock>
+                </StackPanel>
+            </StackPanel>
+
+            <Button x:Name="SubmitBtn" IsEnabled="False" Content="Crear" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="SubmitBtn_Click"/>
+        </Grid>
+    </Grid>
+</Window>

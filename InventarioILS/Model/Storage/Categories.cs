@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Data;
 using System.Linq;
@@ -46,11 +47,28 @@ namespace InventarioILS.Model.Storage
 
         public async Task LoadAsync()
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
             string query = @$"SELECT categoryId id, {SQLUtils.StringCapitalize()} name, shorthand FROM Category ORDER BY name ASC";
             var collection = await conn.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
+        }
+
+        public async Task<DeleteResult> DeleteAsync(uint categoryId)
+        {
+            using var conn = await CreateConnectionAsync();
+
+            try
+            {
+                await conn.ExecuteAsync("DELETE FROM Category WHERE categoryId = @Id", new { Id = categoryId }).ConfigureAwait(false);
+                await LoadAsync();
+
+                return DeleteResult.Ok("Categoría eliminada.");
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 19)
+            {
+                return DeleteResult.Locked("Existen productos vinculados a esta categoría.");
+            }
         }
     }
 }

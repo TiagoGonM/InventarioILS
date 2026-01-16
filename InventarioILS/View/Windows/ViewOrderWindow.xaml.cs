@@ -26,8 +26,8 @@ namespace InventarioILS.View.Windows
             Closed += ViewOrderWindow_Closed;
         }
 
-        public ObservableCollection<ItemMisc> ShipmentStateList => 
-            shipmentStates.Items.Where(it => !string.Equals("recibido", it.Name, StringComparison.OrdinalIgnoreCase)).ToObservableCollection();
+        //public ObservableCollection<ItemMisc> ShipmentStateList => 
+        //    shipmentStates.Items.Where(it => !string.Equals("recibido", it.Name, StringComparison.OrdinalIgnoreCase));
 
         public static async Task<ViewOrderWindow> CreateAsync(Order order)
         {
@@ -37,12 +37,17 @@ namespace InventarioILS.View.Windows
 
             window.currentOrder = order;
 
+            //foreach (var item in window.orderItems.Items)
+            //{
+            //    item.LocalReceived = item.ShipmentStateId == window.shipmentStates.GetStateId("recibido");
+            //}
+
             window.DataContext = new
             {
                 OrderName = order.Name,
                 OrderDescription = order.Description,
                 OrderCreationDate = order.CreatedAt.ToString("dd/MM/yyyy"),
-                window.ShipmentStateList,
+                ShipmentStateList = window.shipmentStates.Items,
                 window.orderItems.Items
             };
 
@@ -54,6 +59,8 @@ namespace InventarioILS.View.Windows
             var checkbox = sender as CheckBox;
             var ctxItem = checkbox.DataContext as OrderItem;
 
+            if (ctxItem.Received) return;
+
             receivedItems.Add(ctxItem);
             ConfirmBtn.IsEnabled = true;
         }
@@ -63,10 +70,12 @@ namespace InventarioILS.View.Windows
             var checkbox = sender as CheckBox;
             var ctxItem = checkbox.DataContext as OrderItem;
 
+            if (ctxItem.Received) return;
+
             var storedItem = receivedItems.First(item => item.Id == ctxItem.Id);
             receivedItems.RemoveAt(receivedItems.IndexOf(storedItem));
 
-            ConfirmBtn.IsEnabled = receivedItems.Count == 0;
+            ConfirmBtn.IsEnabled = receivedItems.Count > 0;
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
@@ -86,6 +95,9 @@ namespace InventarioILS.View.Windows
             var combo = (QueryableComboBox)sender;
             
             var item = (ItemMisc)combo.SelectedItem;
+
+            if (item is null) return;
+
             var newId = item.Id;
 
             var itemCtx = combo.DataContext as OrderItem;

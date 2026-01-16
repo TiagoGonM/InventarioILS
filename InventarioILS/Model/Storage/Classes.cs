@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,6 +50,23 @@ namespace InventarioILS.Model.Storage
                              FROM Class ORDER BY name ASC";
             var collection = await conn.QueryAsync<ItemMisc>(query).ConfigureAwait(false);
             UpdateItems(collection.ToList().ToObservableCollection());
+        }
+
+        public async Task<DeleteResult> DeleteAsync(uint classId)
+        {
+            using var conn = await CreateConnectionAsync();
+
+            try
+            {
+                await conn.ExecuteAsync("DELETE FROM Class WHERE classId = @Id", new { Id = classId }).ConfigureAwait(false);
+                await LoadAsync();
+
+                return DeleteResult.Ok("Tipo de producto eliminado.");
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 19)
+            {
+                return DeleteResult.Locked("Existen productos vinculados a este tipo de producto.");
+            }
         }
     }
 }

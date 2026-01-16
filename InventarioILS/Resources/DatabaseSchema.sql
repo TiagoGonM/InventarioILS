@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS `CatSubcat` (
   `catSubcatId` INTEGER PRIMARY KEY,
   `categoryId` INTEGER NOT NULL,
   `subcategoryId` INTEGER NOT NULL,
-  FOREIGN KEY (`categoryId`) REFERENCES `Category` (`categoryId`),
-  FOREIGN KEY (`subcategoryId`) REFERENCES `Subcategory` (`subcategoryId`)
+  FOREIGN KEY (`categoryId`) REFERENCES `Category` (`categoryId`) ON DELETE CASCADE,
+  FOREIGN KEY (`subcategoryId`) REFERENCES `Subcategory` (`subcategoryId`) ON DELETE CASCADE,
   UNIQUE (`categoryId`, `subcategoryId`)
 );
 
@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `OrderDetail` (
   `itemId` INTEGER NOT NULL,
   `shipmentStateId` INTEGER NOT NULL,
   `quantity` INTEGER NOT NULL DEFAULT 1,
+  `received` INTEGER NOT NULL DEFAULT 0,
   `createdAt` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP),
   `updatedAt` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP),
   FOREIGN KEY (`orderId`) REFERENCES `Order` (`orderId`),
@@ -161,6 +162,7 @@ CREATE VIEW IF NOT EXISTS View_OrderItemsSummary AS
         LOWER(SUBSTRING(class.name, 2, LENGTH(class.name)))
       ) class,
       ordDet.shipmentStateId,
+      ordDet.received,
       CONCAT(
         UPPER(SUBSTRING(ss.name, 1, 1)),
         LOWER(SUBSTRING(ss.name, 2, LENGTH(ss.name)))
@@ -239,7 +241,7 @@ INSERT OR IGNORE INTO ShipmentState (name) VALUES
     ('no realizado'), ('pedido enviado'), ('pedido notado'),
     ('en preparacion'), ('contabilizacion'), ('despachado'),
     ('hacia central de correo'), ('en central de correo'),
-    ('en camino'), ('recibido');
+    ('en camino')
 
 -- 6. Relaciones Categoría-Subcategoría
 -- Nota: Asegúrate de que los IDs coincidan con el orden de inserción anterior

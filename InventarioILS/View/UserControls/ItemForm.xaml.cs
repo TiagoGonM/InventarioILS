@@ -15,7 +15,7 @@ namespace InventarioILS.View.UserControls
         bool enableCategory = true, 
         bool enableSubcategory = true, 
         bool enableClass = true, 
-        bool enableState = true, 
+        bool enableState = true,
         bool enableLocation = true, 
         bool enableAdditionalNotes = true)
     {
@@ -31,10 +31,10 @@ namespace InventarioILS.View.UserControls
 
     public partial class ItemForm : UserControl, IDisposable
     {
-        readonly ItemCategories categories = ItemCategories.Instance;
-        readonly ItemSubCategories subCategories = ItemSubCategories.Instance;
-        readonly ItemClasses classes = ItemClasses.Instance;
-        readonly ItemStates states = ItemStates.Instance;
+        readonly ItemCategories categoryStorage = ItemCategories.Instance;
+        readonly ItemSubCategories subcategoryStorage = ItemSubCategories.Instance;
+        readonly ItemClasses classStorage = ItemClasses.Instance;
+        readonly ItemStates stateStorage = ItemStates.Instance;
 
         string codeMain = "";
 
@@ -58,10 +58,10 @@ namespace InventarioILS.View.UserControls
 
             DataContext = new
             {
-                CategoryList = categories.Items,
-                SubcategoryList = subCategories.Items,
-                ClassList = classes.Items,
-                StateList = states.Items,
+                CategoryList = categoryStorage.Items,
+                SubcategoryList = subcategoryStorage.Items,
+                ClassList = classStorage.Items,
+                StateList = stateStorage.Items,
                 ResultingProductCode,
             };
         }
@@ -78,6 +78,7 @@ namespace InventarioILS.View.UserControls
         {
             get => (ItemFormPresetData)GetValue(PresetDataProperty);
             set { 
+
                 SetValue(PresetDataProperty, value);
                 FillData();
             }
@@ -105,11 +106,10 @@ namespace InventarioILS.View.UserControls
             SubcategoryComboBox.SelectedItemId = item.SubcategoryId;
             ClassComboBox.SelectedItemId = item.ClassId;
             StateComboBox.SelectedItemId = item.StateId;
-            
+
             ExtraValueInput.Text = item.ModelOrValue;
             if (!string.IsNullOrEmpty(ExtraValueInput.Text))
                 ExtraValueCheckbox.IsChecked = true;
-
 
             QuantityInput.Text = item.Quantity.ToString();
             LocationInput.Text = item.Location ?? "";
@@ -123,6 +123,11 @@ namespace InventarioILS.View.UserControls
             StateComboBox.IsEnabled = PresetData.enableState;
             LocationInput.IsEnabled = PresetData.enableLocation;
             NotesInput.IsEnabled = PresetData.enableAdditionalNotes;
+
+            if (item.ClassId > 0) stateStorage.Load(item.ClassId);
+            if (item.CategoryId > 0) subcategoryStorage.Load(item.CategoryId);
+
+            ConfirmBtn.IsEnabled = true;
         }
 
         private static void OnPresetDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -144,6 +149,15 @@ namespace InventarioILS.View.UserControls
                 $"{SelectedCategory?.Shorthand}-{codeMain}{(shouldShowUnitCount ? $"-{deviceCounter + 1}" : "")}";
         }
 
+        private void TryEnableSubmitBtn()
+        {
+            ConfirmBtn.IsEnabled = 
+                SelectedCategory?.Id > 0 
+                && SelectedSubcategory?.Id > 0 
+                && SelectedClass?.Id > 0 
+                && SelectedState?.Id > 0;
+        }
+
         private async Task CheckForDevice()
         {
             if (!isDevice) return;
@@ -152,7 +166,7 @@ namespace InventarioILS.View.UserControls
             deviceCounter = await ItemService.CountByProductCodeAsync(baseCode);
         }
 
-        private void CategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
+        private async void CategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
         {
             var combo = (QueryableComboBox)sender;
 
@@ -160,8 +174,12 @@ namespace InventarioILS.View.UserControls
 
             if (category == null) return;
 
+            await subcategoryStorage.LoadAsync(category.Id);
+            SubcategoryComboBox.IsEnabled = true;
+
             UpdateProductCode();
             UpdateDescription();
+            TryEnableSubmitBtn();
         }
 
         private void SubcategoryComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
@@ -177,6 +195,7 @@ namespace InventarioILS.View.UserControls
 
             UpdateProductCode();
             UpdateDescription();
+            TryEnableSubmitBtn();
         }
 
         private async void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
@@ -191,8 +210,12 @@ namespace InventarioILS.View.UserControls
             QuantityInput.IsEnabled = !isDevice;
             QuantityInput.Text = isDevice ? "1" : QuantityInput.Text;
 
+            await stateStorage.LoadAsync(itemClass.Id);
+            StateComboBox.IsEnabled = true;
+
             await CheckForDevice();
             UpdateProductCode();
+            TryEnableSubmitBtn();
         }
 
         private void StateComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
@@ -202,12 +225,15 @@ namespace InventarioILS.View.UserControls
             var itemState = (ItemMisc)combo.SelectedItem;
 
             if (itemState == null) return;
+
+            TryEnableSubmitBtn();
         }
 
         private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedCategory.Id == 0 || SelectedSubcategory.Id == 0 || SelectedClass.Id == 0)
-                return;
+
+            if (!uint.TryParse(QuantityInput.Text, out uint qty))
+                qty = 1;
 
             resultingItem = new StockItem {
                 ProductCode = ProductCode.Text,
@@ -219,7 +245,7 @@ namespace InventarioILS.View.UserControls
                 ClassId = (uint)SelectedClass.Id,
                 StateId = (uint)SelectedState.Id,
                 Location = LocationInput.Text,
-                Quantity = uint.Parse(QuantityInput.Text),
+                Quantity = qty,
                 AdditionalNotes = NotesInput.Text
             };
 
