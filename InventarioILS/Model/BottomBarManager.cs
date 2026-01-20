@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace InventarioILS.Model
 {
-    internal class BottomBarManager
+    public class BottomBarManager
     {
         private BottomBarManager() { }
 

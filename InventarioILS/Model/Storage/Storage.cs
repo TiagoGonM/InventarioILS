@@ -52,7 +52,7 @@ namespace InventarioILS.Model.Storage
         uint Id { get; }
     }
 
-    internal class Storage<T> where T: IIdentifiable
+    public class Storage<T> where T: IIdentifiable
     {
         public ObservableCollection<T> Items { get; set; }
 
@@ -108,7 +108,7 @@ namespace InventarioILS.Model.Storage
         }
     }
 
-    internal abstract class SingletonStorage<T, TDerived> : Storage<T>
+    public abstract class SingletonStorage<T, TDerived> : Storage<T>
         where T : IIdentifiable
         where TDerived : SingletonStorage<T, TDerived>, new()
     {
@@ -135,7 +135,7 @@ namespace InventarioILS.Model.Storage
         }
     }
 
-    internal class FiltersImpl<T> where T : Enum
+    public class FiltersImpl<T> where T : Enum
     {
         public Map<T, string> FilterList { get; }
 

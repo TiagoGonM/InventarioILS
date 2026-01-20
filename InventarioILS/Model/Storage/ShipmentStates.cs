@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class ShipmentStates : SingletonStorage<ItemMisc, ShipmentStates>
+    public class ShipmentStates : SingletonStorage<ItemMisc, ShipmentStates>
     {
         public void Load()
         {

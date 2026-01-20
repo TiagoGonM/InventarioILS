@@ -20,7 +20,7 @@
                    Padding="5"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Center"/>
-        <DataGrid x:Name="DataGridCSV"
+        <!--<DataGrid x:Name="DataGridCSV"
           Grid.Row="1"
           CanUserAddRows="False"
           CanUserDeleteRows="False"
@@ -40,7 +40,9 @@
           ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
           CellStyle="{StaticResource DataGridCellStyle}"
           RowStyle="{StaticResource DataGridRowStyle}"
-          ItemsSource="{Binding Items}"/>
+          ItemsSource="{Binding Items}"/>-->
+
+        <ContentControl x:Name="WizardControl" Grid.Row="1"/>
 
         <StackPanel Grid.Row="2">
             <TextBlock x:Name="FoundCategories" Text="{Binding Categories, StringFormat=Categorias: {0}}" Foreground="{StaticResource ForegroundBrush}" />

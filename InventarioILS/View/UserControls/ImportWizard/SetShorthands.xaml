@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="InventarioILS.View.UserControls.ImportWizard.SetShorthands"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:InventarioILS.View.UserControls.ImportWizard"
+             mc:Ignorable="d" 
+             DataContext="{RelativeSource AncestorType={x:Type local:SetShorthands}}"
+             Background="{StaticResource BackgroundBrush}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Categorías" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            <ListBox x:Name="CategoryListBox"
+                     Grid.Row="1"
+                     Grid.IsSharedSizeScope="True"
+                     SelectionMode="Single"
+                     Padding="2"
+                     MinWidth="100"
+                     MaxHeight="100"
+                     ItemsSource="{Binding CategoryList}"
+                     SelectionChanged="CategoryListBox_SelectionChanged"
+                     Background="{StaticResource SecondaryBrush}"
+                     Foreground="{StaticResource ForegroundBrush}">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <StackPanel x:Name="CategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="1" Grid.Column="0">
+            <TextBlock Text="Nueva shorthand" Foreground="{StaticResource AccentForegroundBrush}"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBox x:Name="CategoryShorthandInput" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}" MaxLength="4" Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
+                <Button Style="{StaticResource RoundedButtonHighlightTextPrimary}" Click="CategoryShorthandSubmitBtn_Click" Content="✔️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28"/>
+            </StackPanel>
+        </StackPanel>
+
+        <Grid VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Subcategorías" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            
+            <ListBox 
+                x:Name="SubcategoryListBox"
+                Grid.Row="1"
+                Grid.IsSharedSizeScope="True"
+                SelectionMode="Single"
+                Padding="2"
+                MaxWidth="350"
+                MaxHeight="250"
+                ItemsSource="{Binding SubcategoryList}"
+                SelectionChanged="SubcategoryListBox_SelectionChanged"
+                Background="{StaticResource SecondaryBrush}"
+                Foreground="{StaticResource ForegroundBrush}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <StackPanel x:Name="SubcategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="1" Grid.Column="1">
+            <TextBlock Text="Nueva shorthand" Foreground="{StaticResource AccentForegroundBrush}"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBox x:Name="SubcategoryShorthandInput" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}" MaxLength="4" Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
+                <Button Style="{StaticResource RoundedButtonHighlightTextPrimary}" Click="SubcategoryShorthandSubmitBtn_Click" Content="✔️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

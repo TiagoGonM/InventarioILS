@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
+using InventarioILS.View.UserControls.ImportWizard;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,6 +42,7 @@ namespace InventarioILS.View.Windows
                 States
             };
 
+            WizardControl.Content = new SetShorthands(data.CategoryRecords, data.SubcategoryRecords);
         }
     }
 }

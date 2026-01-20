@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class StockItems : SingletonStorage<StockItem, StockItems>
+    public class StockItems : SingletonStorage<StockItem, StockItems>
     {
         public enum Filters
         {

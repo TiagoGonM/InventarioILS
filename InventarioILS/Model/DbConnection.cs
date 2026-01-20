@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace InventarioILS.Model
 {
-    internal class DbConnection : SqliteConnection
+    public class DbConnection : SqliteConnection
     {
         readonly static string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "inventory.db");
         readonly static string resourcePath = "InventarioILS.Resources.DatabaseSchema.sql";

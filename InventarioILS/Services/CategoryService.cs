@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Services
 {
-    internal class CategoryService
+    public class CategoryService
     {
         readonly static ItemCategories categories = ItemCategories.Instance;
 

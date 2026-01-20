@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class ItemStates : SingletonStorage<ItemMisc, ItemStates>
+    public class ItemStates : SingletonStorage<ItemMisc, ItemStates>
     {
         uint filterById = 0;
 

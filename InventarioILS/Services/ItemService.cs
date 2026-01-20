@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Services
 {
-    internal class ItemService
+    public class ItemService
     {
         public async static Task<uint> AddItemAsync(Item item, IDbTransaction transaction)
         {

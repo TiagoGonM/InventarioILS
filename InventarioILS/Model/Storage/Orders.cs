@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class Orders : SingletonStorage<Order, Orders>
+    public class Orders : SingletonStorage<Order, Orders>
     {
         public enum Filters
         {

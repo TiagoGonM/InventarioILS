@@ -6,7 +6,7 @@ using static InventarioILS.View.UserControls.QueryableComboBox;
 
 namespace InventarioILS.Services
 {
-    internal class ComboItemsService
+    public class ComboItemsService
     {
         public static void HandleCreation(ComboTags tag)
         {

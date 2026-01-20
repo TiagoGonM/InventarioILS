@@ -35,7 +35,7 @@ namespace InventarioILS.View.UserControls
         public QueryableComboBox()
         {
             InitializeComponent();
-            ComboBox.SelectionChanged += OnInternalSelectionChanged;
+            ComboBox.SelectionChanged += OnpublicSelectionChanged;
         }
 
         public QueryableComboBox(string title, IEnumerable itemsSource, object selectedItem) : this()
@@ -135,7 +135,7 @@ namespace InventarioILS.View.UserControls
         }
 
         // El evento del ComboBox interno
-        private void OnInternalSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnpublicSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.SelectedItem = ComboBox.SelectedItem;
 

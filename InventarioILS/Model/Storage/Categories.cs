@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class ItemCategories : SingletonStorage<ItemMisc, ItemCategories>
+    public class ItemCategories : SingletonStorage<ItemMisc, ItemCategories>
     {
         public ItemCategories()
         {

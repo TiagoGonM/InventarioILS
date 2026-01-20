@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Services
 {
-    internal class OrderService
+    public class OrderService
     {
         readonly static Orders orderStorage = Orders.Instance;
         readonly static ShipmentStates stateStorage = ShipmentStates.Instance;

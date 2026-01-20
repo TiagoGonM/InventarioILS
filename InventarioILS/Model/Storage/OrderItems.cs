@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    internal class OrderItems : SingletonStorage<OrderItem, OrderItems>
+    public class OrderItems : SingletonStorage<OrderItem, OrderItems>
     {
         readonly string insertQuery = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
                                VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity)";
