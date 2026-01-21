@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Vista previa de datos importados desde CSV"
                    Grid.Row="0"
@@ -44,11 +44,26 @@
 
         <ContentControl x:Name="WizardControl" Grid.Row="1"/>
 
-        <StackPanel Grid.Row="2">
+        <!--<StackPanel Grid.Row="2">
             <TextBlock x:Name="FoundCategories" Text="{Binding Categories, StringFormat=Categorias: {0}}" Foreground="{StaticResource ForegroundBrush}" />
             <TextBlock x:Name="FoundSubcategories" Text="{Binding Subcategories, StringFormat=Subcategorias: {0}}" Foreground="{StaticResource ForegroundBrush}" />
             <TextBlock x:Name="FoundClasses" Text="{Binding Classes, StringFormat=Tipos/clases: {0}}" Foreground="{StaticResource ForegroundBrush}" />
             <TextBlock x:Name="FoundStates" Text="{Binding States, StringFormat=Estados: {0}}" Foreground="{StaticResource ForegroundBrush}" />
+        </StackPanel>-->
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="PreviousPageBtn" Grid.Row="1" Style="{StaticResource RoundedButtonSecondary}" Width="50" Height="50" HorizontalAlignment="Left"
+            Click="PreviousPageBtn_Click" IsEnabled="False">
+                <TextBlock Text="←" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,5"/>
+            </Button>
+
+            <Button x:Name="SubmitBtn" IsEnabled="False" Style="{StaticResource RoundedButtonPrimary}" Width="150" Height="50" Margin="5" Background="{StaticResource AccentBrush}"
+            Foreground="{StaticResource SecondaryBrush}" FontWeight="Bold" Click="SubmitBtn_Click">Importar</Button>
+
+            <Button x:Name="NextPageBtn" Grid.Row="3" Style="{StaticResource RoundedButtonSecondary}" Width="50" Height="50" HorizontalAlignment="Right"
+            Click="NextPageBtn_Click">
+                <TextBlock Text="→" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,5"/>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>
