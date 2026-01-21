@@ -44,12 +44,12 @@
 
         <ContentControl x:Name="WizardControl" Grid.Row="1"/>
 
-        <!--<StackPanel Grid.Row="2">
+        <StackPanel Grid.Row="2">
             <TextBlock x:Name="FoundCategories" Text="{Binding Categories, StringFormat=Categorias: {0}}" Foreground="{StaticResource ForegroundBrush}" />
             <TextBlock x:Name="FoundSubcategories" Text="{Binding Subcategories, StringFormat=Subcategorias: {0}}" Foreground="{StaticResource ForegroundBrush}" />
             <TextBlock x:Name="FoundClasses" Text="{Binding Classes, StringFormat=Tipos/clases: {0}}" Foreground="{StaticResource ForegroundBrush}" />
             <TextBlock x:Name="FoundStates" Text="{Binding States, StringFormat=Estados: {0}}" Foreground="{StaticResource ForegroundBrush}" />
-        </StackPanel>-->
+        </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button x:Name="PreviousPageBtn" Grid.Row="1" Style="{StaticResource RoundedButtonSecondary}" Width="50" Height="50" HorizontalAlignment="Left"

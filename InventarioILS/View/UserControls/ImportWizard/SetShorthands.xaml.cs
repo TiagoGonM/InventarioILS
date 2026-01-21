@@ -1,5 +1,7 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
+using InventarioILS.Services;
+using InventarioILS.View.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +23,7 @@ namespace InventarioILS.View.UserControls.ImportWizard
     /// <summary>
     /// Lógica de interacción para SetShorthands.xaml
     /// </summary>
-    public partial class SetShorthands : UserControl
+    public partial class SetShorthands : UserControl, IWizardStep
     {
         public ObservableCollection<VisualItemMisc> CategoryList { get; set; } = [];
         public ObservableCollection<VisualItemMisc> SubcategoryList { get; set; } = [];
@@ -33,7 +35,7 @@ namespace InventarioILS.View.UserControls.ImportWizard
             InitializeComponent();
         }
 
-        public SetShorthands(IEnumerable<string> categories, IEnumerable<string> subcategories) : this()
+        public SetShorthands(IEnumerable<ItemMisc> categories, IEnumerable<ItemMisc> subcategories) : this()
         {
             CategoryList = categories.Select(name => new VisualItemMisc(name)).ToObservableCollection();
             SubcategoryList = subcategories.Select(name => new VisualItemMisc(name)).ToObservableCollection();
@@ -73,6 +75,15 @@ namespace InventarioILS.View.UserControls.ImportWizard
             SubcategoryShorthandInput.Text = SelectedSubcategory.Shorthand;
 
             SubcategoryShorthandForm.Visibility = Visibility.Visible;
+        }
+
+        public DataImportService.DataResponse GetData()
+        {
+            return new DataImportService.DataResponse
+            {
+                CategoryRecords = CategoryList.Select(c => c.Model),
+                SubcategoryRecords = SubcategoryList.Select(s => s.Model),
+            };
         }
     }
 }

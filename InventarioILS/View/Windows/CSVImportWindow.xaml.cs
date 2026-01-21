@@ -1,18 +1,22 @@
-﻿using InventarioILS.Model.Serializables;
+﻿using InventarioILS.Model;
+using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
 using InventarioILS.View.UserControls.ImportWizard;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static InventarioILS.Services.DataImportService;
 
 namespace InventarioILS.View.Windows
 {
-    /// <summary>
-    /// Lógica de interacción para CSVImportWindow.xaml
-    /// </summary>
+    public interface IWizardStep
+    {
+        DataResponse GetData();
+    }
+
     public partial class CSVImportWindow : Window
     {
         // 0?. Posibilidad de mapear columnas pre importación para evitar errores?
@@ -26,7 +30,13 @@ namespace InventarioILS.View.Windows
             STEP3,
         }
 
+        IWizardStep CurrentControl { get; set; }
+        SetShorthands SetShorthandControl;
+        SetRelations SetRelationsControl;
+
         public IEnumerable<SerializableItem> Items { get; set; }
+
+        DataResponse Data { get; set; }
         public string Categories { get; set; }
         public string Subcategories { get; set; }
         public string Classes { get; set; }
@@ -39,27 +49,27 @@ namespace InventarioILS.View.Windows
 
         private void SetWindow(WizardSteps step, DataResponse data)
         {
-            UserControl content = null;
-
             switch (step)
             {
                 case WizardSteps.STEP1:
-                    content = new SetShorthands(data.CategoryRecords, data.SubcategoryRecords);
+                    CurrentControl = new SetShorthands(data.CategoryRecords, data.SubcategoryRecords);
                     break;
 
                 case WizardSteps.STEP2:
-                    // content = 
+                    CurrentControl = new SetRelations(data.CategoryRecords, data.SubcategoryRecords);
+                    MessageBox.Show(Categories + "\n" + Subcategories);
                     break;
             }
 
-            if (content != null)
+            if (CurrentControl != null)
             {
-                WizardControl.Content = content;
+                WizardControl.Content = CurrentControl;
             }
         }
 
         public CSVImportWindow(DataResponse data) : this()
         {
+            Data = data;
             Items = data.Records.ToObservableCollection();
             Categories = string.Join(", ", data.CategoryRecords);
             Subcategories = string.Join(", ", data.SubcategoryRecords);
@@ -76,7 +86,6 @@ namespace InventarioILS.View.Windows
             };
 
             SetWindow(WizardSteps.STEP1, data);
-
         }
 
         private void SubmitBtn_Click(object sender, RoutedEventArgs e)
@@ -86,7 +95,8 @@ namespace InventarioILS.View.Windows
 
         private void NextPageBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            //MessageBox.Show(string.Join(", ", CurrentControl.GetData().CategoryRecords.Select(x => x.Shorthand)));
+            SetWindow(WizardSteps.STEP2, CurrentControl.GetData());
         }
 
         private void PreviousPageBtn_Click(object sender, RoutedEventArgs e)

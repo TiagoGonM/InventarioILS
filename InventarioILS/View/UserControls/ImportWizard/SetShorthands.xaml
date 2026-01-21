@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:InventarioILS.View.UserControls.ImportWizard"
              mc:Ignorable="d" 
              DataContext="{RelativeSource AncestorType={x:Type local:SetShorthands}}"
-             Background="{StaticResource BackgroundBrush}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>

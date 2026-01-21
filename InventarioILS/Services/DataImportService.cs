@@ -3,10 +3,12 @@ using CsvHelper.Configuration;
 using InventarioILS.Model;
 using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 
@@ -14,18 +16,28 @@ namespace InventarioILS.Services
 {
     public class DataImportService
     {
-        public class DataResponse(
-            List<SerializableItem> records, 
-            HashSet<string> categoryRecords, 
-            HashSet<string> subcategoryRecords, 
-            HashSet<string> classRecords, 
-            HashSet<string> stateRecords)
-        {
-            public List<SerializableItem> Records { get; } = records;
-            public HashSet<string> CategoryRecords { get; } = categoryRecords;
-            public HashSet<string> SubcategoryRecords { get; } = subcategoryRecords;
-            public HashSet<string> ClassRecords { get; } = classRecords;
-            public HashSet<string> StateRecords { get; } = stateRecords;
+        public class DataResponse {
+            public List<SerializableItem> Records { get; set; }
+            public IEnumerable<ItemMisc> CategoryRecords { get; set; }
+            public IEnumerable<ItemMisc> SubcategoryRecords { get; set; }
+            public IEnumerable<ItemMisc> ClassRecords { get; set; }
+            public IEnumerable<ItemMisc> StateRecords { get; set; }
+
+            public DataResponse(
+                List<SerializableItem> records,
+                IEnumerable<ItemMisc> categoryRecords,
+                IEnumerable<ItemMisc> subcategoryRecords,
+                IEnumerable<ItemMisc> classRecords,
+                IEnumerable<ItemMisc> stateRecords)
+            {
+                Records = records;
+                CategoryRecords = categoryRecords;
+                SubcategoryRecords = subcategoryRecords;
+                ClassRecords = classRecords;
+                StateRecords = stateRecords;
+            }
+
+            public DataResponse() { }
         }
 
         public async static Task<DataResponse> ImportCsv(string filePath)
@@ -41,9 +53,6 @@ namespace InventarioILS.Services
 
             using var reader = new StreamReader(filePath);
             using var csv = new CsvReader(reader, config);
-
-            //var records = csv.GetRecords<SerializableItem>();
-            //var collection = records.ToObservableCollection();
 
             var records = new List<SerializableItem>();
 
@@ -62,7 +71,13 @@ namespace InventarioILS.Services
                 states.Add(record.State.Trim());
             }
 
-            return new DataResponse(records, categories, subcategories, classes, states);
+            return new DataResponse(
+                records, 
+                categories.Select(c => new ItemMisc(c)),
+                subcategories.Select(c => new ItemMisc(c)),
+                classes.Select(c => new ItemMisc(c)),
+                states.Select(c => new ItemMisc(c))
+            );
         }
     }
 }
