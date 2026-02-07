@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using InventarioILS.Services;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -122,47 +121,45 @@ namespace InventarioILS.Model.Storage
             return (itemRowId, stockItemRowId);
         }
 
-        public async Task AddRangeAsync(ObservableCollection<StockItem> items)
+        public async Task AddRangeAsync(IEnumerable<StockItem> items)
         {
-            await Task.Run(async () =>
-            {
-                using var transaction = CreateConnection().BeginTransaction();
-                using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
-                try
-                {
-                    foreach (var item in items)
-                    {
-                        for (int i = 0; i < item.Quantity; i++)
-                        {
-                            // A. Insertar en Item y obtener el ID.
-                            uint? itemId = await ItemService.AddItemAsync(item, transaction).ConfigureAwait(false);
-                            // B. Insertar en ItemStock usando el ID generado.
-                            await conn.ExecuteAsync(
-                                @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
-                              VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
-                                new
-                                {
-                                    ItemId = itemId,
-                                    item.StateId,
-                                    item.Location,
-                                    item.AdditionalNotes
-                                },
-                                transaction
-                            ).ConfigureAwait(false);
-                        }
-                    }
+            using var transaction = CreateConnection().BeginTransaction();
+            using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
 
-                    // 2. Si todo fue bien, confirmar una vez.
-                    transaction.Commit();
-                    await LoadAsync();
-                }
-                catch
+            try
+            {
+                foreach (var item in items)
                 {
-                    // 3. Si hay un fallo, revertir todo el lote.
-                    transaction.Rollback();
-                    throw;
+                    for (int i = 0; i < item.Quantity; i++)
+                    {
+                        // A. Insertar en Item y obtener el ID.
+                        uint? itemId = await ItemService.AddItemAsync(item, transaction).ConfigureAwait(false);
+                        // B. Insertar en ItemStock usando el ID generado.
+                        await conn.ExecuteAsync(
+                            @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                            VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
+                            new
+                            {
+                                ItemId = itemId,
+                                item.StateId,
+                                item.Location,
+                                item.AdditionalNotes
+                            },
+                            transaction
+                        ).ConfigureAwait(false);
+                    }
                 }
-            });
+
+                // 2. Si todo fue bien, confirmar una vez.
+                transaction.Commit();
+                await LoadAsync();
+            }
+            catch
+            {
+                // 3. Si hay un fallo, revertir todo el lote.
+                transaction.Rollback();
+                throw;
+            }
         }
 
         public async Task UpdateAsync(StockItem itemToUpdate, StockItem item)

@@ -327,6 +327,8 @@ namespace InventarioILS
 
             ItemView.Visibility = Visibility.Visible;
             SettingsSection.Visibility = Visibility.Collapsed;
+
+            currentWindow = AppPages.INVENTORY;
         }
 
         ItemForm itemForm;

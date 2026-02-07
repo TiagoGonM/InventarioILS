@@ -1,4 +1,5 @@
 ﻿using InventarioILS.Model.Storage;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace InventarioILS.Model
@@ -29,6 +30,12 @@ namespace InventarioILS.Model
         {
             Model = new ItemMisc(name, shorthand);
         }
+        
+        public uint Id
+        {
+            get => Model.Id;
+            set => Model.Id = value;
+        }
 
         public string Name => Model.Name;
 
@@ -43,6 +50,23 @@ namespace InventarioILS.Model
                     OnPropertyChanged(nameof(Shorthand));
                 }
             }
+        }
+
+        HashSet<uint> _linkIds = [];
+
+        public string LinkIds => string.Join(",", _linkIds);
+
+        public void AddLink(uint id)
+        {
+            _linkIds.Add(id);
+            OnPropertyChanged(nameof(LinkIds));
+        }
+
+        public void SetLink(uint id)
+        {
+            _linkIds.Clear();
+            _linkIds.Add(id);
+            OnPropertyChanged(nameof(LinkIds));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

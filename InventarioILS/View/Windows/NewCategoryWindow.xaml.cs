@@ -28,7 +28,7 @@ namespace InventarioILS.View.Windows
             var selectedIds = LinkedSubcategoriesComboBox.SelectedItems.Cast<ItemMisc>().Select(subcat => subcat.Id).ToHashSet();
             var newCategory = new ItemMisc(CategoryNameInput.Text.ToLower(), CategoryShorthandInput.Text);
 
-            await CategoryService.RegisterCategory(newCategory, selectedIds).ConfigureAwait(false);
+            await CategoryService.RegisterCategoryAsync(newCategory, selectedIds).ConfigureAwait(false);
 
             Close();
         }

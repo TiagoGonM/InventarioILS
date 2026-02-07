@@ -1,4 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
+using InventarioILS.Services;
+using System.Security.Cryptography;
 
 namespace InventarioILS.Model.Serializables
 {
@@ -41,5 +43,7 @@ namespace InventarioILS.Model.Serializables
             "Localización", "localización", "Localizacion", "localizacion",
             "Location", "location"])]
         public string Location { get; set; }
+
+        public StockItem ToStockItem() => new StockItem {  };
     }
 }

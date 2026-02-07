@@ -14,24 +14,31 @@ namespace InventarioILS.Model.Storage
             Load();
         }
 
-        public async Task AddAsync(ItemMisc item, IDbTransaction transaction)
+        public async Task<uint> AddAsync(ItemMisc item, IDbTransaction transaction)
         {
             var conn = transaction.Connection;
 
-            string query = @"INSERT INTO Category (name, shorthand) VALUES (@Name, @Shorthand)";
+            string query = @"INSERT INTO Category (name, shorthand) VALUES (@Name, @Shorthand) ON CONFLICT DO NOTHING";
 
             var collection = await conn.ExecuteAsync(query, new
             {
-                item.Name,
+                Name = item.Name.ToLower(),
                 item.Shorthand,
             }, transaction).ConfigureAwait(false);
+
+            uint rowid = await conn.ExecuteScalarAsync<uint>("SELECT categoryId FROM Category WHERE name = @Name COLLATE NOCASE", new
+            {
+                item.Name
+            }).ConfigureAwait(false);
+
+            return rowid;
         }
 
         public async Task LinkWithAsync(uint subcategoryId, uint categoryId, IDbTransaction transaction)
         {
             var conn = transaction.Connection;
 
-            string query = @"INSERT INTO CatSubcat (categoryId, subcategoryId) VALUES (@CatId, @SubcatId)";
+            string query = @"INSERT INTO CatSubcat (categoryId, subcategoryId) VALUES (@CatId, @SubcatId) ON CONFLICT DO NOTHING";
 
             await conn.ExecuteAsync(query, new {CatId = categoryId, SubcatId = subcategoryId}, transaction).ConfigureAwait(false);
         }

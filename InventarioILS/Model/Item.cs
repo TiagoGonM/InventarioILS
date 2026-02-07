@@ -1,4 +1,5 @@
-﻿using InventarioILS.Model.Storage;
+﻿using InventarioILS.Model.Serializables;
+using InventarioILS.Model.Storage;
 
 namespace InventarioILS.Model
 {
@@ -79,6 +80,21 @@ namespace InventarioILS.Model
                 baseItem.Quantity,
                 additionalNotes,
                 baseItem.ModelOrValue
+            )
+        { }
+        
+        public StockItem(SerializableItem item, string productCode, string description) 
+            : this(
+                productCode,
+                categoryId: 0,
+                subcategoryId: 0,
+                classId: 0,
+                stateId: 0,
+                description,
+                item.Location,
+                item.Quantity,
+                item.AdditionalNotes,
+                item.ModelOrValue
             )
         { }
 

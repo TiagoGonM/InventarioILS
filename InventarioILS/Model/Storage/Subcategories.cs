@@ -15,26 +15,44 @@ namespace InventarioILS.Model.Storage
             Load();
         }
 
-        public void Add(ItemMisc item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task AddAsync(ItemMisc item)
+        string addQuery = @"INSERT INTO Subcategory (name, shorthand) VALUES (@Name, @Shorthand) ON CONFLICT(name) DO NOTHING";
+        public uint Add(ItemMisc item)
         {
             using var conn = CreateConnection();
 
-            string query = @"INSERT INTO Subcategory (name, shorthand) VALUES (@Name, @Shorthand)";
+            if (string.IsNullOrWhiteSpace(item.Shorthand)) item.Shorthand = null;
+
+            conn.Execute(SQLUtils.IncludeLastRowIdInserted(addQuery), new
+            {
+                Name = item.Name.ToLower(),
+                item.Shorthand
+            });
+
+            uint rowid = conn.ExecuteScalar<uint>("SELECT subcategoryId FROM Subcategory WHERE name = @Name", new { item.Name });
+
+            Load();
+            return rowid;
+        }
+
+        public async Task<uint> AddAsync(ItemMisc item)
+        {
+            using var conn = await CreateConnectionAsync();
 
             if (string.IsNullOrEmpty(item.Shorthand)) item.Shorthand = null;
             
-            await conn.ExecuteAsync(query, new
+            await conn.ExecuteAsync(SQLUtils.IncludeLastRowIdInserted(addQuery), new
             {
-                item.Name,
+                Name = item.Name.ToLower(),
                 item.Shorthand
             }).ConfigureAwait(false);
 
+            uint rowid = await conn.ExecuteScalarAsync<uint>("SELECT subcategoryId FROM Subcategory WHERE name = @Name COLLATE NOCASE", new 
+            {
+                item.Name
+            }).ConfigureAwait(false);
+
             await LoadAsync();
+            return rowid;
         }
 
         public void Load(uint categoryId = 0)

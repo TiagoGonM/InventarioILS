@@ -2,27 +2,15 @@
 using InventarioILS.Model.Storage;
 using InventarioILS.Services;
 using InventarioILS.View.Windows;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using static InventarioILS.Services.DataImportService;
 
 namespace InventarioILS.View.UserControls.ImportWizard
 {
-    /// <summary>
-    /// Lógica de interacción para SetShorthands.xaml
-    /// </summary>
     public partial class SetShorthands : UserControl, IWizardStep
     {
         public ObservableCollection<VisualItemMisc> CategoryList { get; set; } = [];
@@ -35,10 +23,11 @@ namespace InventarioILS.View.UserControls.ImportWizard
             InitializeComponent();
         }
 
-        public SetShorthands(IEnumerable<ItemMisc> categories, IEnumerable<ItemMisc> subcategories) : this()
+        public SetShorthands(DataResponse data) : this()
         {
-            CategoryList = categories.Select(name => new VisualItemMisc(name)).ToObservableCollection();
-            SubcategoryList = subcategories.Select(name => new VisualItemMisc(name)).ToObservableCollection();
+
+            CategoryList = data.CategoryRecords.Select(cat => new VisualItemMisc(cat)).ToObservableCollection();
+            SubcategoryList = data.SubcategoryRecords.Select(subcat => new VisualItemMisc(subcat)).ToObservableCollection();
 
             DataContext = new
             {
@@ -77,13 +66,21 @@ namespace InventarioILS.View.UserControls.ImportWizard
             SubcategoryShorthandForm.Visibility = Visibility.Visible;
         }
 
-        public DataImportService.DataResponse GetData()
+        public bool Validate()
         {
-            return new DataImportService.DataResponse
+            //if (!CategoryList.All(c => !string.IsNullOrWhiteSpace(c.Shorthand)))
+            //{
+            //    result = null;
+            //    return false;
+            //}
+
+            foreach (var subcategory in SubcategoryList)
             {
-                CategoryRecords = CategoryList.Select(c => c.Model),
-                SubcategoryRecords = SubcategoryList.Select(s => s.Model),
-            };
+                uint newId = ItemSubCategories.Instance.Add(subcategory.Model);
+                subcategory.Id = newId;
+            }
+            
+            return true;
         }
     }
 }

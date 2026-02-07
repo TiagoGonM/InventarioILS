@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using InventarioILS.Model;
+using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
 using System;
 using System.Data;
@@ -79,6 +80,31 @@ namespace InventarioILS.Services
             new { ProductCode = productCode, ClassId = deviceId });
 
             return count;
+        }
+
+        public static string GenerateProductCode(ItemMisc category, ItemMisc subcategory, string productModelOrExtraVal = null)
+        {
+            if (category == null || subcategory == null) return "";
+
+            if (productModelOrExtraVal == null)
+                return $"{category.Shorthand}-{(string.IsNullOrEmpty(subcategory.Shorthand) ? subcategory.Name : subcategory.Shorthand)}";
+
+
+            return $"{category.Shorthand}-{productModelOrExtraVal}";
+        }
+
+        public static string GenerateProductCode(ItemMisc category, string productModelOrExtraVal)
+        {
+            if (category == null || string.IsNullOrEmpty(productModelOrExtraVal)) return "";
+
+            return $"{category.Shorthand}-{productModelOrExtraVal.ToUpper()}";
+        }
+
+        public static string GenerateDescription(SerializableItem item, ItemMisc category, ItemMisc subcategory)
+        {
+            if (category == null || subcategory == null) return "";
+
+            return $"{category.Name} {subcategory.Name} {item.ModelOrValue ?? ""}";
         }
     }
 }

@@ -10,17 +10,17 @@ namespace InventarioILS.Services
     {
         readonly static ItemCategories categories = ItemCategories.Instance;
 
-        public async static Task RegisterCategory(ItemMisc category, IEnumerable<uint> subcategoryIds)
+        public async static Task RegisterCategoryAsync(ItemMisc category, IEnumerable<uint> subcategoryIds)
         {
             using var client = await DbConnection.CreateAndOpenAsync();
             using var transaction = client.BeginTransaction();
 
-            await categories.AddAsync(category, transaction);
+            uint id = await categories.AddAsync(category, transaction);
 
             try
             {
                 foreach (uint subcatId in subcategoryIds)
-                    await categories.LinkWithAsync(subcatId, client.LastRowIdInserted, transaction);
+                    await categories.LinkWithAsync(subcatId, id, transaction);
             }
             catch (SqliteException)
             {

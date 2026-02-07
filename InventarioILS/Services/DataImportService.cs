@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 using InventarioILS.Model;
 using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
+using InventarioILS.Model.Wizard;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,18 +18,18 @@ namespace InventarioILS.Services
     public class DataImportService
     {
         public class DataResponse {
-            public List<SerializableItem> Records { get; set; }
-            public IEnumerable<ItemMisc> CategoryRecords { get; set; }
-            public IEnumerable<ItemMisc> SubcategoryRecords { get; set; }
-            public IEnumerable<ItemMisc> ClassRecords { get; set; }
-            public IEnumerable<ItemMisc> StateRecords { get; set; }
+            public List<StockItemDraft> Records { get; set; }
+            public List<ItemMisc> CategoryRecords { get; set; }
+            public List<ItemMisc> SubcategoryRecords { get; set; }
+            public List<ItemMisc> ClassRecords { get; set; }
+            public List<ItemMisc> StateRecords { get; set; }
 
             public DataResponse(
-                List<SerializableItem> records,
-                IEnumerable<ItemMisc> categoryRecords,
-                IEnumerable<ItemMisc> subcategoryRecords,
-                IEnumerable<ItemMisc> classRecords,
-                IEnumerable<ItemMisc> stateRecords)
+                List<StockItemDraft> records,
+                List<ItemMisc> categoryRecords,
+                List<ItemMisc> subcategoryRecords,
+                List<ItemMisc> classRecords,
+                List<ItemMisc> stateRecords)
             {
                 Records = records;
                 CategoryRecords = categoryRecords;
@@ -49,7 +50,11 @@ namespace InventarioILS.Services
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 PrepareHeaderForMatch = args => args.Header.Trim(),
+                TrimOptions = TrimOptions.Trim,
             };
+
+            if (!File.Exists(filePath))
+                return null;
 
             using var reader = new StreamReader(filePath);
             using var csv = new CsvReader(reader, config);
@@ -63,6 +68,8 @@ namespace InventarioILS.Services
 
             await foreach (var record in csv.GetRecordsAsync<SerializableItem>())
             {
+                record.ModelOrValue = record.ModelOrValue.Trim();
+
                 records.Add(record);
 
                 categories.Add(record.Category.Trim());
@@ -72,12 +79,30 @@ namespace InventarioILS.Services
             }
 
             return new DataResponse(
-                records, 
-                categories.Select(c => new ItemMisc(c)),
-                subcategories.Select(c => new ItemMisc(c)),
-                classes.Select(c => new ItemMisc(c)),
-                states.Select(c => new ItemMisc(c))
+                [.. records.Select(record => new StockItemDraft(record))],
+                [.. categories.Select(c => new ItemMisc(c))],
+                [.. subcategories.Select(c => new ItemMisc(c))],
+                [.. classes.Select(c => new ItemMisc(c))],
+                [.. states.Select(c => new ItemMisc(c))]
             );
+        }
+
+        public static async void SaveData(DataResponse model) 
+        {
+            // 1. Crear y guardar categorias, subcategorias, clases y estados en la BD
+            // 2. Crear y guardar los items en la BD
+
+            if (model == null) return;
+
+            var classStorage = ItemClasses.Instance;
+            var stateStorage = ItemStates.Instance;
+
+            //CategoryService.RegisterCategoryAsync();
+
+            //foreach (var draft in model.Records)
+            //{
+            //    var item = new StockItem(...);
+            //}
         }
     }
 }

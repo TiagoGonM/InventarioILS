@@ -264,7 +264,7 @@ namespace InventarioILS.View.UserControls
         private void ExtraValueCheckbox_Checked(object sender, RoutedEventArgs e)
         {
             ExtraValueInput.IsEnabled = true;
-            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : SelectedSubcategory.Name.ToUpper() ?? "";
+            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : SelectedSubcategory?.Name.ToUpper() ?? "";
             
             UpdateProductCode();
             UpdateDescription();
@@ -275,7 +275,7 @@ namespace InventarioILS.View.UserControls
         private void ExtraValueCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExtraValueInput.IsEnabled = false;
-            codeMain = SelectedSubcategory.Name.ToUpper() ?? "";
+            codeMain = SelectedSubcategory?.Name.ToUpper() ?? "";
 
             UpdateProductCode();
             UpdateDescription();
@@ -285,7 +285,7 @@ namespace InventarioILS.View.UserControls
 
         private async void ExtraValueInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : SelectedSubcategory.Name.ToUpper() ?? "";
+            codeMain = ExtraValueInput.Text.Length > 0 ? ExtraValueInput.Text.ToUpper() : SelectedSubcategory?.Name.ToUpper() ?? "";
 
             await CheckForDevice();
             UpdateProductCode();
