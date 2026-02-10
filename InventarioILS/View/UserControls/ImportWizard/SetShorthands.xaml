@@ -32,7 +32,8 @@
                      SelectionMode="Single"
                      Padding="2"
                      MinWidth="350"
-                     MaxHeight="1000"
+                     MaxHeight="300"
+                     MinHeight="300"
                      ItemsSource="{Binding CategoryList}"
                      SelectionChanged="CategoryListBox_SelectionChanged"
                      Background="{StaticResource SecondaryBrush}"
@@ -54,7 +55,7 @@
             </ListBox>
         </Grid>
 
-        <StackPanel x:Name="CategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="2" Grid.Column="0">
+        <StackPanel x:Name="CategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="2" Margin="0,5" Grid.Column="0">
             <TextBlock Text="Nueva shorthand*" Foreground="{StaticResource AccentForegroundBrush}"/>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <TextBox x:Name="CategoryShorthandInput" TextChanged="CategoryShorthandInput_TextChanged" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}" Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
@@ -77,7 +78,8 @@
                 SelectionMode="Single"
                 Padding="2"
                 MinWidth="350"
-                MaxHeight="1000"
+                MaxHeight="300"
+                MinHeight="300"
                 ItemsSource="{Binding SubcategoryList}"
                 SelectionChanged="SubcategoryListBox_SelectionChanged"
                 Background="{StaticResource SecondaryBrush}"
@@ -98,7 +100,7 @@
             </ListBox>
         </Grid>
 
-        <StackPanel x:Name="SubcategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="2" Grid.Column="1">
+        <StackPanel x:Name="SubcategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="2" Margin="0,5" Grid.Column="1">
             <TextBlock Text="Nueva shorthand" Foreground="{StaticResource AccentForegroundBrush}"/>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <TextBox x:Name="SubcategoryShorthandInput" TextChanged="SubcategoryShorthandInput_TextChanged" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}"  Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>

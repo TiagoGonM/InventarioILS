@@ -22,19 +22,34 @@
             </StackPanel>
         </StackPanel>
 
-        <!--TODO: stylize this somehow-->
-        <kit:CheckComboBox
-            x:Name="LinkedSubcategoriesComboBox"
-            MaxWidth="200"
-            Height="28"
-            Foreground="{StaticResource ForegroundBrush}"
-            Background="{StaticResource BackgroundBrush}"
-            BorderThickness="1"
-            ItemsSource="{Binding SubcategoryList, Mode=OneWay}"
-            DisplayMemberPath="Name"
-            Watermark="Seleccionar subcategorias"
-        />
+        <ListBox 
+            x:Name="SubcategoryListBox"
+            Grid.Row="1"
+            Grid.IsSharedSizeScope="True"
+            SelectionMode="Extended"
+            Padding="2"
+            MinWidth="350"
+            HorizontalAlignment="Center"
+            MaxHeight="150"
+            MinHeight="150"
+            ItemsSource="{Binding SubcategoryList}"
+            Background="{StaticResource SecondaryBrush}"
+            Foreground="{StaticResource ForegroundBrush}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
+                        </Grid.ColumnDefinitions>
 
-        <Button x:Name="CreateCategoryBtn" Content="Crear" IsEnabled="False" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="CreateCategoryBtn_Click"/>
+                        <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="0"/>
+                        <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Button x:Name="CreateCategoryBtn" Content="Crear" FontWeight="Bold" IsEnabled="False" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="CreateCategoryBtn_Click"/>
     </Grid>
 </Window>

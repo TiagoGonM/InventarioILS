@@ -1,7 +1,8 @@
-﻿using InventarioILS.Model.Storage;
-using InventarioILS.Model;
+﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using InventarioILS.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,9 +14,14 @@ namespace InventarioILS.View.Windows
         readonly ItemSubcategories subcategories = ItemSubcategories.Instance;
         readonly ItemCategories categories = ItemCategories.Instance;
 
+        public List<ItemMisc> SelectedSubcategories => [.. SubcategoryListBox.SelectedItems.Cast<ItemMisc>()];
+
         public NewCategoryWindow()
         {
             InitializeComponent();
+
+            categories.Load();
+            subcategories.Load();
 
             DataContext = new
             {
@@ -25,11 +31,24 @@ namespace InventarioILS.View.Windows
 
         private async void CreateCategoryBtn_Click(object sender, RoutedEventArgs e)
         {
-            var selectedIds = LinkedSubcategoriesComboBox.SelectedItems.Cast<ItemMisc>().Select(subcat => subcat.Id).ToHashSet();
+            var selectedIds = SelectedSubcategories.Select(subcat => subcat.Id).ToHashSet();
             var newCategory = new ItemMisc(CategoryNameInput.Text.ToLower(), CategoryShorthandInput.Text);
 
-            await CategoryService.RegisterCategoryAsync(newCategory, selectedIds, DbConnection.CreateAndOpen().BeginTransaction()).ConfigureAwait(false);
+            using var transaction = DbConnection.CreateAndOpen().BeginTransaction();
 
+            try
+            {
+                await CategoryService.RegisterCategoryAsync(newCategory, selectedIds, transaction);
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al crear categoría: {ex.Message}", StatusManager.MessageType.ERROR).ConfigureAwait(false);
+                transaction.Rollback();
+                return;
+            }
+
+            await categories.LoadAsync();
             Close();
         }
 
@@ -49,7 +68,7 @@ namespace InventarioILS.View.Windows
             CategoryNameErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
             if (exists) CategoryNameInput.Focus();
 
-            CreateCategoryBtn.IsEnabled = !exists;
+            CreateCategoryBtn.IsEnabled = !exists && !string.IsNullOrEmpty(CategoryShorthandInput.Text);
         }
 
         private void CategoryShorthandInput_TextChanged(object sender, TextChangedEventArgs e)
@@ -66,7 +85,7 @@ namespace InventarioILS.View.Windows
             bool exists = categories.Items.Any(c => c.Shorthand.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             CategoryShorthandErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
-            CreateCategoryBtn.IsEnabled = !exists;
+            CreateCategoryBtn.IsEnabled = !exists && !string.IsNullOrEmpty(CategoryShorthandInput.Text);
         }
     }
 }

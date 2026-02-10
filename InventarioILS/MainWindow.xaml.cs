@@ -51,6 +51,14 @@ namespace InventarioILS
             StatusManager.Instance.Initialize(StatusMessageLabel); // Initialize app status messages on the bottom
             bottomBarManager.Initialize(BottomBarContent, BottomRow);
 
+            items.Load();
+            orders.Load();
+            itemClasses.Load();
+            ItemCategories.Instance.Load();
+            ItemSubcategories.Instance.Load();
+            ItemStates.Instance.Load();
+            ShipmentStates.Instance.Load();
+
             DataContext = new
             {
                 items.Items,

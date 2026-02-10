@@ -1,10 +1,12 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace InventarioILS.Model.Storage
 {
@@ -30,13 +32,23 @@ namespace InventarioILS.Model.Storage
         {
             var conn = transaction.Connection;
 
-            await conn.ExecuteAsync(insertQuery, new
+            string query = @"INSERT INTO OrderDetail (orderId, itemId, shipmentStateId, quantity)
+                             VALUES (@OrderId, @ItemId, @ShipmentStateId, @Quantity)";
+
+            try
             {
-                item.OrderId,
-                item.ItemId,
-                item.ShipmentStateId,
-                item.Quantity
-            }, transaction: transaction).ConfigureAwait(false);
+                await conn.ExecuteAsync(query, new
+                {
+                    item.OrderId,
+                    item.ItemId,
+                    item.ShipmentStateId,
+                    item.Quantity
+                }, transaction);
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 19)
+            {
+                throw new ApplicationException($"Código: {ex.SqliteErrorCode}, Extendido: {ex.SqliteExtendedErrorCode}", ex);
+            }
         }
 
         public void Load()

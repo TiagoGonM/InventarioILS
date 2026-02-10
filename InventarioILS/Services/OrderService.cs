@@ -19,50 +19,52 @@ namespace InventarioILS.Services
             // 2. Añadir tantas filas en Item como la cantidad indicada
             // 3. Añadir tantas filas en OrderDetail como la cantidad indicada con cantidad = 1 (campo redundante), shipmentState = pendiente y el id del item insertado previamente al crearlo
 
-            await Task.Run(async () =>
+            if (order == null || items == null) return;
+
+            using var client = await DbConnection.CreateAndOpenAsync();
+            using var transaction = client.BeginTransaction();
+
+            try
             {
-                using var client = await DbConnection.CreateAndOpenAsync();
-                using var transaction = client.BeginTransaction();
-                    
-                try
+                int orderId = await orderStorage.AddAsync(order, transaction);
+
+                await stateStorage.LoadAsync();
+
+                var defaultStateId = stateStorage.GetStateId("pendiente");
+
+                foreach (var orderItem in items)
                 {
-                    int orderId = await orderStorage.AddAsync(order, transaction);
+                    orderItem.ShipmentStateId ??= defaultStateId;
 
-                    await stateStorage.LoadAsync();
+                    uint itemsToAdd = orderItem.Quantity;
 
-                    var defaultStateId = stateStorage.GetStateId("pendiente");
-
-                    foreach (var orderItem in items)
+                    for (int i = 0; i < itemsToAdd; i++)
                     {
-                        orderItem.ShipmentStateId ??= defaultStateId;
+                        uint itemId = await ItemService.AddItemAsync(orderItem, transaction);
 
-                        uint itemsToAdd = orderItem.Quantity;
+                        if (itemId == 0) throw new ArgumentNullException($"Item id no insertado: {itemId}");
 
-                        for (int i = 0; i < itemsToAdd; i++)
+                        await orderItemStorage.AddAsync(new OrderItem
                         {
-                            uint itemId = await ItemService.AddItemAsync(orderItem, transaction);
-
-                            if (itemId == 0) throw new ArgumentNullException($"Item id not inserted: {itemId}");
-
-                            orderItem.OrderId = (uint)orderId;
-                            orderItem.ItemId = itemId;
-                            orderItem.Quantity = 1; // Cada fila en OrderDetail representa una unidad individual
-
-                            await orderItemStorage.AddAsync(orderItem, transaction);
-                        }
+                            OrderId = (uint)orderId,
+                            ItemId = itemId,
+                            ShipmentStateId = orderItem.ShipmentStateId,
+                            Quantity = 1,
+                        }, transaction);
                     }
-                } catch
-                {
-                    if (transaction.Connection != null)
-                    {
-                        transaction.Rollback();
-                    }
-                    throw;
                 }
 
                 transaction.Commit();
-            });
-            orderStorage.Load();
+                //orderStorage.Load();
+            }
+            catch
+            {
+                if (transaction.Connection != null)
+                {
+                    transaction.Rollback();
+                }
+                throw;
+            }
         }
     }
 }

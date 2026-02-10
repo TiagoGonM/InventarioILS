@@ -15,6 +15,8 @@ namespace InventarioILS.View.Windows
 
         public NewShipmentStateWindow()
         {
+            shipStateStorage.Load();
+
             InitializeComponent();
         }
 

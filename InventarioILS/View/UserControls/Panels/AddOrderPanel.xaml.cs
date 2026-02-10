@@ -126,13 +126,17 @@ namespace InventarioILS.View.UserControls
 
         private async void ConfirmBtn_Click(object sender, RoutedEventArgs e)
         {
-            StatusManager.Instance.UpdateMessageStatusAsync($"Pedido agregado: {OrderDescriptionInput.Text} | Items: {itemList.Count}", Brushes.Green);
+            if (itemList.Count == 0) 
+                await StatusManager.Instance.UpdateMessageStatusAsync("No se encuentran items en el pedido.", StatusManager.MessageType.ERROR);
+
+            var description = OrderDescriptionInput.Text;
 
             await OrderService.RegisterOrder(new Order
             {
-                Description = OrderDescriptionInput.Text
-            }, itemList);
+                Description = description
+            }, itemList).ConfigureAwait(false);
 
+            await StatusManager.Instance.UpdateMessageStatusAsync($"Pedido agregado: {OrderDescriptionInput.Text} | Items: {itemList.Count}", Brushes.Green);
             OnSuccess.Invoke();
         }
 

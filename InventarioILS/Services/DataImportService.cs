@@ -5,6 +5,7 @@ using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
 using InventarioILS.Model.Wizard;
 using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -140,23 +141,30 @@ namespace InventarioILS.Services
                     switch (link.Key.Type)
                     {
                         case MiscType.Category:
-                            await CreateCategoriesAsync(link, transaction).ConfigureAwait(false);
+                            await CreateCategoriesAsync(link, transaction);
                             break;
 
                         case MiscType.Class:
-                            await CreateClassesAsync(link, transaction).ConfigureAwait(false);
+                            await CreateClassesAsync(link, transaction);
                             break;
                     }
                 }
 
                 await StockItems.Instance.AddRangeAsync(model.Records.Select(draft => draft.ToStockItem()), transaction);
+
+                transaction.Commit();
+
+                await ItemSubcategories.Instance.LoadAsync().ConfigureAwait(false);
+                await ItemCategories.Instance.LoadAsync().ConfigureAwait(false);
+                await ItemClasses.Instance.LoadAsync().ConfigureAwait(false);
+                await ItemStates.Instance.LoadAsync().ConfigureAwait(false);
+                await StockItems.Instance.LoadAsync().ConfigureAwait(false);
             }
-            catch (SqliteException)
+            catch (Exception ex)
             {
                 transaction.Rollback();
-                throw;
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Hubo un error al intentar importar los datos: {ex.Message}", StatusManager.MessageType.ERROR);
             }
-            transaction.Commit();
         }
     }
 }

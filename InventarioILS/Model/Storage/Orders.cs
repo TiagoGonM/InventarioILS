@@ -39,11 +39,10 @@ namespace InventarioILS.Model.Storage
         {
             var conn = transaction.Connection;
             
-            string query = @"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description);
-                             SELECT last_insert_rowid();";
+            string query = SQLUtils.IncludeLastRowIdInserted(@"INSERT INTO 'Order' (name, description) VALUES (@Name, @Description)");
 
 
-            var count = await conn.QueryFirstAsync<int>(@"SELECT COUNT(*) total FROM 'Order'").ConfigureAwait(false);
+            var count = await conn.QueryFirstAsync<int>(@"SELECT COUNT(*) total FROM 'Order'");
             order.Name = $"Pedido #{count + 1}";
 
             int rowId = await conn.ExecuteScalarAsync<int>(query, new

@@ -16,6 +16,6 @@
             </StackPanel>
         </StackPanel>
 
-        <Button x:Name="SubmitBtn" IsEnabled="False" Content="Crear" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="SubmitBtn_Click"/>
+        <Button x:Name="SubmitBtn" IsEnabled="False" FontWeight="Bold" Content="Crear" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="SubmitBtn_Click"/>
     </Grid>
 </Window>

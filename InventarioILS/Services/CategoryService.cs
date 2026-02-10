@@ -18,7 +18,6 @@ namespace InventarioILS.Services
             foreach (uint subcatId in subcategoryIds)
                 await categories.LinkWithAsync(subcatId, id, transaction);
 
-            await categories.LoadAsync();
             return id;
         }
     }

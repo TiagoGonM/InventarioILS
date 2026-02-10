@@ -248,7 +248,7 @@ INSERT OR IGNORE INTO State (name, classId) VALUES
 
 -- 5. Estados de Envío
 INSERT OR IGNORE INTO ShipmentState (name) VALUES
-    ('no realizado'), ('pedido enviado'), ('pedido notado'),
+    ('pendiente'), ('pedido enviado'), ('pedido notado'),
     ('en preparacion'), ('contabilizacion'), ('despachado'),
     ('hacia central de correo'), ('en central de correo'),
     ('en camino')

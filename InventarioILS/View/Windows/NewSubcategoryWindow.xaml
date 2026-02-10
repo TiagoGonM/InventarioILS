@@ -12,15 +12,15 @@
             <StackPanel Margin="10,0,20,0">
                 <TextBlock Text="Nombre de la subcategoría" Foreground="{StaticResource AccentForegroundBrush}"/>
                 <TextBox x:Name="SubcategoryNameInput" Margin="0,4,0,8" MinWidth="200" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="SubcategoryNameInput_TextChanged"/>
-                <TextBlock x:Name="SubcategoryNameErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El nombre de la categoría ya existe.</TextBlock>
+                <TextBlock x:Name="SubcategoryNameErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El nombre de la subcategoría ya existe.</TextBlock>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Abreviatura" Foreground="{StaticResource AccentForegroundBrush}"/>
                 <TextBox x:Name="SubcategoryShorthandInput" Margin="0,4,0,8"  MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="SubcategoryShorthandInput_TextChanged"/>
-                <TextBlock x:Name="SubcategoryShorthandErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El nombre de la categoría ya existe.</TextBlock>
+                <TextBlock x:Name="SubcategoryShorthandErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">La abreviatura ya existe.</TextBlock>
             </StackPanel>
         </StackPanel>
 
-        <Button x:Name="SubmitBtn" IsEnabled="False" Content="Crear" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="SubmitBtn_Click"/>
+        <Button x:Name="SubmitBtn" IsEnabled="False" Content="Crear" FontWeight="Bold" Width="150" Height="35" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" Click="SubmitBtn_Click"/>
     </Grid>
 </Window>

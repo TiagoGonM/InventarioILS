@@ -190,7 +190,6 @@ namespace InventarioILS.Model.Storage
                     ).ConfigureAwait(false);
                 }
             }
-            await LoadAsync();
         }
 
         public async Task UpdateAsync(StockItem itemToUpdate, StockItem item)

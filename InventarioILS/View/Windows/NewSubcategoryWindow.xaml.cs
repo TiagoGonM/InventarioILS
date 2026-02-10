@@ -13,6 +13,8 @@ namespace InventarioILS.View.Windows
 
         public NewSubcategoryWindow()
         {
+            subcategoryStorage.Load();
+
             InitializeComponent();
         }
 

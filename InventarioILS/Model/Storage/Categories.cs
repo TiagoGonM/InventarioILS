@@ -20,7 +20,7 @@ namespace InventarioILS.Model.Storage
 
             string query = @"INSERT INTO Category (name, shorthand) VALUES (@Name, @Shorthand) ON CONFLICT DO NOTHING";
 
-            var collection = await conn.ExecuteAsync(query, new
+            await conn.ExecuteAsync(query, new
             {
                 Name = item.Name.ToLower(),
                 item.Shorthand,
@@ -40,7 +40,26 @@ namespace InventarioILS.Model.Storage
 
             string query = @"INSERT INTO CatSubcat (categoryId, subcategoryId) VALUES (@CatId, @SubcatId) ON CONFLICT DO NOTHING";
 
-            await conn.ExecuteAsync(query, new {CatId = categoryId, SubcatId = subcategoryId}, transaction).ConfigureAwait(false);
+            await conn.ExecuteAsync(query, new { CatId = categoryId, SubcatId = subcategoryId }, transaction);
+        }
+
+        public async Task<int> EnsureCatSubcatIdAsync(uint catId, uint subId, IDbConnection conn, IDbTransaction trans)
+        {
+            // 1. Intentamos insertar por si no existe
+            await conn.ExecuteAsync(@"
+                INSERT INTO CatSubcat (categoryId, subcategoryId) 
+                VALUES (@catId, @subId) 
+                ON CONFLICT DO NOTHING", new { catId, subId }, trans);
+
+            // 2. Buscamos el ID (ahora SI O SI tiene que estar)
+            var id = await conn.QuerySingleOrDefaultAsync<int?>(@"
+                SELECT catSubcatId FROM CatSubcat 
+                WHERE categoryId = @catId AND subcategoryId = @subId",
+                new { catId, subId }, trans);
+
+            return id == null
+                ? throw new Exception($"¡Error fatal! No se pudo crear ni encontrar el vínculo Cat:{catId} Sub:{subId}")
+                : id.Value;
         }
 
         public void Load()

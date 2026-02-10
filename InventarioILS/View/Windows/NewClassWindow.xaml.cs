@@ -13,6 +13,8 @@ namespace InventarioILS.View.Windows
 
         public NewClassWindow()
         {
+            classes.Load();
+
             InitializeComponent();
         }
 

@@ -13,29 +13,33 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Button x:Name="CatSubcatLinkBtn" Content="🔗" Width="40" Height="40" FontSize="20" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonHighlightTextSecondary}" Click="CatSubcatLinkBtn_Click"/>
+        <Button x:Name="CatSubcatLinkBtn" Content="🔗" Width="40" Height="40" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonHighlightTextSecondary}" Click="CatSubcatLinkBtn_Click"/>
 
-        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,30" Text="Debe crear un enlace para cada categoría-subcategoría/s y un enlace para cada clase/tipo-estado/s sin excepción." Foreground="{StaticResource ForegroundBrush}"/>
+
+        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Categorías" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            <TextBlock Text="Categorías" HorizontalAlignment="Center" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
             <ListBox x:Name="CategoryListBox"
-                 Grid.Row="1"
-                 Grid.IsSharedSizeScope="True"
-                 SelectionMode="Single"
-                 Padding="2"
-                 MinWidth="250"
-                 MaxHeight="300"
-                 ItemsSource="{Binding CategoryList}"
-                 Background="{StaticResource SecondaryBrush}"
-                 Foreground="{StaticResource ForegroundBrush}">
+                     Grid.Row="1"
+                     Grid.IsSharedSizeScope="True"
+                     SelectionMode="Single"
+                     Padding="2"
+                     MinWidth="350"
+                     MaxHeight="300"
+                     MinHeight="300"
+                     ItemsSource="{Binding CategoryList}"
+                     Background="{StaticResource SecondaryBrush}"
+                     Foreground="{StaticResource ForegroundBrush}">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -48,112 +52,7 @@
 
                             <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="1"/>
                             <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
-                            <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding LinkIds.Length}" Value="0">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Grid>
-
-        <Grid VerticalAlignment="Stretch" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Text="Subcategorías" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
-
-            <ListBox 
-            x:Name="SubcategoryListBox"
-            Grid.Row="1"
-            Grid.IsSharedSizeScope="True"
-            SelectionMode="Extended"
-            Padding="2"
-            MaxWidth="350"
-            MaxHeight="250"
-            ItemsSource="{Binding SubcategoryList}"
-            Background="{StaticResource SecondaryBrush}"
-            Foreground="{StaticResource ForegroundBrush}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="1"/>
-                            <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
-                            <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding LinkIds.Length}" Value="0">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Grid>
-        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" Margin="0,0,10,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Text="Clases" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
-            <ListBox x:Name="ClassListBox"
-         Grid.Row="1"
-         Grid.IsSharedSizeScope="True"
-         SelectionMode="Single"
-         Padding="2"
-         MinWidth="250"
-         MaxHeight="300"
-         ItemsSource="{Binding ClassList}"
-         Background="{StaticResource SecondaryBrush}"
-         Foreground="{StaticResource ForegroundBrush}">
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="1"/>
-                            <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
-                            <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ClassStatesLinkIds.Length}" Value="0">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                            <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -163,22 +62,23 @@
         <Grid VerticalAlignment="Stretch" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Estados" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            <TextBlock Text="Subcategorías" HorizontalAlignment="Center" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
 
             <ListBox 
-    x:Name="StateListBox"
-    Grid.Row="1"
-    Grid.IsSharedSizeScope="True"
-    SelectionMode="Extended"
-    Padding="2"
-    MaxWidth="350"
-    MaxHeight="250"
-    ItemsSource="{Binding StateList}"
-    Background="{StaticResource SecondaryBrush}"
-    Foreground="{StaticResource ForegroundBrush}">
+                x:Name="SubcategoryListBox"
+                Grid.Row="1"
+                Grid.IsSharedSizeScope="True"
+                SelectionMode="Extended"
+                Padding="2"
+                MinWidth="350"
+                MaxHeight="300"
+                MinHeight="300"
+                ItemsSource="{Binding SubcategoryList}"
+                Background="{StaticResource SecondaryBrush}"
+                Foreground="{StaticResource ForegroundBrush}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -191,22 +91,98 @@
                             <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="1"/>
                             <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
                             <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left">
-                                <TextBlock.Style>
+                                <!--<TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Visible"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ClassStatesLinkIds.Length}" Value="0">
+                                            <DataTrigger Binding="{Binding LinkIds.Length}" Value="0">
                                                 <Setter Property="Visibility" Value="Hidden"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </TextBlock.Style>
+                                </TextBlock.Style>-->
                             </TextBlock>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <Button x:Name="ClassStatesLinkBtn" Content="🔗" Width="40" Height="40" FontSize="20" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonHighlightTextSecondary}" Click="ClassStatesLinkBtn_Click" Grid.Row="1"/>
+        
+        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Tipos/clases" HorizontalAlignment="Center" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            <ListBox x:Name="ClassListBox"
+                     Grid.Row="1"
+                     Grid.IsSharedSizeScope="True"
+                     SelectionMode="Single"
+                     Padding="2"
+                     MinWidth="350"
+                     MaxHeight="300"
+                     MinHeight="300"
+                     ItemsSource="{Binding ClassList}"
+                     Background="{StaticResource SecondaryBrush}"
+                     Foreground="{StaticResource ForegroundBrush}">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
+                            <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <Grid VerticalAlignment="Stretch" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Estados" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+
+            <ListBox 
+                x:Name="StateListBox"
+                Grid.Row="1"
+                Grid.IsSharedSizeScope="True"
+                SelectionMode="Extended"
+                Padding="2"
+                MinWidth="350"
+                MaxHeight="300"
+                MinHeight="300"
+                ItemsSource="{Binding StateList}"
+                Background="{StaticResource SecondaryBrush}"
+                Foreground="{StaticResource ForegroundBrush}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" SharedSizeGroup="NameColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ShorthandColumn"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Shorthand}" Grid.Column="2" Foreground="{StaticResource AccentForegroundBrush}"/>
+                            <TextBlock Text="{Binding LinkIds, StringFormat=🔗{0}}" FontSize="11" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" HorizontalAlignment="Left"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        
+        <Button x:Name="ClassStatesLinkBtn" Content="🔗" Width="40" Height="40" Margin="5,0" FontSize="20" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonHighlightTextSecondary}" Click="ClassStatesLinkBtn_Click" Grid.Row="2"/>
     </Grid>
 </UserControl>

@@ -19,13 +19,15 @@ namespace InventarioILS.Services
 
             try
             {
-                catSubcatId = await conn.QuerySingleOrDefaultAsync<int>(
-                    @"SELECT catSubcatId FROM CatSubcat
-                      WHERE categoryId = @CategoryId 
-                      AND subcategoryId = @SubcategoryId",
-                    new { item.CategoryId, item.SubcategoryId },
-                    transaction
-                ).ConfigureAwait(false);
+                //catSubcatId = await conn.QuerySingleOrDefaultAsync<int>(
+                //    @"SELECT catSubcatId FROM CatSubcat
+                //      WHERE categoryId = @CategoryId 
+                //      AND subcategoryId = @SubcategoryId",
+                //    new { item.CategoryId, item.SubcategoryId },
+                //    transaction
+                //);
+
+                catSubcatId = await ItemCategories.Instance.EnsureCatSubcatIdAsync(item.CategoryId, item.SubcategoryId, conn, transaction);
 
                 if (catSubcatId == default) // Si no se encontró el ID
                 {
@@ -37,6 +39,23 @@ namespace InventarioILS.Services
             {
                 throw new ApplicationException("Error al buscar CatSubcatId: " + ex.Message);
             }
+
+            //if (!string.IsNullOrEmpty(item.Class) && string.Equals(item.Class, "dispositivo", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    string queryMax = @"
+            //        SELECT MAX(CAST(SUBSTR(productCode, LENGTH(@BaseCode) + 2) AS INTEGER))
+            //        FROM Item
+            //        WHERE productCode LIKE @Pattern";
+
+            //    var maxSuffix = await conn.QuerySingleOrDefaultAsync<int?>(
+            //        queryMax,
+            //        new { BaseCode = item.ProductCode, Pattern = $"{item.ProductCode}-%" },
+            //        transaction);
+
+            //    // 2. Generamos el código con sufijo (ej: T-UT39-1)
+            //    int nextSuffix = (maxSuffix ?? 0) + 1;
+            //    item.ProductCode = $"{item.ProductCode}-{nextSuffix}";
+            //}
 
             string insertSql =
                 SQLUtils.IncludeLastRowIdInserted(
@@ -56,7 +75,7 @@ namespace InventarioILS.Services
                 insertSql,
                 parameters,
                 transaction
-            ).ConfigureAwait(false);
+            );
 
             return rowId;
         }

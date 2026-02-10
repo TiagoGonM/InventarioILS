@@ -73,7 +73,6 @@ namespace InventarioILS.Model.Storage
                 item.Name
             }).ConfigureAwait(false);
 
-            await LoadAsync();
             return rowid;
         }
 

@@ -8,8 +8,16 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel>
-            <Button x:Name="ImportDataBtn" Content="Importar datos desde CSV" MinHeight="35" HorizontalAlignment="Left" Click="ImportDataBtn_Click"  Margin="5" Style="{StaticResource RoundedButtonPrimary}" />
-            
+            <Button x:Name="ImportDataBtn" Content="Importar datos desde CSV" MinHeight="35" MinWidth="170" FontWeight="Bold" Foreground="{StaticResource BackgroundBrush}" HorizontalAlignment="Left" Click="ImportDataBtn_Click" Margin="5" Style="{StaticResource RoundedButtonPrimary}" />
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Button Content="Crear categoría" Margin="5,0" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" MinHeight="35" FontWeight="Bold" MinWidth="100" Click="CreateCategory_Click"/>
+                <Button Content="Crear subcategoría" Margin="5,0" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" MinHeight="35" FontWeight="Bold" MinWidth="120" Click="CreateSubcategory_Click"/>
+                <Button Content="Crear clase/tipo" Margin="5,0" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" MinHeight="35" FontWeight="Bold" MinWidth="100" Click="CreateClass_Click"/>
+                <Button Content="Crear estado de item" Margin="5,0" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" MinHeight="35" FontWeight="Bold" MinWidth="130" Click="CreateState_Click"/>
+                <Button Content="Crear estado de envío" Margin="5,0" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" MinHeight="35" FontWeight="Bold" MinWidth="140" Click="CreateShipmentState_Click"/>
+
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

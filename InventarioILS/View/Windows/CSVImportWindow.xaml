@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventarioILS.View.Windows"
         mc:Ignorable="d"
-        Title="Importación de datos" Background="{StaticResource BackgroundBrush}" Height="1020" Width="1040">
+        Title="Importación de datos" Background="{StaticResource BackgroundBrush}" Height="880" MinHeight="850" Width="1040">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
