@@ -26,14 +26,23 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="TitleLabel" 
-                               Text="{Binding Title, ElementName=orderCard, FallbackValue=Pedido #N}"
-                               FontWeight="Bold" FontSize="16" Foreground="White"/>
-                    <TextBlock x:Name="CreationDateLabel" 
-                               Text="{Binding CreationDate, ElementName=orderCard, StringFormat=dd/MM/yyyy, FallbackValue=--/--/----}" 
-                               Foreground="#A1A1A1" FontSize="12" VerticalAlignment="Center" Margin="5,0"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Column="0">
+                        <TextBlock x:Name="TitleLabel" 
+                                   Text="{Binding Title, ElementName=orderCard, FallbackValue=Pedido #N}"
+                                   FontWeight="Bold" FontSize="16" Foreground="White"/>
+                        <TextBlock x:Name="CreationDateLabel" 
+                                   Text="{Binding CreationDate, ElementName=orderCard, StringFormat=dd/MM/yyyy, FallbackValue=--/--/----}" 
+                                   Foreground="#A1A1A1" FontSize="12" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="isDoneLabel" Text="Completado" Visibility="Collapsed" Grid.Column="1" VerticalAlignment="Center" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Right"/>
+                </Grid>
+
                 <TextBlock x:Name="DescriptionLabel" 
                            Text="{Binding Description, ElementName=orderCard, FallbackValue=descripcion}" 
                            Foreground="#BFBFBF" TextWrapping="Wrap"/>

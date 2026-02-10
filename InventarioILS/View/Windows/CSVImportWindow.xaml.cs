@@ -16,7 +16,6 @@ namespace InventarioILS.View.Windows
 {
     public interface IWizardStep
     {
-        //DataResponse GetData();
         bool Validate();
     }
 
@@ -38,7 +37,7 @@ namespace InventarioILS.View.Windows
         public WizardSteps CurrentStep => (WizardSteps)_currentStepInd;
         private uint _currentStepInd = 0;
 
-        static DataResponse Data { get; set; }
+        DataResponse Data { get; set; }
 
         public CSVImportWindow()
         {
@@ -63,6 +62,7 @@ namespace InventarioILS.View.Windows
                 case WizardSteps.STEP3:
                     CurrentControl = new ImportPreview(Data);
                     SubmitBtn.IsEnabled = true;
+                    NextPageBtn.IsEnabled = false;
                     break;
             }
 
@@ -121,36 +121,11 @@ namespace InventarioILS.View.Windows
 
         private async void SubmitBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentControl is ImportPreview control)
+            if (CurrentControl is ImportPreview)
             {
-                foreach (var itemDraft in Data.Records)
-                {
-                    MessageBox.Show(
-                        $"Item: {itemDraft.ProductCode}\n" +
-                        $"Categoría: {itemDraft.CategoryRef?.Name ?? "null"} : {itemDraft.CategoryRef?.Shorthand ?? "null"}\n" +
-                        $"Subcategoría: {itemDraft.SubcategoryRef?.Name ?? "null"} : {itemDraft.SubcategoryRef?.Shorthand ?? "null"}\n" +
-                        $"Clase: {itemDraft.ClassRef?.Name ?? "null"} : {itemDraft.ClassRef?.Shorthand ?? "null"}\n" +
-                        $"Estado: {itemDraft.StateRef?.Name ?? "null"} : {itemDraft.StateRef?.Shorthand ?? "null"}");
+                await SaveDataAsync(Data);
 
-                    //var newItem = new StockItem
-                    //{
-                    //    Name = itemDraft.Source.Name,
-                    //    Description = itemDraft.Source.Description,
-                    //    Quantity = itemDraft.Source.Quantity,
-                    //    Category = itemDraft.CategoryRef,
-                    //    Subcategory = itemDraft.SubcategoryRef,
-                    //    Location = itemDraft.Source.Location,
-                    //    State = itemDraft.Source.State,
-                    //    Class = itemDraft.Source.Class,
-                    //};
-
-                    break;
-                }
-
-                //await StockItems.Instance.AddRangeAsync(items);
-
-                //MessageBox.Show("Importación finalizada con éxito");
-                //Close();
+                Close();
             }
         }
 
@@ -165,22 +140,6 @@ namespace InventarioILS.View.Windows
             //    MessageBox.Show("Debes asignarle una abreviatura a todas las categorías");
             //    return;
             //}
-
-            // 2. Tomamos el primer registro como muestra
-            var sample = Data.Records.FirstOrDefault();
-            if (sample != null)
-            {
-                // Buscamos manualmente si el nombre existe en la lista de categorías
-                var categoryInList = Data.CategoryRecords.FirstOrDefault(c => c.Name == sample.Source.Category);
-
-                // EL MOMENTO DE LA VERDAD:
-                bool sonElMismoObjeto = Object.ReferenceEquals(sample.CategoryRef, categoryInList);
-
-                MessageBox.Show(
-                    $"¿CategoryRef es null?: {sample.CategoryRef == null}\n" +
-                    $"¿Existe en la lista maestra?: {categoryInList != null}\n" +
-                    $"¿Son la misma instancia de memoria?: {sonElMismoObjeto}");
-            }
 
             Next();
             SetWindow();

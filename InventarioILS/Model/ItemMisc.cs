@@ -4,11 +4,20 @@ using System.ComponentModel;
 
 namespace InventarioILS.Model
 {
+    public enum MiscType
+    {
+        Category,
+        Subcategory,
+        Class,
+        State
+    }
+
     public class ItemMisc : IIdentifiable
     {
         public uint Id { get; set; }
         public string Name { get; set; }
         public string Shorthand { get; set; }
+        public MiscType Type { get; set; }
 
         public ItemMisc() { }
         public ItemMisc(string name, string shorthand = null)

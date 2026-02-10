@@ -18,6 +18,8 @@ namespace InventarioILS.View.UserControls.ImportWizard
         public VisualItemMisc SelectedCategory => (VisualItemMisc)CategoryListBox.SelectedItem;
         public VisualItemMisc SelectedSubcategory => (VisualItemMisc)SubcategoryListBox.SelectedItem;
 
+        DataResponse _data;
+
         public SetShorthands()
         {
             InitializeComponent();
@@ -25,6 +27,7 @@ namespace InventarioILS.View.UserControls.ImportWizard
 
         public SetShorthands(DataResponse data) : this()
         {
+            _data = data;
 
             CategoryList = data.CategoryRecords.Select(cat => new VisualItemMisc(cat)).ToObservableCollection();
             SubcategoryList = data.SubcategoryRecords.Select(subcat => new VisualItemMisc(subcat)).ToObservableCollection();
@@ -68,19 +71,31 @@ namespace InventarioILS.View.UserControls.ImportWizard
 
         public bool Validate()
         {
-            //if (!CategoryList.All(c => !string.IsNullOrWhiteSpace(c.Shorthand)))
-            //{
-            //    result = null;
-            //    return false;
-            //}
-
-            foreach (var subcategory in SubcategoryList)
-            {
-                uint newId = ItemSubCategories.Instance.Add(subcategory.Model);
-                subcategory.Id = newId;
-            }
+            if (!CategoryList.All(c => !string.IsNullOrWhiteSpace(c.Shorthand)))
+                return false;
             
             return true;
+        }
+
+        private void CategoryShorthandInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (CategoryList.Any(cat => cat.Shorthand == CategoryShorthandInput.Text) || ItemCategories.Instance.Items.Any(cat => cat.Shorthand == CategoryShorthandInput.Text))
+            {
+                CategoryShorthandSubmitBtn.IsEnabled = false;
+                return;
+            }
+            CategoryShorthandSubmitBtn.IsEnabled = true;
+        }
+
+        private void SubcategoryShorthandInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (SubcategoryList.Any(subcat => subcat.Shorthand == SubcategoryShorthandInput.Text) 
+                || ItemSubcategories.Instance.Items.Any(subcat => subcat.Shorthand == SubcategoryShorthandInput.Text))
+            {
+                SubcategoryShorthandSubmitBtn.IsEnabled = false;
+                return;
+            }
+            SubcategoryShorthandSubmitBtn.IsEnabled = true;
         }
     }
 }

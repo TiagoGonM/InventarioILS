@@ -12,7 +12,7 @@ namespace InventarioILS.View.UserControls
     public partial class OrderItemForm : UserControl, IDisposable
     {
         readonly ItemCategories categoryStorage = ItemCategories.Instance;
-        readonly ItemSubCategories subcategoryStorage = ItemSubCategories.Instance;
+        readonly ItemSubcategories subcategoryStorage = ItemSubcategories.Instance;
         readonly ItemClasses classStorage = ItemClasses.Instance;
 
         string codeMain = "";

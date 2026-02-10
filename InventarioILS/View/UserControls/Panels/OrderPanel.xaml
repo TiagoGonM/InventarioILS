@@ -33,12 +33,13 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="local:OrderCard">
                             <local:OrderCard MinWidth="500" Title="{Binding Name}"
-                                    CreationDate="{Binding CreatedAt}"
-                                    Description="{Binding Description}"
-                                    Tag="{Binding Id}"
-                                    Cursor="Hand"
-                                    FocusVisualStyle="{x:Null}"
-                                    Margin="5,0" MouseDoubleClick="OrderCard_MouseDoubleClick"/>
+                                             CreationDate="{Binding CreatedAt}"
+                                             Description="{Binding Description}"
+                                             Tag="{Binding Id}"
+                                             Done="{Binding Done}"
+                                             Cursor="Hand"
+                                             FocusVisualStyle="{x:Null}"
+                                             Margin="5,0" MouseDoubleClick="OrderCard_MouseDoubleClick"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

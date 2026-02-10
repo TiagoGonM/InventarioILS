@@ -17,7 +17,7 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Abreviatura" Foreground="{StaticResource AccentForegroundBrush}"/>
-                <TextBox x:Name="CategoryShorthandInput" CharacterCasing="Upper" Margin="0,4,0,8" MaxLength="4" MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="CategoryShorthandInput_TextChanged"/>
+                <TextBox x:Name="CategoryShorthandInput" CharacterCasing="Upper" Margin="0,4,0,8"  MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="CategoryShorthandInput_TextChanged"/>
                 <TextBlock x:Name="CategoryShorthandErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">La abreviatura ya existe.</TextBlock>
             </StackPanel>
         </StackPanel>

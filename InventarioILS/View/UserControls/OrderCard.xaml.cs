@@ -16,6 +16,7 @@ namespace InventarioILS.View.UserControls
             Title = title;
             CreationDate = creationDate;
             Description = description;
+            Done = false;
         }
 
         public static readonly DependencyProperty TitleProperty =
@@ -29,6 +30,10 @@ namespace InventarioILS.View.UserControls
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register("Description", typeof(string), typeof(OrderCard),
                 new PropertyMetadata(string.Empty, OnDescriptionChanged));
+
+        public static readonly DependencyProperty DoneProperty =
+            DependencyProperty.Register("Done", typeof(bool), typeof(OrderCard),
+                new PropertyMetadata(false, OnDoneChanged));
 
         public string Title
         {
@@ -48,6 +53,12 @@ namespace InventarioILS.View.UserControls
             set => SetValue(DescriptionProperty, value);
         }
 
+        public bool Done
+        {
+            get => (bool)GetValue(DoneProperty);
+            set => SetValue(DoneProperty, value);
+        }
+
         private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (OrderCard)d;
@@ -64,6 +75,13 @@ namespace InventarioILS.View.UserControls
         {
             var control = (OrderCard)d;
             control.DescriptionLabel.Text = e.NewValue.ToString();
+        }
+
+        private static void OnDoneChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (OrderCard)d;
+            bool isDone = (bool)e.NewValue;
+            control.isDoneLabel.Visibility = isDone ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

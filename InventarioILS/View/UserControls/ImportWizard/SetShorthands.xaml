@@ -13,24 +13,26 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        
-        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
+
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,30" Text="Debe asignar una abreviatura a todas las categorías para continuar (las abreviaturas para las subcategorias son opcionales)." Foreground="{StaticResource ForegroundBrush}"/>
+        <Grid VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" Margin="0,0,10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Categorías" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            <TextBlock Text="Categorías*" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
             <ListBox x:Name="CategoryListBox"
                      Grid.Row="1"
                      Grid.IsSharedSizeScope="True"
                      SelectionMode="Single"
                      Padding="2"
                      MinWidth="350"
-                     MaxHeight="200"
+                     MaxHeight="1000"
                      ItemsSource="{Binding CategoryList}"
                      SelectionChanged="CategoryListBox_SelectionChanged"
                      Background="{StaticResource SecondaryBrush}"
@@ -52,21 +54,21 @@
             </ListBox>
         </Grid>
 
-        <StackPanel x:Name="CategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="1" Grid.Column="0">
-            <TextBlock Text="Nueva shorthand" Foreground="{StaticResource AccentForegroundBrush}"/>
+        <StackPanel x:Name="CategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="2" Grid.Column="0">
+            <TextBlock Text="Nueva shorthand*" Foreground="{StaticResource AccentForegroundBrush}"/>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                <TextBox x:Name="CategoryShorthandInput" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}" MaxLength="4" Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
-                <Button Style="{StaticResource RoundedButtonHighlightTextPrimary}" Click="CategoryShorthandSubmitBtn_Click" Content="✔️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28"/>
+                <TextBox x:Name="CategoryShorthandInput" TextChanged="CategoryShorthandInput_TextChanged" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}" Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
+                <Button x:Name="CategoryShorthandSubmitBtn" Style="{StaticResource RoundedButtonHighlightTextPrimary}" Click="CategoryShorthandSubmitBtn_Click" Content="✔️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28"/>
             </StackPanel>
         </StackPanel>
 
-        <Grid VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+        <Grid VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Subcategorías" Grid.Row="0" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
+            <TextBlock Text="Subcategorías" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource ForegroundBrush}" Margin="0,0,0,5"/>
             
             <ListBox 
                 x:Name="SubcategoryListBox"
@@ -74,8 +76,8 @@
                 Grid.IsSharedSizeScope="True"
                 SelectionMode="Single"
                 Padding="2"
-                MaxWidth="350"
-                MaxHeight="250"
+                MinWidth="350"
+                MaxHeight="1000"
                 ItemsSource="{Binding SubcategoryList}"
                 SelectionChanged="SubcategoryListBox_SelectionChanged"
                 Background="{StaticResource SecondaryBrush}"
@@ -96,11 +98,11 @@
             </ListBox>
         </Grid>
 
-        <StackPanel x:Name="SubcategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="1" Grid.Column="1">
+        <StackPanel x:Name="SubcategoryShorthandForm" Visibility="Collapsed" d:Visibility="Visible" Grid.Row="2" Grid.Column="1">
             <TextBlock Text="Nueva shorthand" Foreground="{StaticResource AccentForegroundBrush}"/>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                <TextBox x:Name="SubcategoryShorthandInput" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}" MaxLength="4" Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
-                <Button Style="{StaticResource RoundedButtonHighlightTextPrimary}" Click="SubcategoryShorthandSubmitBtn_Click" Content="✔️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28"/>
+                <TextBox x:Name="SubcategoryShorthandInput" TextChanged="SubcategoryShorthandInput_TextChanged" CharacterCasing="Upper" Foreground="{StaticResource ForegroundBrush}"  Style="{StaticResource RoundedInput}" MinHeight="28" MinWidth="100" Margin="0,0,5,0"/>
+                <Button x:Name="SubcategoryShorthandSubmitBtn" Style="{StaticResource RoundedButtonHighlightTextPrimary}" Click="SubcategoryShorthandSubmitBtn_Click" Content="✔️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Width="28" Height="28"/>
             </StackPanel>
         </StackPanel>
     </Grid>

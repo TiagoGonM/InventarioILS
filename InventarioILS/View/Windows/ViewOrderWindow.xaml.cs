@@ -12,8 +12,8 @@ namespace InventarioILS.View.Windows
 {
     public partial class ViewOrderWindow : Window, IDisposable
     {
-        readonly ShipmentStates shipmentStates = ShipmentStates.Instance;
-        readonly OrderItems orderItems = OrderItems.Instance;
+        static readonly ShipmentStates shipmentStates = ShipmentStates.Instance;
+        static readonly OrderItems orderItems = OrderItems.Instance;
         Order currentOrder;
         
         readonly ObservableCollection<OrderItem> receivedItems = [];
@@ -26,29 +26,24 @@ namespace InventarioILS.View.Windows
             Closed += ViewOrderWindow_Closed;
         }
 
-        //public ObservableCollection<ItemMisc> ShipmentStateList => 
-        //    shipmentStates.Items.Where(it => !string.Equals("recibido", it.Name, StringComparison.OrdinalIgnoreCase));
-
         public static async Task<ViewOrderWindow> CreateAsync(Order order)
         {
             ViewOrderWindow window = new();
-            await window.orderItems.LoadSingleAsync(order.Id);
-            await window.shipmentStates.LoadAsync();
+            await orderItems.LoadSingleAsync(order.Id);
+            await shipmentStates.LoadAsync();
 
             window.currentOrder = order;
 
-            //foreach (var item in window.orderItems.Items)
-            //{
-            //    item.LocalReceived = item.ShipmentStateId == window.shipmentStates.GetStateId("recibido");
-            //}
+            if (orderItems.Items.All(item => item.Received == true)) 
+                await Orders.Instance.MarkAsDoneAsync(order.Id);
 
             window.DataContext = new
             {
                 OrderName = order.Name,
                 OrderDescription = order.Description,
                 OrderCreationDate = order.CreatedAt.ToString("dd/MM/yyyy"),
-                ShipmentStateList = window.shipmentStates.Items,
-                window.orderItems.Items
+                ShipmentStateList = shipmentStates.Items,
+                orderItems.Items
             };
 
             return window;

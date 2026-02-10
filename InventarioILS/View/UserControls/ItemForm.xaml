@@ -37,14 +37,14 @@
                         <CheckBox x:Name="ExtraValueCheckbox" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,13,10,0" Checked="ExtraValueCheckbox_Checked" Unchecked="ExtraValueCheckbox_Unchecked"/>
                         <StackPanel Grid.Column="1">
                             <TextBlock x:Name="ExtraValueLabel" Text="Modelo/valor" Foreground="Gray"/>
-                            <TextBox x:Name="ExtraValueInput" IsEnabled="False" MaxLength="12" Margin="0,4,0,8" MinHeight="28" MinWidth="120" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold" TextChanged="ExtraValueInput_TextChanged"/>
+                            <TextBox x:Name="ExtraValueInput" IsEnabled="False" Margin="0,4,0,8" MinHeight="28" MinWidth="120" Style="{StaticResource RoundedInput}" TextWrapping="Wrap" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Foreground="{StaticResource ForegroundBrush}" FontWeight="Bold" TextChanged="ExtraValueInput_TextChanged"/>
                         </StackPanel>
                     </Grid>
                 </WrapPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2">
-                    <Button x:Name="ConfirmBtn" Content="Agregar elemento" IsEnabled="False" Margin="0,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
-                    <Button x:Name="DummyBtn" Content="Agregar dummy" Margin="10,16,0,0" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="DummyBtn_Click"/>
+                    <Button x:Name="ConfirmBtn" Content="Agregar elemento" IsEnabled="False" Margin="0,16,0,0" FontWeight="Bold" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="ConfirmBtn_Click"/>
+                    <!--<Button x:Name="DummyBtn" Content="Agregar dummy" Margin="10,16,0,0" FontWeight="Bold" Height="32" Width="150" HorizontalAlignment="Center" Style="{StaticResource RoundedButtonPrimary}" Click="DummyBtn_Click"/>-->
                 </StackPanel>
             </Grid>
             <StackPanel Grid.Row="1" Grid.Column="1" Margin="16,0,16,0" HorizontalAlignment="Stretch">

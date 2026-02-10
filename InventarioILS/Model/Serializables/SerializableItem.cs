@@ -43,7 +43,5 @@ namespace InventarioILS.Model.Serializables
             "Localización", "localización", "Localizacion", "localizacion",
             "Location", "location"])]
         public string Location { get; set; }
-
-        public StockItem ToStockItem() => new StockItem {  };
     }
 }

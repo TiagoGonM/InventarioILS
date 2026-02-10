@@ -2,6 +2,7 @@
 using InventarioILS.Model;
 using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Data;
 using System.Linq;
@@ -21,9 +22,9 @@ namespace InventarioILS.Services
                 catSubcatId = await conn.QuerySingleOrDefaultAsync<int>(
                     @"SELECT catSubcatId FROM CatSubcat
                       WHERE categoryId = @CategoryId 
-                      AND subcategoryId = @SubcategoryId COLLATE NOCASE",
+                      AND subcategoryId = @SubcategoryId",
                     new { item.CategoryId, item.SubcategoryId },
-                    transaction: transaction
+                    transaction
                 ).ConfigureAwait(false);
 
                 if (catSubcatId == default) // Si no se encontró el ID
@@ -32,7 +33,7 @@ namespace InventarioILS.Services
                         $"No se encontró CatSubcatId para CategoryId: {item.CategoryId}, SubcategoryId: {item.SubcategoryId}");
                 }
             }
-            catch (Exception ex)
+            catch (SqliteException ex)
             {
                 throw new ApplicationException("Error al buscar CatSubcatId: " + ex.Message);
             }
@@ -54,7 +55,7 @@ namespace InventarioILS.Services
             uint rowId = await conn.ExecuteScalarAsync<uint>(
                 insertSql,
                 parameters,
-                transaction: transaction
+                transaction
             ).ConfigureAwait(false);
 
             return rowId;

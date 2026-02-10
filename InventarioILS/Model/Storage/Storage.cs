@@ -66,30 +66,68 @@ namespace InventarioILS.Model.Storage
 
         protected void UpdateItems(ObservableCollection<T> collection)
         {
-            var existingItemsMap = Items.ToDictionary(item => item.Id, item => item);
+            // 1. Creamos el mapa ignorando duplicados (o quedándonos con el último)
+            // Esto agiliza la búsqueda sin riesgo de "Duplicate Key Exception"
+            var existingItemsMap = new Dictionary<uint, T>();
+            foreach (var item in Items)
+            {
+                existingItemsMap[item.Id] = item; // Si el ID se repite, simplemente se sobreescribe
+            }
 
+            // 2. IDs de la nueva colección para saaber qué borrar
             var newIds = new HashSet<uint>(collection.Select(item => (uint)item.Id));
 
+            // 3. Eliminación eficiente (de atrás hacia adelante)
             for (int i = Items.Count - 1; i >= 0; i--)
             {
-                var existingItem = Items[i];
-
-                if (!newIds.Contains((uint)existingItem.Id))
+                if (!newIds.Contains((uint)Items[i].Id))
                 {
-                    Items.RemoveAt(i); // RemoveAt es más eficiente que Items.Remove(item)
+                    Items.RemoveAt(i);
                 }
             }
 
+            // 4. Actualización o Inserción
             foreach (var newItem in collection)
             {
                 if (existingItemsMap.TryGetValue(newItem.Id, out T existingItem))
                 {
+                    // Opcional: Si el objeto es exactamente la misma instancia, 
+                    // no hace falta remover y agregar.
+                    if (ReferenceEquals(existingItem, newItem)) continue;
+
                     Items.Remove(existingItem);
                 }
-                
+
                 Items.Add(newItem);
             }
         }
+
+        //protected void UpdateItems(ObservableCollection<T> collection)
+        //{
+        //    var existingItemsMap = Items.ToDictionary(item => item.Id, item => item); // FIXME
+
+        //    var newIds = new HashSet<uint>(collection.Select(item => (uint)item.Id));
+
+        //    for (int i = Items.Count - 1; i >= 0; i--)
+        //    {
+        //        var existingItem = Items[i];
+
+        //        if (!newIds.Contains((uint)existingItem.Id))
+        //        {
+        //            Items.RemoveAt(i); // RemoveAt es más eficiente que Items.Remove(item)
+        //        }
+        //    }
+
+        //    foreach (var newItem in collection)
+        //    {
+        //        if (existingItemsMap.TryGetValue(newItem.Id, out T existingItem))
+        //        {
+        //            Items.Remove(existingItem);
+        //        }
+                
+        //        Items.Add(newItem);
+        //    }
+        //}
 
         protected async Task UpdateItemsAsync(ObservableCollection<T> collection)
         {

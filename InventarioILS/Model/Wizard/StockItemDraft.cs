@@ -1,11 +1,6 @@
 ﻿using InventarioILS.Model.Serializables;
 using InventarioILS.Services;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Wizard
 {
@@ -26,6 +21,10 @@ namespace InventarioILS.Model.Wizard
         {
             Source = source;
         }
+
+        public StockItem ToStockItem() => new(this);
+
+        public bool IsDevice => string.Equals(ClassRef.Name, "dispositivo", System.StringComparison.OrdinalIgnoreCase);
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

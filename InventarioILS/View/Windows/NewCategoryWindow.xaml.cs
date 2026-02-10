@@ -10,7 +10,7 @@ namespace InventarioILS.View.Windows
 {
     public partial class NewCategoryWindow : Window
     {
-        readonly ItemSubCategories subcategories = ItemSubCategories.Instance;
+        readonly ItemSubcategories subcategories = ItemSubcategories.Instance;
         readonly ItemCategories categories = ItemCategories.Instance;
 
         public NewCategoryWindow()
@@ -28,7 +28,7 @@ namespace InventarioILS.View.Windows
             var selectedIds = LinkedSubcategoriesComboBox.SelectedItems.Cast<ItemMisc>().Select(subcat => subcat.Id).ToHashSet();
             var newCategory = new ItemMisc(CategoryNameInput.Text.ToLower(), CategoryShorthandInput.Text);
 
-            await CategoryService.RegisterCategoryAsync(newCategory, selectedIds).ConfigureAwait(false);
+            await CategoryService.RegisterCategoryAsync(newCategory, selectedIds, DbConnection.CreateAndOpen().BeginTransaction()).ConfigureAwait(false);
 
             Close();
         }

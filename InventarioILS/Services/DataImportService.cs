@@ -4,14 +4,15 @@ using InventarioILS.Model;
 using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
 using InventarioILS.Model.Wizard;
-using System;
+using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace InventarioILS.Services
 {
@@ -23,6 +24,8 @@ namespace InventarioILS.Services
             public List<ItemMisc> SubcategoryRecords { get; set; }
             public List<ItemMisc> ClassRecords { get; set; }
             public List<ItemMisc> StateRecords { get; set; }
+
+            public Map<ItemMisc, ItemMisc[]> LinkMap { get; set; } = [];
 
             public DataResponse(
                 List<StockItemDraft> records,
@@ -87,22 +90,73 @@ namespace InventarioILS.Services
             );
         }
 
-        public static async void SaveData(DataResponse model) 
+        readonly static ItemSubcategories subcategoryStorage = ItemSubcategories.Instance;
+
+        readonly static ItemClasses classStorage = ItemClasses.Instance;
+        readonly static ItemStates stateStorage = ItemStates.Instance;
+
+        async static Task CreateCategoriesAsync(KeyValuePair<ItemMisc, ItemMisc[]> link, IDbTransaction transaction)
+        {
+            var elements = link.Value;
+
+            foreach (var subcategory in elements)
+            {
+                var newId = await subcategoryStorage.AddAsync(subcategory, transaction);
+                subcategory.Id = newId;
+            }
+
+            var catId = await CategoryService.RegisterCategoryAsync(link.Key, elements.Select(subcat => subcat.Id), transaction);
+            link.Key.Id = catId;
+        }
+
+        async static Task CreateClassesAsync(KeyValuePair<ItemMisc, ItemMisc[]> link, IDbTransaction transaction)
+        {
+            var elements = link.Value;
+
+            var newClassId = await classStorage.AddAsync(link.Key, transaction);
+            link.Key.Id = newClassId;
+
+            foreach (var @class in elements)
+            {
+                var newStateId = await stateStorage.AddAsync(@class, newClassId, transaction);
+                @class.Id = newStateId;
+            }
+        }
+
+        public static async Task SaveDataAsync(DataResponse model)
         {
             // 1. Crear y guardar categorias, subcategorias, clases y estados en la BD
             // 2. Crear y guardar los items en la BD
 
             if (model == null) return;
 
-            var classStorage = ItemClasses.Instance;
-            var stateStorage = ItemStates.Instance;
+            using var initialConn = await DbConnection.CreateAndOpenAsync();
+            var transaction = initialConn.BeginTransaction();
 
-            //CategoryService.RegisterCategoryAsync();
+            try
+            {
+                foreach (var link in model.LinkMap)
+                {
+                    switch (link.Key.Type)
+                    {
+                        case MiscType.Category:
+                            await CreateCategoriesAsync(link, transaction).ConfigureAwait(false);
+                            break;
 
-            //foreach (var draft in model.Records)
-            //{
-            //    var item = new StockItem(...);
-            //}
+                        case MiscType.Class:
+                            await CreateClassesAsync(link, transaction).ConfigureAwait(false);
+                            break;
+                    }
+                }
+
+                await StockItems.Instance.AddRangeAsync(model.Records.Select(draft => draft.ToStockItem()), transaction);
+            }
+            catch (SqliteException)
+            {
+                transaction.Rollback();
+                throw;
+            }
+            transaction.Commit();
         }
     }
 }

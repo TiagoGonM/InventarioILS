@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 using InventarioILS.Model;
 using InventarioILS.Model.Storage;
@@ -20,7 +19,7 @@ namespace InventarioILS.View.UserControls
             
             DataContext = new
             {
-                Count = orders.Items.Count,
+                orders.Items.Count,
                 OrderList = orders.Items
             };
         }

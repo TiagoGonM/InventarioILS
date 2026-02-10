@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,14 +21,36 @@ namespace InventarioILS.Model.Storage
             throw new NotImplementedException();
         }
 
-        public async Task AddAsync(ItemMisc item, uint classId)
+        public async Task<uint> AddAsync(ItemMisc item, uint classId)
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
-            string query = @"INSERT INTO State (name, classId) VALUES (@Name, @ClassId)";
+            string query = @"INSERT INTO State (name, classId) VALUES (@Name, @ClassId) ON CONFLICT DO NOTHING";
             await conn.ExecuteAsync(query, new { item.Name, ClassId = classId }).ConfigureAwait(false);
-            
+
+            uint rowid = await conn.ExecuteScalarAsync<uint>("SELECT stateId FROM State WHERE name = @Name COLLATE NOCASE", new
+            {
+                item.Name
+            }).ConfigureAwait(false);
+
             await LoadAsync();
+            return rowid;
+        }
+
+        public async Task<uint> AddAsync(ItemMisc item, uint classId, IDbTransaction transaction)
+        {
+            var conn = transaction.Connection;
+
+            string query = @"INSERT INTO State (name, classId) VALUES (@Name, @ClassId) ON CONFLICT DO NOTHING";
+            await conn.ExecuteAsync(query, new { item.Name, ClassId = classId }, transaction).ConfigureAwait(false);
+
+            uint rowid = await conn.ExecuteScalarAsync<uint>("SELECT stateId FROM State WHERE name = @Name COLLATE NOCASE", new
+            {
+                item.Name
+            }).ConfigureAwait(false);
+
+            await LoadAsync();
+            return rowid;
         }
 
         public void Load(uint classId = 0)

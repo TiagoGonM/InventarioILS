@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `Order` (
   `orderId` INTEGER PRIMARY KEY,
   `name` TEXT,
   `description` TEXT,
+  `done` INTEGER NOT NULL DEFAULT 0,
   `createdAt` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP),
   `updatedAt` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP)
 );
@@ -212,6 +213,15 @@ WHERE it.isDeleted = 1
         AND currentIt.isDeleted = 0
   )
 GROUP BY it.productCode;
+
+CREATE VIEW IF NOT EXISTS View_ShowCompletedOrders AS 
+	SELECT
+		o.orderId id, 
+		o.name, 
+		o.description, 
+		o.done, 
+		o.createdAt 
+	FROM 'Order' o WHERE o.done = 1;
 
 -- Datos iniciales
 

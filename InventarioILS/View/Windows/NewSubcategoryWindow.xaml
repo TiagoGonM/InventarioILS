@@ -16,7 +16,7 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Abreviatura" Foreground="{StaticResource AccentForegroundBrush}"/>
-                <TextBox x:Name="SubcategoryShorthandInput" Margin="0,4,0,8" MaxLength="4" MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="SubcategoryShorthandInput_TextChanged"/>
+                <TextBox x:Name="SubcategoryShorthandInput" Margin="0,4,0,8"  MinWidth="100" MinHeight="28" Style="{StaticResource RoundedInput}" Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" TextChanged="SubcategoryShorthandInput_TextChanged"/>
                 <TextBlock x:Name="SubcategoryShorthandErrorText" Foreground="PaleVioletRed" FontSize="12" Visibility="Collapsed">El nombre de la categoría ya existe.</TextBlock>
             </StackPanel>
         </StackPanel>

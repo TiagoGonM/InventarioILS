@@ -31,7 +31,7 @@
         <Grid Grid.Row="1" Margin="16,0,16,12" Background="{StaticResource SecondaryBrush}">
             <StackPanel Margin="5" Grid.Row="1">
                 <TextBlock Text="Descripción" Margin="0,0,0,4" Foreground="{StaticResource AccentForegroundBrush}"/>
-                <TextBlock Text="{Binding OrderDescription, Mode=OneWay, FallbackValue=test}" Foreground="{StaticResource ForegroundBrush}"/>
+                <TextBlock Text="{Binding OrderDescription, Mode=OneWay}" Foreground="{StaticResource ForegroundBrush}"/>
             </StackPanel>
             
         </Grid>

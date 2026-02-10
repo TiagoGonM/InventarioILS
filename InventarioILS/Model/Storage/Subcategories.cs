@@ -1,16 +1,17 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace InventarioILS.Model.Storage
 {
-    public class ItemSubCategories : SingletonStorage<ItemMisc, ItemSubCategories>
+    public class ItemSubcategories : SingletonStorage<ItemMisc, ItemSubcategories>
     {
         uint filterById = 0;
 
-        public ItemSubCategories()
+        public ItemSubcategories()
         {
             Load();
         }
@@ -22,7 +23,7 @@ namespace InventarioILS.Model.Storage
 
             if (string.IsNullOrWhiteSpace(item.Shorthand)) item.Shorthand = null;
 
-            conn.Execute(SQLUtils.IncludeLastRowIdInserted(addQuery), new
+            conn.Execute(addQuery, new
             {
                 Name = item.Name.ToLower(),
                 item.Shorthand
@@ -40,7 +41,7 @@ namespace InventarioILS.Model.Storage
 
             if (string.IsNullOrEmpty(item.Shorthand)) item.Shorthand = null;
             
-            await conn.ExecuteAsync(SQLUtils.IncludeLastRowIdInserted(addQuery), new
+            await conn.ExecuteAsync(addQuery, new
             {
                 Name = item.Name.ToLower(),
                 item.Shorthand
@@ -53,6 +54,53 @@ namespace InventarioILS.Model.Storage
 
             await LoadAsync();
             return rowid;
+        }
+
+        public async Task<uint> AddAsync(ItemMisc item, IDbTransaction transaction)
+        {
+            var conn = transaction.Connection;
+
+            if (string.IsNullOrEmpty(item.Shorthand)) item.Shorthand = null;
+
+            await conn.ExecuteAsync(addQuery, new
+            {
+                Name = item.Name.ToLower(),
+                item.Shorthand
+            }, transaction).ConfigureAwait(false);
+
+            uint rowid = await conn.ExecuteScalarAsync<uint>("SELECT subcategoryId FROM Subcategory WHERE name = @Name COLLATE NOCASE", new
+            {
+                item.Name
+            }).ConfigureAwait(false);
+
+            await LoadAsync();
+            return rowid;
+        }
+
+        public async Task AddRangeAsync(ItemMisc[] items)
+        {
+            using var conn = await CreateConnectionAsync();
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                foreach (var item in items)
+                {
+                    if (string.IsNullOrWhiteSpace(item.Shorthand)) item.Shorthand = null;
+                    await conn.ExecuteAsync(addQuery, new
+                    {
+                        Name = item.Name.ToLower(),
+                        item.Shorthand
+                    }, transaction).ConfigureAwait(false);
+                }
+
+                await transaction.CommitAsync().ConfigureAwait(false);
+                await LoadAsync();
+            } catch
+            {
+                await transaction.RollbackAsync().ConfigureAwait(false);
+                throw;
+            }
         }
 
         public void Load(uint categoryId = 0)

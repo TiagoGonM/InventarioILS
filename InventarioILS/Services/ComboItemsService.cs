@@ -42,7 +42,7 @@ namespace InventarioILS.Services
                     result = await ItemCategories.Instance.DeleteAsync(id);
                     break;
                 case ComboTags.Subcategory:
-                    result = await ItemSubCategories.Instance.DeleteAsync(id);
+                    result = await ItemSubcategories.Instance.DeleteAsync(id);
                     break;
                 case ComboTags.Class:
                     result = await ItemClasses.Instance.DeleteAsync(id);

@@ -9,7 +9,7 @@ namespace InventarioILS.View.Windows
 {
     public partial class NewSubcategoryWindow : Window
     {
-        readonly static ItemSubCategories subCategories = ItemSubCategories.Instance;
+        readonly static ItemSubcategories subcategoryStorage = ItemSubcategories.Instance;
 
         public NewSubcategoryWindow()
         {
@@ -20,7 +20,7 @@ namespace InventarioILS.View.Windows
         {
             var newSubcategory = new ItemMisc(SubcategoryNameInput.Text.ToLower(), SubcategoryShorthandInput.Text);
 
-            await subCategories.AddAsync(newSubcategory).ConfigureAwait(false);
+            await subcategoryStorage.AddAsync(newSubcategory).ConfigureAwait(false);
 
             Close();
         }
@@ -36,7 +36,7 @@ namespace InventarioILS.View.Windows
                 return;
             }
 
-            bool exists = subCategories.Items.Any(c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
+            bool exists = subcategoryStorage.Items.Any(c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             SubcategoryNameErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
             if (exists) SubcategoryNameInput.Focus();
@@ -54,7 +54,7 @@ namespace InventarioILS.View.Windows
                 return;
             }
 
-            bool exists = subCategories.Items.Any(subcat => !string.IsNullOrEmpty(subcat.Shorthand) && subcat.Shorthand.Equals(input, StringComparison.OrdinalIgnoreCase));
+            bool exists = subcategoryStorage.Items.Any(subcat => !string.IsNullOrEmpty(subcat.Shorthand) && subcat.Shorthand.Equals(input, StringComparison.OrdinalIgnoreCase));
 
             SubcategoryShorthandErrorText.Visibility = !exists ? Visibility.Collapsed : Visibility.Visible;
             if (exists) SubcategoryShorthandInput.Focus();

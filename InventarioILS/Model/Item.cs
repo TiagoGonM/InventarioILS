@@ -1,5 +1,6 @@
 ﻿using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
+using InventarioILS.Model.Wizard;
 
 namespace InventarioILS.Model
 {
@@ -44,7 +45,7 @@ namespace InventarioILS.Model
         public uint StateId { get; set; }
         public string Location { get; set; }
         public string AdditionalNotes { get; set; }
-        
+
         public StockItem(
             string productCode,
             uint categoryId,
@@ -54,7 +55,7 @@ namespace InventarioILS.Model
             string description,
             string location,
             uint quantity,
-            string additionalNotes = "", 
+            string additionalNotes = "",
             string modelOrVal = null)
             : base(productCode, categoryId, subcategoryId, classId, description, quantity, modelOrVal)
         {
@@ -68,7 +69,7 @@ namespace InventarioILS.Model
             Item baseItem,
             uint stateId,
             string location,
-            string additionalNotes) 
+            string additionalNotes)
             : this(
                 baseItem.ProductCode,
                 baseItem.CategoryId,
@@ -82,8 +83,8 @@ namespace InventarioILS.Model
                 baseItem.ModelOrValue
             )
         { }
-        
-        public StockItem(SerializableItem item, string productCode, string description) 
+
+        public StockItem(SerializableItem item, string productCode, string description)
             : this(
                 productCode,
                 categoryId: 0,
@@ -97,6 +98,23 @@ namespace InventarioILS.Model
                 item.ModelOrValue
             )
         { }
+
+        public StockItem(StockItemDraft draft)
+            : this(
+                draft.ProductCode,
+                draft.CategoryRef?.Id ?? 0,
+                draft.SubcategoryRef?.Id ?? 0,
+                draft.ClassRef?.Id ?? 0,
+                draft.StateRef?.Id ?? 0,
+                draft.Description,
+                draft.Source.Location,
+                draft.Source.Quantity,
+                draft.Source.AdditionalNotes,
+                draft.Source.ModelOrValue
+            )
+        {
+            Class = draft.ClassRef.Name;
+        }
 
         public StockItem() { }
     }

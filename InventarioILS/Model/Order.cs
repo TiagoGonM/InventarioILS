@@ -8,6 +8,7 @@ namespace InventarioILS.Model
         public uint Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public bool Done { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public Order() { }
@@ -17,6 +18,7 @@ namespace InventarioILS.Model
             Id = id;
             Name = name;
             Description = description;
+            Done = false;
             CreatedAt = createdAt;
         }
     }

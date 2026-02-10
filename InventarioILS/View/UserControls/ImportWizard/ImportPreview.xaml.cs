@@ -14,8 +14,6 @@ namespace InventarioILS.View.UserControls.ImportWizard
             InitializeComponent();
         }
 
-        IEnumerable<StockItem> _items;
-
         public ImportPreview(DataImportService.DataResponse data) : this()
         {
             DataContext = new

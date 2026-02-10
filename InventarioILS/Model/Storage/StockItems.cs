@@ -3,6 +3,7 @@ using InventarioILS.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace InventarioILS.Model.Storage
 
         public async Task LoadAsync()
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
             string query = @$"SELECT * FROM View_ItemStockSummary WHERE 1=1";
 
@@ -83,7 +84,7 @@ namespace InventarioILS.Model.Storage
 
         public async Task LoadNoStockAsync()
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
             var collection = await conn.QueryAsync<StockItem>(@"SELECT * FROM View_NoStockItems").ConfigureAwait(false);
             await UpdateItemsAsync(collection.ToList().ToObservableCollection()).ConfigureAwait(false);
@@ -123,8 +124,9 @@ namespace InventarioILS.Model.Storage
 
         public async Task AddRangeAsync(IEnumerable<StockItem> items)
         {
-            using var transaction = CreateConnection().BeginTransaction();
-            using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
+            using var initialConn = await CreateConnectionAsync().ConfigureAwait(false);
+            using var transaction = initialConn.BeginTransaction();
+            var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
 
             try
             {
@@ -133,7 +135,7 @@ namespace InventarioILS.Model.Storage
                     for (int i = 0; i < item.Quantity; i++)
                     {
                         // A. Insertar en Item y obtener el ID.
-                        uint? itemId = await ItemService.AddItemAsync(item, transaction).ConfigureAwait(false);
+                        uint itemId = await ItemService.AddItemAsync(item, transaction).ConfigureAwait(false);
                         // B. Insertar en ItemStock usando el ID generado.
                         await conn.ExecuteAsync(
                             @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
@@ -154,17 +156,46 @@ namespace InventarioILS.Model.Storage
                 transaction.Commit();
                 await LoadAsync();
             }
-            catch
+            catch (Exception ex)
             {
                 // 3. Si hay un fallo, revertir todo el lote.
                 transaction.Rollback();
+                await StatusManager.Instance.UpdateMessageStatusAsync($"No se pudieron crear los objetos:. {ex.Message}", StatusManager.MessageType.ERROR);
                 throw;
             }
         }
 
+        public async Task AddRangeAsync(IEnumerable<StockItem> items, IDbTransaction transaction)
+        {
+            var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
+            
+            foreach (var item in items)
+            {
+                for (int i = 0; i < item.Quantity; i++)
+                {
+                    // A. Insertar en Item y obtener el ID.
+                    uint itemId = await ItemService.AddItemAsync(item, transaction).ConfigureAwait(false);
+                    // B. Insertar en ItemStock usando el ID generado.
+                    await conn.ExecuteAsync(
+                        @"INSERT INTO ItemStock (itemId, stateId, location, additionalNotes)
+                        VALUES (@ItemId, @StateId, @Location, @AdditionalNotes)",
+                        new
+                        {
+                            ItemId = itemId,
+                            item.StateId,
+                            item.Location,
+                            item.AdditionalNotes
+                        },
+                        transaction
+                    ).ConfigureAwait(false);
+                }
+            }
+            await LoadAsync();
+        }
+
         public async Task UpdateAsync(StockItem itemToUpdate, StockItem item)
         {
-            using var conn = CreateConnection();
+            using var conn = await CreateConnectionAsync();
 
             var oldQuantity = Items.First(it => string.Equals(it.ProductCode, item.ProductCode)).Quantity;
 
@@ -199,8 +230,9 @@ namespace InventarioILS.Model.Storage
 
         public async Task<int> DeleteAsync(StockItem item, uint quantityToDelete)
         {
-            using var transaction = CreateConnection().BeginTransaction();
-            using var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
+            using var initialConn = await CreateConnectionAsync().ConfigureAwait(false);
+            using var transaction = initialConn.BeginTransaction();
+            var conn = transaction.Connection ?? throw new InvalidOperationException("La conexión de la transacción es nula.");
 
             try
             {

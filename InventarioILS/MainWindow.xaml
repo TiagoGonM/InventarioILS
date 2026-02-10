@@ -27,6 +27,7 @@
         <Grid Background="{StaticResource SecondaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
@@ -52,7 +53,7 @@
 
                 <userControls:QueryableComboBox Title="Tipo" x:Name="ClassComboBox" ComboTag="Class" ItemsSource="{Binding ItemClassList, Mode=OneWay}" SelectedItemChanged="ClassComboBox_SelectedItemChanged" SelectedItem="{Binding SelectedClassItem, Mode=TwoWay}"/>
 
-                <TextBlock Text="Cantidad mínima" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <!--<TextBlock Text="Cantidad mínima" Foreground="{StaticResource AccentForegroundBrush}"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                     <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0"/>
@@ -64,15 +65,24 @@
                     <TextBlock Text="0" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
                     <Slider Style="{StaticResource BlackSlider}" Minimum="0" Maximum="1000" Width="180" Margin="8,0" SmallChange="3"/>
                     <TextBlock Text="1000" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
-                </StackPanel>
+                </StackPanel>-->
 
-                <Button Width="Auto" x:Name="ClearFilters" Content="Restablecer filtros" Click="ClearFilters_Click"/>
+                <Button Width="Auto" x:Name="ClearFilters" Content="Restablecer filtros" Click="ClearFilters_Click" Style="{StaticResource RoundedButtonHighlightTextTransparent}"/>
 
                 <CheckBox x:Name="ShowNonStockItems" Content="Mostrar elementos sin stock" Foreground="White" Margin="0,8,0,0" Click="ShowNonStockItems_Click"/>
             </StackPanel>
+
+            <StackPanel Visibility="Collapsed" d:Visibility="Visible" x:Name="OrderFiltersPanel" Margin="16,0,16,0" Panel.ZIndex="0" Grid.Row="1">
+                <TextBlock Text="Pedidos" Foreground="Gray" FontSize="14" HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Descripción" Foreground="{StaticResource AccentForegroundBrush}"/>
+                <TextBox x:Name="DescriptionInput" Style="{StaticResource RoundedInput}" Margin="0,4,0,8" TextChanged="DescriptionInput_TextChanged" Height="28" Background="{StaticResource BackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" Foreground="{StaticResource ForegroundBrush}" BorderThickness="1"/>
+
+                <CheckBox x:Name="ShowOnlyCompletedOrders" Content="Mostrar solo pedidos completados" Foreground="{StaticResource ForegroundBrush}" BorderBrush="Transparent" Checked="ShowOnlyCompletedOrders_Checked" Unchecked="ShowOnlyCompletedOrders_Unchecked"/>
+            </StackPanel>
             <!--Botones-->
-            <StackPanel Grid.Row="1" MinWidth="170" HorizontalAlignment="Stretch" Margin="20,0,20,20" VerticalAlignment="Center">
-                <Button x:Name="AddItemBtn" Height="48" Style="{StaticResource RoundedButton}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemBtn_Click"
+            <StackPanel Grid.Row="2" MinWidth="170" HorizontalAlignment="Stretch" Margin="20,0,20,20" VerticalAlignment="Center">
+                <Button x:Name="AddItemBtn" Height="48" Style="{StaticResource RoundedButtonPrimary}" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent" Click="AddItemBtn_Click"
                             Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="+" FontSize="22" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -88,7 +98,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="CancelBtn" Height="48" Style="{StaticResource RoundedButton}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
+                <Button x:Name="CancelBtn" Height="48" Style="{StaticResource RoundedButtonPrimary}" Visibility="Collapsed" d:Visibility="Visible" FontWeight="Bold" FontSize="18" Margin="0,0,0,8" BorderBrush="Transparent"
                         Foreground="{StaticResource SecondaryBrush}" Background="{StaticResource AccentBrush}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="-" FontSize="30" FontWeight="Bold" Margin="0,0,8,4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -124,20 +134,10 @@
             <!-- Tabla de datos -->
             <userControls:InventoryDataView x:Name="ItemView" Loaded="ItemView_Loaded" OnEdit="ItemView_OnEdit" d:Visibility="Hidden" ItemsSource="{Binding Items}"/>
             <StackPanel x:Name="SettingsSection" Visibility="Collapsed" d:Visibility="Visible">
-                <Button x:Name="SettingsBackBtn" Click="SettingsBackBtn_Click" Content="← Volver" 
-                        Width="100" Height="50" Margin="10"
-                        FontSize="20"
-                        FontWeight="Bold"
-                        BorderBrush="Transparent"
-                        Style="{StaticResource RoundedButton}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Background="Transparent"
-                        Foreground="{StaticResource AccentBrush}"/>
                 <panels:SettingsPanel />
             </StackPanel>
 
-            <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Grid x:Name="CollapsedButtonBar" Grid.Row="0" Panel.ZIndex="10" Height="140" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -151,7 +151,7 @@
                         Style="{StaticResource RoundedButton}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Visibility="Hidden"
+                        Visibility="Collapsed"
                         d:Visibility="Visible"
                         Background="{StaticResource AccentBrush}">
                     <TextBlock Text="+" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Height="50" Width="50" />
@@ -170,8 +170,7 @@
                     <TextBlock Text="+" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Height="50" Width="50" />
                 </Button>
 
-                <Button Grid.Row="0" x:Name="CancelNewOrderFormCollapsedBtn"
-                        Click="CancelNewOrderFormCollapsedBtn_Click"
+                <Button Grid.Row="0" x:Name="CancelBtnCollapsed"
                         Width="50"
                         Height="50"
                         Margin="10,0,0,10"
@@ -191,7 +190,7 @@
                         Style="{StaticResource RoundedButtonSecondary}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Visibility="Hidden"
+                        Visibility="Collapsed"
                         d:Visibility="Visible">
                     <TextBlock Text="🠖" FontSize="30" FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" Margin="0,8,0,0" HorizontalAlignment="Center" Height="50" Width="50" />
                 </Button>

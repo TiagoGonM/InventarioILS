@@ -14,8 +14,9 @@ namespace InventarioILS
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly StockItems items;
-        readonly ItemClasses itemClasses;
+        static readonly StockItems items = StockItems.Instance;
+        static readonly Orders orders = Orders.Instance;
+        static readonly ItemClasses itemClasses = ItemClasses.Instance;
 
         bool sidebarCollapsed = false;
 
@@ -37,6 +38,7 @@ namespace InventarioILS
         AppPages currentWindow = AppPages.INVENTORY;
 
         bool isStock = true;
+        bool isShowingCompletedOrders = false;
 
         readonly BottomBarManager bottomBarManager = BottomBarManager.Instance;
 
@@ -45,9 +47,6 @@ namespace InventarioILS
         public MainWindow()
         {
             InitializeComponent();
-
-            items = StockItems.Instance;
-            itemClasses = ItemClasses.Instance;
             
             StatusManager.Instance.Initialize(StatusMessageLabel); // Initialize app status messages on the bottom
             bottomBarManager.Initialize(BottomBarContent, BottomRow);
@@ -67,12 +66,14 @@ namespace InventarioILS
             StartActionWith(addItemPanel);
 
             CancelBtn.Click += AddItemBtn_CancelAction;
+            CancelBtnCollapsed.Click += AddItemBtn_CancelAction;
         }
         
         private void AddItemBtn_CancelAction(object sender, RoutedEventArgs e)
         {
             CancelAction();
             CancelBtn.Click -= AddItemBtn_CancelAction;
+            CancelBtnCollapsed.Click -= AddItemBtn_CancelAction;
         }
 
         AddOrderPanel addOrderPanel;
@@ -84,6 +85,7 @@ namespace InventarioILS
             StartActionWith(addOrderPanel);
 
             CancelBtn.Click += AddOrderBtn_CancelAction;
+            CancelBtnCollapsed.Click += AddOrderBtn_CancelAction;
         }
 
         private void AddOrderBtn_CancelAction(object sender, RoutedEventArgs e)
@@ -91,6 +93,7 @@ namespace InventarioILS
             CancelAction();
 
             CancelBtn.Click -= AddOrderBtn_CancelAction;
+            CancelBtnCollapsed.Click -= AddOrderBtn_CancelAction;
             OrderTabBtn_Click(sender, e);
         }
 
@@ -112,6 +115,12 @@ namespace InventarioILS
         {
             if (isStock) await items.LoadAsync().ConfigureAwait(false);
             else await items.LoadNoStockAsync().ConfigureAwait(false);
+        }
+
+        public async Task SetOrders()
+        {
+            if (!isShowingCompletedOrders) await orders.LoadAsync().ConfigureAwait(false);
+            else await orders.LoadDoneAsync().ConfigureAwait(false);
         }
 
         private async void ClassComboBox_SelectedItemChanged(object sender, RoutedEventArgs e)
@@ -178,6 +187,34 @@ namespace InventarioILS
             await SetItems();
         }
 
+        private async void DescriptionInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(DescriptionInput.Text))
+            {
+                orders.QueryFilters.RemoveFilter(Orders.Filters.DESCRIPTION);
+                await SetOrders();
+                return;
+            }
+
+            orders.QueryFilters.AddFilter(Orders.Filters.DESCRIPTION, DescriptionInput.Text);
+
+            await SetOrders();
+        }
+        
+        private async void ShowOnlyCompletedOrders_Checked(object sender, RoutedEventArgs e)
+        {
+            isShowingCompletedOrders = true;
+
+            await SetOrders();
+        }
+
+        private async void ShowOnlyCompletedOrders_Unchecked(object sender, RoutedEventArgs e)
+        {
+            isShowingCompletedOrders = false;
+
+            await SetOrders();
+        }
+
         private static void ToggleVisibility(UIElement element, bool value)
         {
             element.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
@@ -194,14 +231,22 @@ namespace InventarioILS
 
         private void ShowCancelBtn(bool show = true)
         {
+            InventoryTabBtn.IsEnabled = !show;
             OrderTabBtn.IsEnabled = !show;
             SettingsBtn.IsEnabled = !show;
             
             var targetBtn = currentWindow == AppPages.INVENTORY ? AddItemBtn : AddOrderBtn;
             ToggleVisibility(targetBtn, !show);
-
             ToggleVisibility(CancelBtn, show);
+
+            if (sidebarCollapsed)
+            {
+                var targetBtnCollapsed = currentWindow == AppPages.INVENTORY ? AddItemCollapsedBtn : AddOrderCollapsedBtn;
+                ToggleVisibility(targetBtnCollapsed, !show);
+                ToggleVisibility(CancelBtnCollapsed, show);
+            }
         }
+
         private void InventoryTabBtn_Click(object sender, RoutedEventArgs e)
         {
             currentWindow = AppPages.INVENTORY;
@@ -214,9 +259,15 @@ namespace InventarioILS
 
             SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FFE0E0E0");
             SettingsBtn.FontWeight = FontWeights.Normal;
-            
-            AddOrderBtn.Visibility = Visibility.Collapsed;
-            AddItemBtn.Visibility = Visibility.Visible;
+
+            ItemView.Visibility = Visibility.Visible;
+            OrderFiltersPanel.Visibility = Visibility.Collapsed;
+            SettingsSection.Visibility = Visibility.Collapsed;
+
+            ToggleVisibility(AddItemBtn, true);
+            ToggleVisibility(AddOrderBtn, false);
+            ToggleVisibility(AddItemCollapsedBtn, sidebarCollapsed);
+            ToggleVisibility(AddOrderCollapsedBtn, false);
 
             ShowBottomBar(false);
 
@@ -237,67 +288,19 @@ namespace InventarioILS
             OrderTabBtn.FontWeight = FontWeights.Bold;
 
             bottomBarManager.CurrentControlContent = new OrderPanel();
-            ShowBottomBar();
 
+            ItemView.Visibility = Visibility.Visible;
+            OrderFiltersPanel.Visibility = Visibility.Visible;
             AddOrderBtn.Visibility = Visibility.Visible;
             AddItemBtn.Visibility = Visibility.Collapsed;
-        }
+            SettingsSection.Visibility = Visibility.Collapsed;
 
-        // TODO: Refactor this method to reduce complexity
-        private void CollapseSidebarBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var col = Grid.GetColumn(CollapseSidebarBtn);
-            var colDef = MainGrid.ColumnDefinitions[col];
+            ToggleVisibility(AddItemBtn, false);
+            ToggleVisibility(AddOrderBtn, true);
+            ToggleVisibility(AddItemCollapsedBtn, false);
+            ToggleVisibility(AddOrderCollapsedBtn, sidebarCollapsed);
 
-            colDef.MinWidth = 0;
-
-            if (!sidebarCollapsed) prevWidth = colDef.Width;
-
-            colDef.Width = new GridLength(!sidebarCollapsed ? 0 : 320);
-
-            sidebarCollapsed = !sidebarCollapsed;
-
-            if (sidebarCollapsed)
-            {
-                if (!bottomBarCollapsed)
-                {
-                    AddOrderCollapsedBtn.Visibility = Visibility.Visible;
-                    AddItemCollapsedBtn.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
-                    AddItemCollapsedBtn.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
-                AddItemCollapsedBtn.Visibility = Visibility.Collapsed;
-            }
-
-            DecollapseSidebarBtn.Visibility = !sidebarCollapsed ? Visibility.Hidden : Visibility.Visible;
-            if (!sidebarCollapsed)
-            {
-                colDef.MinWidth = 220;
-                colDef.Width = prevWidth;
-            }
-        }
-
-        private void AddOrderCollapsedBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //CancelNewOrderFormCollapsedBtn.Visibility = Visibility.Visible;
-            //AddOrderCollapsedBtn.Visibility = Visibility.Collapsed;
-
-            //ShowAddOrderSection(true);
-        }
-
-        private void CancelNewOrderFormCollapsedBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //CancelNewOrderFormCollapsedBtn.Visibility = Visibility.Collapsed;
-            //AddOrderCollapsedBtn.Visibility = Visibility.Visible;
-
-            //ShowAddOrderSection(false);
+            ShowBottomBar();
         }
 
         private void SettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -313,23 +316,53 @@ namespace InventarioILS
             SettingsBtn.Foreground = (Brush)new BrushConverter().ConvertFrom("#FF9BE8D6");
             SettingsBtn.FontWeight = FontWeights.Bold;
 
-            InventoryTabBtn.IsEnabled = false;
-            OrderTabBtn.IsEnabled = false;
-
+            OrderFiltersPanel.Visibility = Visibility.Collapsed;
             ItemView.Visibility = Visibility.Collapsed;
             SettingsSection.Visibility = Visibility.Visible;
+
+            ToggleVisibility(AddItemBtn, false);
+            ToggleVisibility(AddOrderBtn, false);
+            ToggleVisibility(AddItemCollapsedBtn, false);
+            ToggleVisibility(AddOrderCollapsedBtn, false);
+            
+            ShowBottomBar(false);
         }
 
-        private void SettingsBackBtn_Click(object sender, RoutedEventArgs e)
+        // TODO: Refactor this method to reduce complexity
+        private void CollapseSidebarBtn_Click(object sender, RoutedEventArgs e)
         {
-            InventoryTabBtn.IsEnabled = true;
-            OrderTabBtn.IsEnabled = true;
+            var col = Grid.GetColumn(CollapseSidebarBtn);
+            var colDef = MainGrid.ColumnDefinitions[col];
 
-            ItemView.Visibility = Visibility.Visible;
-            SettingsSection.Visibility = Visibility.Collapsed;
+            colDef.MinWidth = 0;
+            if (!sidebarCollapsed) prevWidth = colDef.Width;
+            colDef.Width = new GridLength(!sidebarCollapsed ? 0 : 320);
 
-            currentWindow = AppPages.INVENTORY;
+            sidebarCollapsed = !sidebarCollapsed;
+
+            var neverShowFlag = currentWindow == AppPages.SETTINGS || !sidebarCollapsed;
+
+            ToggleVisibility(AddItemCollapsedBtn, currentWindow == AppPages.INVENTORY && !neverShowFlag);
+            ToggleVisibility(AddOrderCollapsedBtn, currentWindow == AppPages.ORDER && !neverShowFlag);
+            ToggleVisibility(DecollapseSidebarBtn, sidebarCollapsed);
+
+            if (!sidebarCollapsed)
+            {
+                colDef.MinWidth = 220;
+                colDef.Width = prevWidth;
+            }
         }
+
+        private void AddOrderCollapsedBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AddItemBtn_Click(sender, e);
+        }
+
+        private void CancelNewOrderFormCollapsedBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AddOrderBtn_Click(sender, e);
+        }
+
 
         ItemForm itemForm;
         private void ItemView_OnEdit(object sender, ItemEventArgs e)
@@ -347,12 +380,14 @@ namespace InventarioILS
             StartActionWith(itemForm);
 
             CancelBtn.Click += ItemView_CancelAction;
+            CancelBtnCollapsed.Click += ItemView_CancelAction;
         }
 
         private void ItemView_CancelAction(object sender, EventArgs e)
         {
             CancelAction();
             CancelBtn.Click -= ItemView_CancelAction;
+            CancelBtnCollapsed.Click -= ItemView_CancelAction;
         }
 
         private async void ItemForm_OnConfirmEdit(object sender, ItemEventArgs e)
