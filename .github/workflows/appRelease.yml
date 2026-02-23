@@ -1,0 +1,53 @@
+name: Build release version
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Se dispara con v1.0, v2.1.3, etc.
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Fetch code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    # 1. Extraer la versión del Tag (ej: de v1.2.0 a 1.2.0)
+    - name: Get tag version
+      shell: bash
+      run: |
+        TAG=${GITHUB_REF#refs/tags/}
+        echo "APP_VERSION=${TAG#v}" >> $GITHUB_ENV
+
+    # 2. Publicar la App (Archivos limpios)
+    - name: Dotnet publish
+      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
+
+    # 3. Crear el Instalador .exe
+    - name: Pack application
+      uses: Calofut/Inno-Setup-Action@v1
+      with:
+        filepath: 'installer.iss'
+      env:
+        APP_VERSION: ${{ env.APP_VERSION }}
+
+    # 4. Crear el "Release" en GitHub y subir el instalador
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        files: ./output/*.exe
+        name: Release v${{ env.APP_VERSION }}
+        body: "Nueva versión estable de Gestor de Inventario."
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
