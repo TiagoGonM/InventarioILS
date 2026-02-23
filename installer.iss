@@ -10,7 +10,7 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher=Instituto La Salette - Practicantes 2025-2026
 
-SetupIconFile=InventarioILS\Resources\logo.ico
+SetupIconFile="InventarioILS\Resources\logo.ico"
 UninstallDisplayIcon={app}\{#AppExeName}
 
 DefaultDirName={autopf}\{#AppName}
