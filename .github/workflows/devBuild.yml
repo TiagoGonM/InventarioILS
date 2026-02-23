@@ -1,0 +1,35 @@
+name: Build and pack App
+
+on:
+  push:
+    branches: [ main ] # Se dispara cuando subes a main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest # Importante: Inno Setup necesita Windows
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Publish app
+      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
+
+    - name: Compile .ISS to .EXE Installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: installer.iss
+        options: /O+
+      env:
+        APP_VERSION: "dev-$(date +'%Y%m%d')"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: InventarioILS-Installer-Dev
+        path: installer_output/*.exe
