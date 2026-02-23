@@ -20,26 +20,23 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    # 1. Extraer la versión del Tag (ej: de v1.2.0 a 1.2.0)
     - name: Get tag version
       shell: bash
       run: |
         TAG=${GITHUB_REF#refs/tags/}
         echo "APP_VERSION=${TAG#v}" >> $GITHUB_ENV
 
-    # 2. Publicar la App (Archivos limpios)
     - name: Dotnet publish
       run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
 
-    # 3. Crear el Instalador .exe
-    - name: Pack application
-      uses: Calofut/Inno-Setup-Action@v1
+    - name: Compile .ISS to .EXE Installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
-        filepath: 'installer.iss'
+        path: installer.iss
+        options: /O+
       env:
         APP_VERSION: ${{ env.APP_VERSION }}
 
-    # 4. Crear el "Release" en GitHub y subir el instalador
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
