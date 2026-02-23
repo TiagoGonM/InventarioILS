@@ -40,22 +40,22 @@ namespace InventarioILS.Services
                 throw new ApplicationException("Error al buscar CatSubcatId: " + ex.Message);
             }
 
-            //if (!string.IsNullOrEmpty(item.Class) && string.Equals(item.Class, "dispositivo", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    string queryMax = @"
-            //        SELECT MAX(CAST(SUBSTR(productCode, LENGTH(@BaseCode) + 2) AS INTEGER))
-            //        FROM Item
-            //        WHERE productCode LIKE @Pattern";
+            if (!string.IsNullOrEmpty(item.Class) && string.Equals(item.Class, "dispositivo", StringComparison.OrdinalIgnoreCase))
+            {
+                string queryMax = @"
+                    SELECT MAX(CAST(SUBSTR(productCode, LENGTH(@BaseCode) + 2) AS INTEGER))
+                    FROM Item
+                    WHERE productCode LIKE @Pattern";
 
-            //    var maxSuffix = await conn.QuerySingleOrDefaultAsync<int?>(
-            //        queryMax,
-            //        new { BaseCode = item.ProductCode, Pattern = $"{item.ProductCode}-%" },
-            //        transaction);
+                var maxSuffix = await conn.QuerySingleOrDefaultAsync<int?>(
+                    queryMax,
+                    new { BaseCode = item.ProductCode, Pattern = $"{item.ProductCode}-%" },
+                    transaction);
 
-            //    // 2. Generamos el código con sufijo (ej: T-UT39-1)
-            //    int nextSuffix = (maxSuffix ?? 0) + 1;
-            //    item.ProductCode = $"{item.ProductCode}-{nextSuffix}";
-            //}
+                // 2. Generamos el código con sufijo (ej: T-UT39-1)
+                int nextSuffix = (maxSuffix ?? 0) + 1;
+                item.ProductCode = $"{item.ProductCode}-{nextSuffix}";
+            }
 
             string insertSql =
                 SQLUtils.IncludeLastRowIdInserted(

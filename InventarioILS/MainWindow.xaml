@@ -8,6 +8,7 @@
         xmlns:userControls="clr-namespace:InventarioILS.View.UserControls"
         xmlns:panels="clr-namespace:InventarioILS.View.UserControls.Panels"
         xmlns:windows="clr-namespace:InventarioILS.View.Windows"
+        Icon="pack://application:,,,/Resources/logo.ico"
         mc:Ignorable="d"
         Title="Inventario Electrónica" Width="1720" Height="1040"
         Background="{StaticResource BackgroundBrush}">

@@ -1,6 +1,5 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Model.Storage;
-using InventarioILS.Services;
 using InventarioILS.View.Windows;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,10 +75,10 @@ namespace InventarioILS.View.UserControls.ImportWizard
 
         public bool Validate()
         {
-            //if (!(_data.CategoryRecords.All(category => _data.LinkMap.ContainsKey(category)) && _data.LinkMap.All(link => link.Value.Length > 0)))
-            //{
-            //    return false;
-            //}
+            if (!(_data.CategoryRecords.All(category => _data.LinkMap.ContainsKey(category)) && _data.LinkMap.All(link => link.Value.Length > 0)))
+            {
+                return false;
+            }
 
             return true;
         }

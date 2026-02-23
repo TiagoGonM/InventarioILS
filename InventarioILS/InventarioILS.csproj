@@ -21,6 +21,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\DatabaseSchema.sql" />
+    <None Remove="Resources\logo.ico" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="View\Windows\NewSubcategoryWindow.xaml.cs">
@@ -56,5 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\DatabaseSchema.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 </Project>
