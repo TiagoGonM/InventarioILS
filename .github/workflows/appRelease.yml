@@ -41,7 +41,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.ref_name }}
-        files: ./output/*.exe
+        files: ./installer_output/*.exe
         name: Release v${{ env.APP_VERSION }}
         body: "Nueva versión estable de Gestor de Inventario."
         draft: false
