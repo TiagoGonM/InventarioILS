@@ -27,8 +27,8 @@ jobs:
         LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
         BASE_VER=${LATEST_TAG#v}
         SHORT_SHA=$(git rev-parse --short HEAD)
-        DATE=$(date +'%d%m')
-        echo "APP_VERSION=${BASE_VER}-dev-${DATE}-${SHORT_SHA}" >> $GITHUB_ENV
+        echo "APP_VERSION_CLEAN=${BASE_VER}" >> $GITHUB_ENV
+        echo "APP_VERSION=${BASE_VER} (dev | ${SHORT_SHA})" >> $GITHUB_ENV
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -36,7 +36,7 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Publish app
-      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:InformationalVersion="${{ env.APP_VERSION }}" -o ./publish
+      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:Version="${{ env.APP_VERSION_CLEAN }}" /p:InformationalVersion="${{ env.APP_VERSION }}" -o ./publish
 
     - name: Bundle app
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
@@ -45,6 +45,8 @@ jobs:
         options: /O+
       env:
         APP_VERSION: ${{ env.APP_VERSION }}
+        APP_VERSION_CLEAN: ${{ env.APP_VERSION_CLEAN }}
+        
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
