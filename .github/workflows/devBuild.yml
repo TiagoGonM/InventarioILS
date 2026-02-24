@@ -1,20 +1,34 @@
 name: Build and pack App
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ] # Se dispara cuando subes a main
+    paths: # Solo compila si alguno de estos paths es modificado
+      - 'InventarioILS/**'
+      - '**.cs'
+      - '**.xaml'
+      - '**.iss'           # Setup file
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest # Importante: Inno Setup necesita Windows
+    runs-on: windows-latest # Inno Setup requires windows
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Set installer version
       shell: bash
-      run: echo "APP_VERSION=dev-$(date +'%Y%m%d')" >> $GITHUB_ENV
+      run: |
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        BASE_VER=${LATEST_TAG#v}
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        DATE=$(date +'%d%m')
+        echo "APP_VERSION=${BASE_VER}-dev-${DATE}-${SHORT_SHA}" >> $GITHUB_ENV
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -22,9 +36,9 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Publish app
-      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
+      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:InformationalVersion="${{ env.APP_VERSION }}" -o ./publish
 
-    - name: Compile .ISS to .EXE Installer
+    - name: Bundle app
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
         path: installer.iss
