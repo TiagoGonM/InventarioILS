@@ -45,6 +45,7 @@ jobs:
         options: /O+
       env:
         APP_VERSION: ${{ env.APP_VERSION }}
+        CLEAN_APP_VERSION: ${{ env.APP_VERSION }}
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
