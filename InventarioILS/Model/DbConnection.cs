@@ -32,11 +32,11 @@ namespace InventarioILS.Model
 
             using var reader = new StreamReader(stream);
 
-            string sqlScript = await reader.ReadToEndAsync().ConfigureAwait(false);
+            string sqlScript = await reader.ReadToEndAsync();
 
 
-            await conn.ExecuteAsync("PRAGMA foreign_keys = ON").ConfigureAwait(false); // Force foreign_keys policy
-            await conn.ExecuteAsync(sqlScript).ConfigureAwait(false);
+            await conn.ExecuteAsync("PRAGMA foreign_keys = ON"); // Force foreign_keys policy
+            await conn.ExecuteAsync(sqlScript);
         }
 
         public static DbConnection CreateAndOpen()
@@ -82,11 +82,10 @@ namespace InventarioILS.Model
             {
                 if (!File.Exists(dbPath))
                 {
-                    await connection.OpenAsync().ConfigureAwait(false);
+                    await connection.OpenAsync();
                     try
                     {
                         await SetupDatabaseAsync(connection);
-
                     }
                     catch (SqliteException)
                     {
@@ -96,7 +95,7 @@ namespace InventarioILS.Model
                 }
                 else
                 {
-                    await connection.OpenAsync().ConfigureAwait(false);
+                    await connection.OpenAsync();
                 }
 
                 return connection;
@@ -104,7 +103,7 @@ namespace InventarioILS.Model
             catch (SqliteException ex)
             {
                 MessageBox.Show($"Error initializing database: {ex.Message}");
-                connection.Dispose();
+                await connection.DisposeAsync();
                 throw;
             }
         }
