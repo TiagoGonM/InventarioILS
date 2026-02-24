@@ -4,10 +4,12 @@
 #define AppExeName "InventarioILS.exe"
 ; La versión se toma de la variable de entorno que definimos en el Workflow de GitHub
 #define AppVersion GetEnv('APP_VERSION')
+#define AppVersionClean GetEnv('CLEAN_APP_VERSION')
 
 [Setup]
 AppName={#AppName}
 AppVersion={#AppVersion}
+AppVersionClean={#AppVersionClean}
 AppPublisher=Instituto La Salette - Practicantes 2025-2026
 
 SetupIconFile="InventarioILS\Resources\logo.ico"
@@ -20,7 +22,7 @@ Compression=lzma2
 SolidCompression=yes
 
 OutputDir=.\installer_output
-OutputBaseFilename=InventarioILS_Setup_v{#AppVersion}
+OutputBaseFilename=InventarioILS_Setup_v{#AppVersionClean}
 
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
