@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
+using InventarioILS.View.UserControls;
+using System;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using InventarioILS.Model;
 using System.Windows.Media;
-using System;
-using InventarioILS.View.UserControls;
-using InventarioILS.Model.Storage;
 
 namespace InventarioILS
 {
@@ -47,7 +48,7 @@ namespace InventarioILS
         public MainWindow()
         {
             InitializeComponent();
-            
+
             StatusManager.Instance.Initialize(StatusMessageLabel); // Initialize app status messages on the bottom
             bottomBarManager.Initialize(BottomBarContent, BottomRow);
 
@@ -76,7 +77,7 @@ namespace InventarioILS
             CancelBtn.Click += AddItemBtn_CancelAction;
             CancelBtnCollapsed.Click += AddItemBtn_CancelAction;
         }
-        
+
         private void AddItemBtn_CancelAction(object sender, RoutedEventArgs e)
         {
             CancelAction();
@@ -89,7 +90,7 @@ namespace InventarioILS
         {
             addOrderPanel = new AddOrderPanel();
             addOrderPanel.OnSuccess += CancelAction;
-            
+
             StartActionWith(addOrderPanel);
 
             CancelBtn.Click += AddOrderBtn_CancelAction;
@@ -208,7 +209,7 @@ namespace InventarioILS
 
             await SetOrders();
         }
-        
+
         private async void ShowOnlyCompletedOrders_Checked(object sender, RoutedEventArgs e)
         {
             isShowingCompletedOrders = true;
@@ -242,7 +243,7 @@ namespace InventarioILS
             InventoryTabBtn.IsEnabled = !show;
             OrderTabBtn.IsEnabled = !show;
             SettingsBtn.IsEnabled = !show;
-            
+
             var targetBtn = currentWindow == AppPages.INVENTORY ? AddItemBtn : AddOrderBtn;
             ToggleVisibility(targetBtn, !show);
             ToggleVisibility(CancelBtn, show);
@@ -332,7 +333,7 @@ namespace InventarioILS
             ToggleVisibility(AddOrderBtn, false);
             ToggleVisibility(AddItemCollapsedBtn, false);
             ToggleVisibility(AddOrderCollapsedBtn, false);
-            
+
             ShowBottomBar(false);
         }
 
@@ -404,5 +405,12 @@ namespace InventarioILS
             CancelAction();
         }
 
+        private void GithubBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            //{
+            //    FileName = "
+            //}
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace InventarioILS.View.UserControls.Panels
         public SettingsPanel()
         {
             InitializeComponent();
+
+            AppVersion.Text = $"Versión: {App.AppVersion}";
         }
 
         private async void ImportDataBtn_Click(object sender, RoutedEventArgs e)

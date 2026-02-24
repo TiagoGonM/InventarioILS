@@ -1,6 +1,7 @@
 ﻿using InventarioILS.Model;
 using InventarioILS.Services;
 using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using static InventarioILS.View.UserControls.QueryableComboBox;
@@ -24,6 +25,29 @@ namespace InventarioILS
                 }
 
                 e.Handled = true;
+            }
+        }
+
+        public static string AppVersion
+        {
+            get
+            {
+                string revisionId = Assembly.GetExecutingAssembly()
+                                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                                 .InformationalVersion ?? "Debug";
+
+                if (revisionId.Contains('+'))
+                {
+                    var spl = revisionId.Split("+");
+                    string version = spl[0];
+                    string hash = spl[1];
+
+                    string shortHash = hash.Length > 7 ? hash[..7] : hash;
+
+                    return $"v{version} (dev | {shortHash})";
+                }
+
+                return $"v{revisionId}";
             }
         }
     }

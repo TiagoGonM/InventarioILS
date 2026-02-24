@@ -7,7 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
             <Button x:Name="ImportDataBtn" Content="Importar datos desde CSV" MinHeight="35" MinWidth="170" FontWeight="Bold" Foreground="{StaticResource BackgroundBrush}" HorizontalAlignment="Left" Click="ImportDataBtn_Click" Margin="5" Style="{StaticResource RoundedButtonPrimary}" />
 
             <StackPanel Orientation="Horizontal" Margin="10">
@@ -18,6 +22,10 @@
                 <Button Content="Crear estado de envío" Margin="5,0" Style="{StaticResource RoundedButtonPrimary}" Foreground="{StaticResource BackgroundBrush}" MinHeight="35" FontWeight="Bold" MinWidth="140" Click="CreateShipmentState_Click"/>
 
             </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock x:Name="AppVersion" HorizontalAlignment="right" Margin="0,10" Foreground="{StaticResource AccentForegroundBrush}" FontSize="12"/>
         </StackPanel>
     </Grid>
 </UserControl>
