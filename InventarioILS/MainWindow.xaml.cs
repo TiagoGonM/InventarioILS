@@ -2,6 +2,7 @@
 using InventarioILS.Model.Storage;
 using InventarioILS.View.UserControls;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -407,10 +408,7 @@ namespace InventarioILS
 
         private void GithubBtn_Click(object sender, RoutedEventArgs e)
         {
-            //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-            //{
-            //    FileName = "
-            //}
+            Process.Start(new ProcessStartInfo("https://github.com/TiagoGonM/InventarioILS") { UseShellExecute = true });
         }
     }
 }
