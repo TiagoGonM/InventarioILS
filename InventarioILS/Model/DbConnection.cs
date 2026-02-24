@@ -10,7 +10,7 @@ namespace InventarioILS.Model
 {
     public class DbConnection : SqliteConnection
     {
-        readonly static string appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData;
+        readonly static string appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         readonly static string dbDirectory = Path.Combine(appDataDir, "InventarioILS");
         readonly static string dbPath = Path.Combine(dbDirectory, "inventory.db");
 
