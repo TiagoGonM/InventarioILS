@@ -45,3 +45,27 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: deskto
 [Run]
 ; Para que el usuario pueda abrir la app apenas termine el wizard
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,InventarioILS}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+procedure CurUninstallStepChanged(UninstallStep: TUninstallStep);
+var
+  DataPath: string;
+begin
+  // Verificamos que estamos en el paso final de la desinstalación
+  if UninstallStep = usPostUninstall then
+  begin
+    // Construimos la ruta a la carpeta de AppData
+    DataPath := ExpandConstant('{userappdata}\InventarioILS');
+
+    // Si la carpeta existe, preguntamos al usuario
+    if DirExists(DataPath) then
+    begin
+      if MsgBox('¿Desea eliminar permanentemente la base de datos y sus datos? Ten en cuenta que esta acción es irreversible.', 
+                mbConfirmation, MB_YESNO) = IDYES then
+      begin
+        // Borra la carpeta y todo su contenido (True = subcarpetas, True = archivos)
+        DelTree(DataPath, True, True, True);
+      end;
+    end;
+  end;
+end;

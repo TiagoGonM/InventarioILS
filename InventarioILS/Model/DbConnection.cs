@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,7 +10,10 @@ namespace InventarioILS.Model
 {
     public class DbConnection : SqliteConnection
     {
-        readonly static string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "inventory.db");
+        readonly static string appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData;
+        readonly static string dbDirectory = Path.Combine(appDataDir, "InventarioILS");
+        readonly static string dbPath = Path.Combine(dbDirectory, "inventory.db");
+
         readonly static string resourcePath = "InventarioILS.Resources.DatabaseSchema.sql";
 
         private static void SetupDatabase(DbConnection conn)
@@ -34,7 +38,6 @@ namespace InventarioILS.Model
 
             string sqlScript = await reader.ReadToEndAsync();
 
-
             await conn.ExecuteAsync("PRAGMA foreign_keys = ON"); // Force foreign_keys policy
             await conn.ExecuteAsync(sqlScript);
         }
@@ -43,9 +46,13 @@ namespace InventarioILS.Model
         {
             var connection = new DbConnection();
 
+            if (!Directory.Exists(dbDirectory))
+            {
+                Directory.CreateDirectory(dbDirectory);
+            }
+
             try
             {
-
                 if (!File.Exists(dbPath))
                 {
                     connection.Open();
@@ -77,6 +84,11 @@ namespace InventarioILS.Model
         public static async Task<DbConnection> CreateAndOpenAsync()
         {
             var connection = new DbConnection();
+
+            if (!Directory.Exists(dbDirectory))
+            {
+                Directory.CreateDirectory(dbDirectory);
+            }
 
             try
             {
