@@ -36,7 +36,7 @@ jobs:
         echo "APP_VERSION=${TAG#v}" >> $GITHUB_ENV
 
     - name: Dotnet publish
-      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:InformationalVersion="${{ env.APP_VERSION }}" -o ./publish
+      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:InformationalVersion="${{ env.APP_VERSION }}" /p:IncludeSourceRevisionInInformationalVersion=false -o ./publish
 
     - name: Compile .ISS to .EXE Installer
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
