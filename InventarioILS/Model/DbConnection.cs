@@ -8,13 +8,15 @@ using System.Windows;
 
 namespace InventarioILS.Model
 {
-    public class DbConnection : SqliteConnection
+    public sealed class DbConnection : SqliteConnection, IDisposable, IAsyncDisposable
     {
         readonly static string appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         readonly static string dbDirectory = Path.Combine(appDataDir, "InventarioILS");
         readonly static string dbPath = Path.Combine(dbDirectory, "inventory.db");
 
         readonly static string resourcePath = "InventarioILS.Resources.DatabaseSchema.sql";
+
+        private bool _disposed;
 
         private static void SetupDatabase(DbConnection conn)
         {
@@ -36,10 +38,10 @@ namespace InventarioILS.Model
 
             using var reader = new StreamReader(stream);
 
-            string sqlScript = await reader.ReadToEndAsync();
+            string sqlScript = await reader.ReadToEndAsync().ConfigureAwait(false);
 
-            await conn.ExecuteAsync("PRAGMA foreign_keys = ON"); // Force foreign_keys policy
-            await conn.ExecuteAsync(sqlScript);
+            await conn.ExecuteAsync("PRAGMA foreign_keys = ON").ConfigureAwait(false); // Force foreign_keys policy
+            await conn.ExecuteAsync(sqlScript).ConfigureAwait(false);
         }
 
         public static DbConnection CreateAndOpen()
@@ -53,16 +55,16 @@ namespace InventarioILS.Model
 
             try
             {
-                if (!File.Exists(dbPath))
+                if (!File.Exists(dbPath))   
                 {
                     connection.Open();
                     try
                     {
                         SetupDatabase(connection);
                     }
-                    catch (SqliteException)
+                    catch (Exception)
                     {
-                        File.Delete(dbPath);
+                        try { File.Delete(dbPath); } catch (Exception deleteEx) { StatusManager.Instance.UpdateMessageStatus(deleteEx.ToString(), StatusManager.MessageType.ERROR); }
                         throw;
                     }
                 }
@@ -75,9 +77,9 @@ namespace InventarioILS.Model
             }
             catch (SqliteException ex)
             {
-                MessageBox.Show($"Error initializing database: {ex.Message}");
+                MessageBox.Show($"Error inicializando la base de datos: {ex}", "Error", MessageBoxButton.OK);
                 connection.Dispose();
-                throw;
+                throw new InvalidOperationException("Error initializing database.", ex);
             }
         }
 
@@ -94,43 +96,82 @@ namespace InventarioILS.Model
             {
                 if (!File.Exists(dbPath))
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(false);
                     try
                     {
-                        await SetupDatabaseAsync(connection);
+                        await SetupDatabaseAsync(connection).ConfigureAwait(false);
                     }
-                    catch (SqliteException)
+                    catch (Exception)
                     {
-                        File.Delete(dbPath);
+                        try { File.Delete(dbPath); } catch (Exception deleteEx) { StatusManager.Instance.UpdateMessageStatus(deleteEx.ToString(), StatusManager.MessageType.ERROR); }
                         throw;
                     }
                 }
                 else
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(false);
                 }
 
                 return connection;
             }
             catch (SqliteException ex)
             {
-                MessageBox.Show($"Error initializing database: {ex.Message}");
-                await connection.DisposeAsync();
-                throw;
+                MessageBox.Show($"Error inicializando la base de datos: {ex}", "Error", MessageBoxButton.OK );
+                await connection.DisposeAsync().ConfigureAwait(false);
+                throw new InvalidOperationException("Error initializing database.", ex);
             }
         }
 
-        public uint LastRowIdInserted => this.ExecuteScalar<uint>("SELECT last_insert_rowid()");
+        public long LastRowIdInserted => this.ExecuteScalar<long>("SELECT last_insert_rowid()");
 
         private DbConnection() : base($"Data Source={dbPath}") { }
 
-        ~DbConnection()
+        public async new ValueTask DisposeAsync()
         {
-            if (State == System.Data.ConnectionState.Open)
+            await DisposeAsyncCore().ConfigureAwait(false);
+            base.Dispose(false);
+            GC.SuppressFinalize(this);
+        }
+
+        private new void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
             {
-                Close();
+                try
+                {
+                    if (State == System.Data.ConnectionState.Open)
+                    {
+                        Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    StatusManager.Instance.UpdateMessageStatus($"Error al intentar cerrar la conexión con la base de datos: {ex}", StatusManager.MessageType.WARNING);
+                }
+
+                base.Dispose();
             }
-            Dispose();
+
+            _disposed = true;
+        }
+
+        private async ValueTask DisposeAsyncCore()
+        {
+            try
+            {
+                if (State == System.Data.ConnectionState.Open)
+                {
+                    await CloseAsync().ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusManager.Instance.UpdateMessageStatus($"Error al intentar cerrar la conexión con la base de datos: {ex}", StatusManager.MessageType.WARNING);
+            }
+
+            await base.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

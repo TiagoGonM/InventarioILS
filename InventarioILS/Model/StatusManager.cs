@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿    using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +12,7 @@ namespace InventarioILS.Model
         {
             DEFAULT,
             SUCCESS,
+            WARNING,
             ERROR
         }
 
@@ -39,11 +40,35 @@ namespace InventarioILS.Model
                     return Brushes.Green;
                 case MessageType.ERROR:
                     return Brushes.PaleVioletRed;
+                case MessageType.WARNING:
+                    return Brushes.Orange;
                 default:
                     break;
             }
 
             return Brushes.White;
+        }
+
+        public void UpdateMessageStatus(string message, MessageType colorType = MessageType.DEFAULT)
+        {
+            UpdateMessageStatus(message, GetColor(colorType));
+        }
+
+        public void UpdateMessageStatus(string message, Brush color = null)
+        {
+            if (_statusMessageLabel == null || message == null)
+                return;
+
+            color ??= Brushes.White;
+
+            _statusMessageLabel.Foreground = color;
+            _statusMessageLabel.Content = message;
+            _statusMessageLabel.Visibility = Visibility.Visible;
+            
+            var timer = new Timer(_ =>
+            {
+                _statusMessageLabel.Visibility = Visibility.Hidden;
+            }, null, 5000, Timeout.Infinite);
         }
 
         public async Task UpdateMessageStatusAsync(string message, MessageType colorType = MessageType.DEFAULT)
@@ -53,7 +78,7 @@ namespace InventarioILS.Model
 
         public async Task UpdateMessageStatusAsync(string message, Brush color = null)
         {
-            if (_statusMessageLabel == null)
+            if (_statusMessageLabel == null || message == null)
                 return;
 
             color ??= Brushes.White;
