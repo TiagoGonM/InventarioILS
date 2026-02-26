@@ -7,6 +7,7 @@ Control de stock de inventario hecho con ~~.NET Framework 4.8~~ .NET 9.0 y WPF.
 - Migración a una base de datos más robusta como *PostgreSQL*
 - Reestructurar la base de datos para una mayor escalabilidad y menor complejidad
 - Migración a una tecnología .NET mas actual como *MAUI* o *AvaloniaUI* (requeriría reescribir parte del código)
+- Creación de un sistema de registro de la aplicación o "logger" (por ejemplo basado en Microsoft.Extensions.Logging)
 
 <img width="1600" height="940" alt="image" src="https://github.com/user-attachments/assets/933c05dd-d926-4f9f-b25a-39153ca540dd" />
 
