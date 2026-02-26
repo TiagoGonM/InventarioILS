@@ -6,8 +6,8 @@ concurrency:
 
 on:
   push:
-    branches: [ main ] # Se dispara cuando subes a main
-    paths: # Solo compila si alguno de estos paths es modificado
+    branches: [ main ]
+    paths: # Only compiles if any of these paths are modified
       - 'InventarioILS/**'
       - '**.cs'
       - '**.xaml'
@@ -28,7 +28,7 @@ jobs:
         BASE_VER=${LATEST_TAG#v}
         SHORT_SHA=$(git rev-parse --short HEAD)
         echo "APP_VERSION_CLEAN=${BASE_VER}" >> $GITHUB_ENV
-        echo "APP_VERSION=${BASE_VER} (dev | ${SHORT_SHA})" >> $GITHUB_ENV
+        echo "APP_VERSION=${LATEST_TAG} (dev | ${SHORT_SHA})" >> $GITHUB_ENV
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
