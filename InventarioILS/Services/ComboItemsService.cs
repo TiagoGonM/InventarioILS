@@ -2,6 +2,8 @@
 using InventarioILS.Model.Storage;
 using InventarioILS.View.Windows;
 using System;
+using System.Configuration;
+using System.Windows;
 using static InventarioILS.View.UserControls.QueryableComboBox;
 
 namespace InventarioILS.Services
@@ -36,6 +38,10 @@ namespace InventarioILS.Services
         {
             DeleteResult result = null;
 
+            var confirm = MessageBox.Show("¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.", "Confirmar eliminación", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+
+            if (confirm.HasFlag(MessageBoxResult.Cancel) && !confirm.HasFlag(MessageBoxResult.OK)) return;
+
             switch (tag)
             {
                 case ComboTags.Category:
@@ -52,6 +58,9 @@ namespace InventarioILS.Services
                     break;
                 case ComboTags.ShipmentState:
                     result = await ShipmentStates.Instance.DeleteAsync(id);
+                    break;
+                case ComboTags.Default:
+                    MessageBox.Show("El botón no se encuentra asignado a ningun comportamiento. Por favor, intente desde los ajustes de la aplicación.");
                     break;
                 default:
                     throw new ArgumentNullException("Error de aplicación: el elemento no posee ninguna tag, por lo que no es posible de eliminar.");

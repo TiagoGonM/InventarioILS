@@ -318,6 +318,7 @@ namespace InventarioILS.View.UserControls
         {
             OnConfirm = null;
             OnConfirmEdit = null;
+            GC.SuppressFinalize(this);
         }
     }
 

@@ -4,7 +4,6 @@ using InventarioILS.Model;
 using InventarioILS.Model.Serializables;
 using InventarioILS.Model.Storage;
 using InventarioILS.Model.Wizard;
-using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,19 +11,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms;
 
 namespace InventarioILS.Services
 {
     public class DataImportService
     {
         public class DataResponse {
-            public List<StockItemDraft> Records { get; set; }
-            public List<ItemMisc> CategoryRecords { get; set; }
-            public List<ItemMisc> SubcategoryRecords { get; set; }
-            public List<ItemMisc> ClassRecords { get; set; }
-            public List<ItemMisc> StateRecords { get; set; }
+            public List<StockItemDraft> Records { get; set; } = [];
+            public List<ItemMisc> CategoryRecords { get; set; } = [];
+            public List<ItemMisc> SubcategoryRecords { get; set; } = [];
+            public List<ItemMisc> ClassRecords { get; set; } = [];
+            public List<ItemMisc> StateRecords { get; set; } = [];
 
             public Map<ItemMisc, ItemMisc[]> LinkMap { get; set; } = [];
 
@@ -47,47 +44,75 @@ namespace InventarioILS.Services
 
         public async static Task<DataResponse> ImportCsv(string filePath)
         {
-            // TODO
-            // 1. Recuperar todos los datos iniciales (categorias, subcategorias, clases, estados)
-            // 2. Crear items a partir del CSV
-
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                PrepareHeaderForMatch = args => args.Header.Trim(),
+                PrepareHeaderForMatch = args => args.Header?.Trim(),
                 TrimOptions = TrimOptions.Trim,
+                MissingFieldFound = null, // avoids exception
             };
 
-            if (!File.Exists(filePath))
-                return null;
+            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+                return new DataResponse();
 
             using var reader = new StreamReader(filePath);
             using var csv = new CsvReader(reader, config);
 
             var records = new List<SerializableItem>();
 
-            var categories = new HashSet<string>();
-            var subcategories = new HashSet<string>();
-            var classes = new HashSet<string>();
-            var states = new HashSet<string>();
+            var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var subcategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var classes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var states = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            await foreach (var record in csv.GetRecordsAsync<SerializableItem>())
+            try
             {
-                record.ModelOrValue = record.ModelOrValue.Trim();
+                await foreach (var record in csv.GetRecordsAsync<SerializableItem>())
+                {
+                    record.ModelOrValue = (record.ModelOrValue ?? string.Empty).Trim();
+                    record.Category = (record.Category ?? string.Empty).Trim();
+                    record.Subcategory = (record.Subcategory ?? string.Empty).Trim();
+                    record.Class = (record.Class ?? string.Empty).Trim();
+                    record.State = (record.State ?? string.Empty).Trim();
 
-                records.Add(record);
+                    records.Add(record);
 
-                categories.Add(record.Category.Trim());
-                subcategories.Add(record.Subcategory.Trim());
-                classes.Add(record.Class.Trim());
-                states.Add(record.State.Trim());
+                    if (!string.IsNullOrEmpty(record.Category)) categories.Add(record.Category);
+                    if (!string.IsNullOrEmpty(record.Subcategory)) subcategories.Add(record.Subcategory);
+                    if (!string.IsNullOrEmpty(record.Class)) classes.Add(record.Class);
+                    if (!string.IsNullOrEmpty(record.State)) states.Add(record.State);
+                }
+            }
+            catch (ReaderException ex)
+            {
+                StatusManager.Instance.UpdateMessageStatus($"Error al parsear el CSV: {ex}", StatusManager.MessageType.ERROR);
+                
+                // Return everything that got cached
+                return new DataResponse(
+                    records.Select(r => new StockItemDraft(r)).ToList(),
+                    categories.Select(c => new ItemMisc(c)).ToList(),
+                    subcategories.Select(c => new ItemMisc(c)).ToList(),
+                    classes.Select(c => new ItemMisc(c)).ToList(),
+                    states.Select(c => new ItemMisc(c)).ToList()
+                );
+            }
+            catch (Exception ex)
+            {
+                StatusManager.Instance.UpdateMessageStatus($"Error inesperado al leer el CSV: {ex}", StatusManager.MessageType.ERROR);
+                return new DataResponse(
+                    records.Select(r => new StockItemDraft(r)).ToList(),
+                    categories.Select(c => new ItemMisc(c)).ToList(),
+                    subcategories.Select(c => new ItemMisc(c)).ToList(),
+                    classes.Select(c => new ItemMisc(c)).ToList(),
+                    states.Select(c => new ItemMisc(c)).ToList()
+                );
             }
 
             return new DataResponse(
-                [.. records.Select(record => new StockItemDraft(record))],
-                [.. categories.Select(c => new ItemMisc(c))],
-                [.. subcategories.Select(c => new ItemMisc(c))],
-                [.. classes.Select(c => new ItemMisc(c))],
-                [.. states.Select(c => new ItemMisc(c))]
+                records.Select(record => new StockItemDraft(record)).ToList(),
+                categories.Select(c => new ItemMisc(c)).ToList(),
+                subcategories.Select(c => new ItemMisc(c)).ToList(),
+                classes.Select(c => new ItemMisc(c)).ToList(),
+                states.Select(c => new ItemMisc(c)).ToList()
             );
         }
 
@@ -102,11 +127,11 @@ namespace InventarioILS.Services
 
             foreach (var subcategory in elements)
             {
-                var newId = await subcategoryStorage.AddAsync(subcategory, transaction);
+                var newId = await subcategoryStorage.AddAsync(subcategory, transaction).ConfigureAwait(false);
                 subcategory.Id = newId;
             }
 
-            var catId = await CategoryService.RegisterCategoryAsync(link.Key, elements.Select(subcat => subcat.Id), transaction);
+            var catId = await CategoryService.RegisterCategoryAsync(link.Key, elements.Select(subcat => subcat.Id), transaction).ConfigureAwait(false);
             link.Key.Id = catId;
         }
 
@@ -114,25 +139,22 @@ namespace InventarioILS.Services
         {
             var elements = link.Value;
 
-            var newClassId = await classStorage.AddAsync(link.Key, transaction);
+            var newClassId = await classStorage.AddAsync(link.Key, transaction).ConfigureAwait(false);
             link.Key.Id = newClassId;
 
             foreach (var @class in elements)
             {
-                var newStateId = await stateStorage.AddAsync(@class, newClassId, transaction);
+                var newStateId = await stateStorage.AddAsync(@class, newClassId, transaction).ConfigureAwait(false);
                 @class.Id = newStateId;
             }
         }
 
         public static async Task SaveDataAsync(DataResponse model)
         {
-            // 1. Crear y guardar categorias, subcategorias, clases y estados en la BD
-            // 2. Crear y guardar los items en la BD
-
             if (model == null) return;
 
-            using var initialConn = await DbConnection.CreateAndOpenAsync();
-            var transaction = initialConn.BeginTransaction();
+            await using var initialConn = await DbConnection.CreateAndOpenAsync().ConfigureAwait(false);
+            await using var transaction = initialConn.BeginTransaction();
 
             try
             {
@@ -141,16 +163,16 @@ namespace InventarioILS.Services
                     switch (link.Key.Type)
                     {
                         case MiscType.Category:
-                            await CreateCategoriesAsync(link, transaction);
+                            await CreateCategoriesAsync(link, transaction).ConfigureAwait(false);
                             break;
 
                         case MiscType.Class:
-                            await CreateClassesAsync(link, transaction);
+                            await CreateClassesAsync(link, transaction).ConfigureAwait(false);
                             break;
                     }
                 }
 
-                await StockItems.Instance.AddRangeAsync(model.Records.Select(draft => draft.ToStockItem()), transaction);
+                await StockItems.Instance.AddRangeAsync(model.Records.Select(draft => draft.ToStockItem()), transaction).ConfigureAwait(false);
 
                 transaction.Commit();
 
@@ -162,8 +184,16 @@ namespace InventarioILS.Services
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                await StatusManager.Instance.UpdateMessageStatusAsync($"Hubo un error al intentar importar los datos: {ex.Message}", StatusManager.MessageType.ERROR);
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (Exception rbEx)
+                {
+                    StatusManager.Instance.UpdateMessageStatus($"Error al deshacer los cambios hechos: {rbEx}", StatusManager.MessageType.ERROR);
+                }
+
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Hubo un error al intentar importar los datos: {ex.Message}", StatusManager.MessageType.ERROR).ConfigureAwait(false);
             }
         }
     }

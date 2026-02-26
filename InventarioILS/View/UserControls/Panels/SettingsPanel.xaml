@@ -25,7 +25,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1">
-            <TextBlock x:Name="AppVersion" HorizontalAlignment="right" Margin="0,10" Foreground="{StaticResource AccentForegroundBrush}" FontSize="12"/>
+            <TextBlock x:Name="AppVersion" HorizontalAlignment="Right" Margin="0,10" Foreground="{StaticResource AccentForegroundBrush}" FontSize="12"/>
         </StackPanel>
     </Grid>
 </UserControl>
