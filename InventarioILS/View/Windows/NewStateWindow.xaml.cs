@@ -27,9 +27,17 @@ namespace InventarioILS.View.Windows
 
         private async void SubmitBtn_Click(object sender, RoutedEventArgs e)
         {
-            await states.AddAsync(new ItemMisc(StateNameInput.Text.ToLower()), selectedClassId);
-            
+            try
+            {
+                await states.AddAsync(new ItemMisc(StateNameInput.Text.ToLower()), selectedClassId);
+            } catch (Exception ex)
+            {
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al intentar crear el estado: {ex.Message}", StatusManager.MessageType.ERROR);
+                return;
+            }
+
             Close();
+            await StatusManager.Instance.UpdateMessageStatusAsync($"Estado '{StateNameInput.Text}' creado exitosamente.", StatusManager.MessageType.SUCCESS);
         }
 
         private void StateNameInput_TextChanged(object sender, TextChangedEventArgs e)

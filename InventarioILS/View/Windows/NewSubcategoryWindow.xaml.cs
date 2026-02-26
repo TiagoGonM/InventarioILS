@@ -22,9 +22,17 @@ namespace InventarioILS.View.Windows
         {
             var newSubcategory = new ItemMisc(SubcategoryNameInput.Text.ToLower(), SubcategoryShorthandInput.Text);
 
-            await subcategoryStorage.AddAsync(newSubcategory).ConfigureAwait(false);
+            try
+            {
+                await subcategoryStorage.AddAsync(newSubcategory).ConfigureAwait(false);
+            } catch (Exception ex)
+            {
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al crear la subcategoria: {ex.Message}", StatusManager.MessageType.ERROR);
+                return;
+            }
 
             Close();
+            await StatusManager.Instance.UpdateMessageStatusAsync($"Subcategoria '{newSubcategory.Name}' creada exitosamente.", StatusManager.MessageType.SUCCESS);
         }
 
         private void SubcategoryNameInput_TextChanged(object sender, TextChangedEventArgs e)

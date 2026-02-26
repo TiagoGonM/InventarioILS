@@ -20,9 +20,17 @@ namespace InventarioILS.View.Windows
 
         private async void SubmitBtn_Click(object sender, RoutedEventArgs e)
         {
-            await classes.AddAsync(new ItemMisc(ClassNameInput.Text.ToLower()));
+            try
+            {
+                await classes.AddAsync(new ItemMisc(ClassNameInput.Text.ToLower()));
+            } catch (Exception ex)
+            {
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error intentando crear la clase: {ex.Message}", StatusManager.MessageType.ERROR);
+                return;
+            }
 
             Close();
+            await StatusManager.Instance.UpdateMessageStatusAsync($"Clase '{ClassNameInput.Text}' creada exitosamente.", StatusManager.MessageType.SUCCESS);
         }
 
         private void ClassNameInput_TextChanged(object sender, TextChangedEventArgs e)
