@@ -10,7 +10,7 @@
 AppName={#AppName}
 AppVersion={#AppVersion}
 VersionInfoVersion={#AppVersionClean}
-VersionInfoDescription="Inventario ILS - Version v{#AppVersion}"
+VersionInfoDescription="Inventario ILS - Version {#AppVersion}"
 AppPublisher=Instituto La Salette - Practicantes 2025-2026
 
 SetupIconFile="InventarioILS\Resources\logo.ico"
