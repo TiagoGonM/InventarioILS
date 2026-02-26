@@ -43,13 +43,14 @@ namespace InventarioILS.View.Windows
             }
             catch (Exception ex)
             {
-                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al crear categoría: {ex.Message}", StatusManager.MessageType.ERROR).ConfigureAwait(false);
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al crear categoría: {ex.Message}", StatusManager.MessageType.ERROR);
                 transaction.Rollback();
                 return;
             }
 
             await categories.LoadAsync();
             Close();
+            await StatusManager.Instance.UpdateMessageStatusAsync($"Categoría '{CategoryNameInput.Text}' creada exitosamente.", StatusManager.MessageType.SUCCESS);
         }
 
         private void CategoryNameInput_TextChanged(object sender, TextChangedEventArgs e)

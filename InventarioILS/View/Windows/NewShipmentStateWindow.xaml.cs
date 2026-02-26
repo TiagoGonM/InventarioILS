@@ -1,4 +1,5 @@
-﻿using InventarioILS.Model.Storage;
+﻿using InventarioILS.Model;
+using InventarioILS.Model.Storage;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,8 +42,18 @@ namespace InventarioILS.View.Windows
 
         public async void SubmitBtn_Click(object sender, RoutedEventArgs e)
         {
-            await shipStateStorage.AddAsync(Input.Text.ToLower());
+            try
+            {
+                await shipStateStorage.AddAsync(Input.Text.ToLower());
+
+            } catch (Exception ex)
+            {
+                await StatusManager.Instance.UpdateMessageStatusAsync($"Error al crear el estado de envío: {ex.Message}", StatusManager.MessageType.ERROR);
+                return;
+            }
+
             Close();
+            await StatusManager.Instance.UpdateMessageStatusAsync($"Estado de envío '{Input.Text}' creado exitosamente.", StatusManager.MessageType.SUCCESS);
         }
     }
 }
